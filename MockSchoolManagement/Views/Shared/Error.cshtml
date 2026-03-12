@@ -1,0 +1,12 @@
+﻿@if(ViewBag.ErrorTitle == null)
+{
+    <h3 class="text-danger">
+        程序在请求时发生了一个内部错误，已反馈给开发团队，开发团队将努力解决这个问题。
+    </h3>
+    <h5 class="text-info">请通过xsbnltx@163.com与开发者取得联系</h5>
+}
+else
+{
+    <h1 class="text-danger">@ViewBag.ErrorTitle</h1>
+    <h6 class="text-danger">@ViewBag.ErrorMessage</h6>
+}

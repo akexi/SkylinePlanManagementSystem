@@ -1,0 +1,90 @@
+﻿@model StudentEditViewModel
+@{
+    ViewBag.Title = "编辑学生信息";
+    var photoPath = "~/images/noimage.png";
+    if (!string.IsNullOrWhiteSpace(Model.ExistingPhotoPath))
+    {
+        photoPath = "~/images/avatars/" + Model.ExistingPhotoPath;
+    }
+}
+<form enctype="multipart/form-data" asp-controller="home" asp-action="edit" method="post" class="m-3">
+    <div asp-validation-summary="All" class="text-danger">
+        @*
+            当我们提交表单和更新数据库数据时，需验证以下两个属性，
+            但又不希望用户看到它们，所以我们用隐藏的<Input>标签来存储员工ID和ExistingPhotoPath属性值
+        *@
+        <input hidden asp-for="Id" />
+        <input hidden asp-for="ExistingPhotoPath" />
+
+        @* 
+            采用asp-for的TagHelper绑定StudentEditViewModel的属性
+            它会自动生成对应的name和id属性值
+        *@
+        <div class="form-group row">
+            <label asp-for="Name" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="Name" class="form-control" placeholder="请输入姓名" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Email" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="Email" class="form-control" placeholder="请输入邮箱地址" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Major" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <select asp-for="Major" class="custom-select mr-sm-2" asp-items="Html.GetEnumSelectList<MajorEnum>()">
+                    <option value=""> 请选择</option>
+                </select>
+                <span asp-validation-for="Major" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Photos" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <div class="custom-file">
+                    <input asp-for="Photos" class="form-control custom-file-input" />
+                    <label class="custom-file-label">单击修改图片</label>
+                </div>
+            </div>
+        </div>
+
+        @* 用于显示当前图片信息 *@
+        <div class="form-group row col-sm-4 offset-4">
+            <img class="imageThumbnail" src="@photoPath" asp-append-version="true" />
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">更新</button>
+                <a asp-controller="home" asp-action="index" class="btn btn-primary">取消</a>
+            </div>
+        </div>
+
+        @* 以下JavaScript的作用是，可以在上传标签中显示选定的上传文件名称。 *@
+        @section Scripts{
+            <script>
+                $(document).ready(function() {
+                    $(".custom-file-input").on('change', function () {
+                        // console.log($(this));   // 调试用查看this值
+                        var fileLabel = $(this).next(".custom-file-label");
+                        var files = $(this)[0].files;
+                        if(files.length > 1) {
+                            fileLabel.html("用户已经选择了：" + files.length + " 个文件");
+                        }else if(files.length == 1) {
+                            fileLabel.html(files[0].name);
+                        }
+                    });
+                });
+            </script>
+        }
+
+    </div>
+</form>
