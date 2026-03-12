@@ -23,8 +23,56 @@ namespace MockSchoolManagement.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangePassword()
+        public async Task<IActionResult> AddPassword()
         {
+            var user = await _userManager.GetUserAsync(User);
+
+            var userHasPassword = await _userManager.HasPasswordAsync(user);
+            if(userHasPassword)
+            {
+                return RedirectToAction("ChangePassword");
+            }
+            
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPassword(AddPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync (User);
+                // 为用户添加密码。
+                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+                if (!result.Succeeded)
+                {
+                    foreach(var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View();
+                }
+                // 刷新当前用户的Cookie以反映密码更改
+                await _signInManager.RefreshSignInAsync(user);
+                return View("AddPasswordConfirmation");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            // 判断当前用户是否拥有密码，如果没有密码，则重定向到AddPassword视图中
+            var userHasPassword = await _userManager.HasPasswordAsync(user);
+
+            if (!userHasPassword)
+            {
+                return RedirectToAction("AddPassword");
+            }
+
             return View();
         }
 
