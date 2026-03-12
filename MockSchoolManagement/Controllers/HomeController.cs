@@ -109,7 +109,8 @@ namespace MockSchoolManagement.Controllers
                     PhotoPath = uniqueFileName
                 };
                 _studentRepository.Insert(newStudent);
-                return RedirectToAction("Details", new { id = newStudent.Id });
+                // 将新学生的ID值加密后传递到Details视图
+                return RedirectToAction("Details", new { id = protector.Protect(newStudent.Id.ToString()) });
             }
             return View();
         }
