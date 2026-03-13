@@ -132,6 +132,12 @@ namespace MockSchoolManagement.Controllers
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
                     if(result.Succeeded)
                     {
+                        // 密码重置成功后，如果当前账户被锁定，则设置该账户锁定结束时间为当前UTC日期时间，这样就解锁了账户
+                        if(await _userManager.IsLockedOutAsync(user))
+                        {
+                            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                            // DateTimeOffset指的是UTC日期时间即格林威治时间。
+                        }
                         return View("ResetPasswordConfirmation");
                     }
 
@@ -378,22 +384,36 @@ namespace MockSchoolManagement.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if(user != null && !user.EmailConfirmed && (await _userManager.CheckPasswordAsync(user, model.Password)))
                 {
-                    ModelState.AddModelError(string.Empty, "Email not confirmedyet");
+                    ModelState.AddModelError(string.Empty, "您的电子邮箱还未进行验证。");
                     return View(model);
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                // 在PasswordSignInAsync()中将最后一个参数从false改为true，以启用账户锁定功能。
+                // 每次登录失败后，都会将AspNetUsers表中的AccessFailedCount字段加1，当连续登录失败次数达到指定值时，
+                // MaxFailedAccessAttempts将会锁定账户，然后修改LockoutEnd字段，添加解锁时间
+                // 即使提供了正确的密码，PasswordSignInAsync()方法返回的值依然是LocakedOut
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, true);
                 if (result.Succeeded)
                 {
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    if (!string.IsNullOrEmpty(returnUrl))
                     {
-                        return Redirect(returnUrl);
+                        if (Url.IsLocalUrl(returnUrl))
+                        {
+                            return Redirect(returnUrl);
+                        }
                     }
                     else
                     {
                         return RedirectToAction("Index", "Home");
                     }
                 }
+
+                // 如果账户状态为LockedOut，则重定向到AccountLocked视图中,提示用户账户已被锁定
+                if (result.IsLockedOut)
+                {
+                    return View("AccountLocked");
+                }
+
                 ModelState.AddModelError(string.Empty, "登陆失败，请重试");
             }
             return View(model);

@@ -72,6 +72,8 @@ namespace MockSchoolManagement
 
                 // 其它设置（如锁定、用户等）可以在这里配置
                 options.SignIn.RequireConfirmedEmail = true; // 是否要求确认邮箱才能登录
+                options.Lockout.MaxFailedAccessAttempts = 5; // 最大失败登录尝试次数
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // 锁定时间
             });
 
             // 修改所有令牌的默认有效期为5小时（包括密码重置令牌、邮箱确认令牌等）
