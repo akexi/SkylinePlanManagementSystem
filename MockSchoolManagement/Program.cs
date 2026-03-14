@@ -37,6 +37,7 @@ namespace MockSchoolManagement
             .AddXmlSerializerFormatters();
 
             builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
+            builder.Services.AddScoped<ICourseRepository, SQLCourseRepository>();
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
 
             // зЂВс DbContext(MySQL 8)

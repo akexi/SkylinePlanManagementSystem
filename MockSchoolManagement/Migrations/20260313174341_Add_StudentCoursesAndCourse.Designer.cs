@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MockSchoolManagement.Infrastructure;
 
@@ -11,9 +12,11 @@ using MockSchoolManagement.Infrastructure;
 namespace MockSchoolManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260313174341_Add_StudentCoursesAndCourse")]
+    partial class Add_StudentCoursesAndCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,7 +239,7 @@ namespace MockSchoolManagement.Migrations
 
                     b.HasKey("CourseId");
 
-                    b.ToTable("School_Course", (string)null);
+                    b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("MockSchoolManagement.Models.Student", b =>
@@ -267,7 +270,7 @@ namespace MockSchoolManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Student", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("MockSchoolManagement.Models.StudentCourse", b =>
@@ -290,7 +293,7 @@ namespace MockSchoolManagement.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentCourse", (string)null);
+                    b.ToTable("StudentCourses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

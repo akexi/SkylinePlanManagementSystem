@@ -27,5 +27,13 @@
 
         [NotMapped]
         public string EncryptedId { get; set; }
+
+        /// <summary>
+        /// 入学时间
+        /// </summary>
+        public DateTime EnrollmentDate { get; set; }
+
+        // 导航属性
+        public ICollection<StudentCourse> StudentCourses { get; set; }
     }
 }
