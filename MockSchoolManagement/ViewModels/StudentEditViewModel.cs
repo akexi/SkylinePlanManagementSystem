@@ -5,7 +5,7 @@
     /// </summary>
     public class StudentEditViewModel: StudentCreateViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 已经存在数据库中的头像路径

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MockSchoolManagement.DataRepositories;
+using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Models;
 using MockSchoolManagement.ViewModels;
 
@@ -9,14 +10,14 @@ namespace MockSchoolManagement.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IStudentRepository _studentRepository;
+        private readonly IRepository<Student, int> _studentRepository;  // 注入学生仓储接口，用于访问学生数据
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger logger;
-        // IDataProtector提供了Protect()和Unprotect()方法来加密和解密数据
-        private readonly IDataProtector protector;
+        private readonly IDataProtector protector;  // IDataProtector提供了Protect()和Unprotect()方法来加密和解密数据
 
-        // 使用构造函数注入的方式注入IStudentRepository、IWebHostEnvironment和ILogger服务
-        public HomeController(IStudentRepository studentRepository, 
+
+        // 使用构造函数注入的方式注入IRepository<Student, int>、IWebHostEnvironment、ILogger<HomeController>、IDataProtectionProvider和DataProtectionPurposeStrings服务
+        public HomeController(IRepository<Student, int> studentRepository, 
             IWebHostEnvironment webHostEnvironment, 
             ILogger<HomeController> logger, 
             IDataProtectionProvider dataProtectionProvider,
@@ -34,7 +35,7 @@ namespace MockSchoolManagement.Controllers
         public ViewResult Index()
         {
             // 查询所有的学生信息
-            List<Student> model = _studentRepository.GetAllStudents().Select(s =>
+            List<Student> model = _studentRepository.GetAllList().Select(s =>
             {
                 // 加密ID值并存储在EncryptedId属性中
                 s.EncryptedId = protector.Protect(s.Id.ToString());
@@ -44,15 +45,26 @@ namespace MockSchoolManagement.Controllers
             return View(model);
         }
 
-        //[Route("Home/Details/{id}")]
-        // Details视图接收加密后的学生ID
-        public ViewResult Details(string id)
+        /// <summary>
+        /// 解密学生信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private Student DecryptedStudent(string id)
         {
             // 使用Unprotect()方法解密学生ID值
             string decryptedId = protector.Unprotect(id);
             int decryptedStudentId = Convert.ToInt32(decryptedId);
+            Student student = _studentRepository.FirstOrDefault(s => s.Id == decryptedStudentId);
 
-            var student = _studentRepository.GetStudentById(decryptedStudentId);
+            return student;
+        }
+
+        //[Route("Home/Details/{id}")]
+        // Details视图接收加密后的学生ID
+        public ViewResult Details(string id)
+        {
+            var student = DecryptedStudent(id);
             // 判断学生是否存在，如果不存在则返回404错误页面
             if (student == null)
             {
@@ -65,6 +77,8 @@ namespace MockSchoolManagement.Controllers
                 Student = student,
                 PageTitle = "学生详情"
             };
+            // 加密学生ID值并存储在EncryptedId属性中，以便在视图中使用它来生成编辑链接
+            homeDetailsViewModel.Student.EncryptedId = protector.Protect(student.Id.ToString());
 
             // 将ViewModel对象传递给View()方法
             return View(homeDetailsViewModel);
@@ -82,35 +96,24 @@ namespace MockSchoolManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                string uniqueFileName = null;
-                if (model.Photos != null && model.Photos.Count > 0)
-                {
-                    // 循环每个选定上传的文件
-                    foreach (IFormFile photo in model.Photos)
-                    {
-                        // 必须将图片文件上传到wwwroot的images文件夹中
-                        // 而要获取wwwroot文件夹的路径，需注入WebHostEnvironment服务获取wwwroot文件夹路径
-                        string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "avatars");
-                        // 为了确保文件名唯一，在文件名后附加一个新的GUID值
-                        uniqueFileName = Guid.NewGuid().ToString() + "_" + photo.FileName;
-                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                        // 使用IFormFile接口提供的CopyTo()方法将文件复制到wwwroot/images文件夹
-                        photo.CopyTo(new FileStream(filePath, FileMode.Create));
-                    }
-
-                }
+                var uniqueFileName = ProcessUploadedFile(model);
                 Student newStudent = new Student
                 {
                     Name = model.Name,
                     Email = model.Email,
                     Major = model.Major,
+                    EnrollmentDate = model.EnrollmentDate,
                     // 文件名保存在Student对象的PhotoPath属性中
                     // 它将被存储在数据库Student表的PhotoPath字段中
                     PhotoPath = uniqueFileName
                 };
+
                 _studentRepository.Insert(newStudent);
-                // 将新学生的ID值加密后传递到Details视图
-                return RedirectToAction("Details", new { id = protector.Protect(newStudent.Id.ToString()) });
+
+                var encryptedId = protector.Protect(newStudent.Id.ToString());
+
+                return RedirectToAction("Details", new { id = encryptedId });
+
             }
             return View();
         }
@@ -118,26 +121,23 @@ namespace MockSchoolManagement.Controllers
         [HttpGet]
         public ViewResult Edit(string id)
         {
-            // 使用Unprotect()方法解密学生ID值
-            string decryptedId = protector.Unprotect(id);
-            int decryptedStudentId = Convert.ToInt32(decryptedId);
-
-            Student student = _studentRepository.GetStudentById(decryptedStudentId);
+            var student = DecryptedStudent(id);
 
             // 判断学生是否存在，如果不存在则返回404错误页面
             if (student == null)
             {
-                Response.StatusCode = 404;
-                return View("StudentNotFound", id);
+                ViewBag.ErrorMessage = $"学生Id={id}的信息不存在，请重试";
+                return View("NotFound");
             }
 
             StudentEditViewModel studentEditViewModel = new StudentEditViewModel
             {
-                Id = student.Id,
+                Id = id,
                 Name = student.Name,
                 Email = student.Email,
                 Major = student.Major,
-                ExistingPhotoPath = student.PhotoPath
+                ExistingPhotoPath = student.PhotoPath,
+                EnrollmentDate = student.EnrollmentDate
             };
             return View(studentEditViewModel);
         }
@@ -150,23 +150,28 @@ namespace MockSchoolManagement.Controllers
             if (ModelState.IsValid)
             {
                 // 从数据库中获取要编辑的学生信息
-                Student student = _studentRepository.GetStudentById(model.Id);
+                var student = DecryptedStudent(model.Id);
                 // 用模型数据更新student对象
                 student.Name = model.Name;
                 student.Email = model.Email;
                 student.Major = model.Major;
+                student.EnrollmentDate = model.EnrollmentDate;
 
                 // 如果用户上传了新的照片,模型的Photos属性将接收到上传的文件
                 // 如果没有上传新照片,保留现有的图片文件信息
                 // 因为兼容了多图片上传,所以判断总数是否大于0
-                if (model.Photos.Count > 0)
+                if (model.Photos != null && model.Photos.Count > 0)
                 {
                     // 如果上传了新照片,则显示新照片并删除旧照片
                     if (model.ExistingPhotoPath != null)
                     {
                         string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "avatars", model.ExistingPhotoPath);
-                        System.IO.File.Delete(filePath);
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
                     }
+
                     // 上传新照片并更新student对象的PhotoPath属性
                     student.PhotoPath = ProcessUploadedFile(model);
                 }
@@ -176,6 +181,21 @@ namespace MockSchoolManagement.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var student = await _studentRepository.FirstOrDefaultAsync(a => a.Id == id);
+
+            if(student == null)
+            {
+                ViewBag.ErrorMessage = $"学生Id={id}的信息不存在，请重试";
+                return View("NotFound");
+            }
+
+            await _studentRepository.DeleteAsync(a => a.Id == id);
+            return RedirectToAction("index");
         }
 
         /// <summary>

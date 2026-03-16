@@ -21,5 +21,6 @@ namespace MockSchoolManagement.ViewModels
         [Display(Name = "头像")]
         //public IFormFile Photo { get; set; }
         public List<IFormFile> Photos { get; set; }
+        public DateTime EnrollmentDate { get; internal set; }
     }
 }
