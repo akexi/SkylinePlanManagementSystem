@@ -12,6 +12,7 @@ using NLog.Web;
 using System.Runtime;
 using MockSchoolManagement.Security;
 using MockSchoolManagement.Security.CustomTokenProvider;
+using MockSchoolManagement.Infrastructure.Repositories;
 
 namespace MockSchoolManagement
 {
@@ -39,6 +40,7 @@ namespace MockSchoolManagement
             builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
             builder.Services.AddScoped<ICourseRepository, SQLCourseRepository>();
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
+            builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // ×¢²á·ºÐÍ²Ö´¢·þÎñ
 
             // ×¢²á DbContext(MySQL 8)
             builder.Services.AddDbContextPool<AppDbContext>(options =>
