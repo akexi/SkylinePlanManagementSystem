@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockSchoolManagement.Bll", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockSchoolManagement.Dal", "MockSchoolManagement.Dal\MockSchoolManagement.Dal.csproj", "{448C9C27-A4F8-4B88-83EB-1FCEC4DCD1D6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{9FA3D6BD-1EC1-3BA5-80CB-CE02773A58D5}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\18279\Documents\notes\my-notes-main\深入浅出 ASP.NET Core（笔记）.md = C:\Users\18279\Documents\notes\my-notes-main\深入浅出 ASP.NET Core（笔记）.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

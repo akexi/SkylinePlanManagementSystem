@@ -8,10 +8,22 @@
         <thead>
             <tr>
                 <th scope="col">头像</th>
-                <th scope="col">名字</th>
-                <th scope="col">邮箱地址</th>
-                <th scope="col">主修科目</th>
-                <th scope="col">入学时间</th>
+                <th scope="col" class="sort-link">
+                    <a asp-action="Index" asp-route-sortby="Name"> 名字 </a>
+                    <a class="pl-3" asp-action="Index" asp-route-sortby="Name desc"> 降序 </a>
+                </th>
+                <th scope="col">
+                    <a asp-action="Index" asp-route-sortby="Email"> 邮箱地址 </a>
+                    <a class="pl-3" asp-action="Index" asp-route-sortby="Email desc"> 降序 </a>
+                </th>
+                <th scope="col">
+                    <a asp-action="Index" asp-route-sortby="Major"> 主修科目 </a>
+                    <a class="pl-3" asp-action="Index" asp-route-sortby="Major desc"> 降序 </a>
+                </th>
+                <th scope="col">
+                    <a asp-action="Index" asp-route-sortby="EnrollmentDate"> 入学时间 </a>
+                    <a class="pl-3" asp-action="Index" asp-route-sortby="EnrollmentDate desc"> 降序 </a>
+                </th>
                 <th scope="col">操作</th>
             </tr>
         </thead>
@@ -28,7 +40,7 @@
                     <td>
                         <img class="table-img imageThumbnail" src="@photoPath" asp-append-version="true" />
                     </td>
-                    <th scope="row">@student.Name</th>
+                    <td scope="row">@student.Name</td>
                     <td>@student.Email</td>
                     <td>@student.Major.GetDisplayName()</td>
                     <td>@student.EnrollmentDate.ToString("yyyy-MM-dd")</td>

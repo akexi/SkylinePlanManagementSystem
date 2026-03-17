@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MockSchoolManagement.DataRepositories;
 using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Models;
 using MockSchoolManagement.ViewModels;
+using System.Linq.Dynamic.Core;
 
 namespace MockSchoolManagement.Controllers
 {
@@ -32,16 +34,16 @@ namespace MockSchoolManagement.Controllers
         //[Route("")]
         //[Route("Home")]
         //[Route("Home/Index")]
-        public ViewResult Index()
+        public async Task<IActionResult> Index(int?pageNumber,int pageSize = 10, string sortBy = "Id")
         {
-            // 查询所有的学生信息
-            List<Student> model = _studentRepository.GetAllList().Select(s =>
+            IQueryable<Student> query = _studentRepository.GetAll().OrderBy(sortBy).AsNoTracking();
+
+            var model = query.ToList().Select(s =>
             {
-                // 加密ID值并存储在EncryptedId属性中
                 s.EncryptedId = protector.Protect(s.Id.ToString());
                 return s;
             }).ToList();
-            // 将学生列表传递到视图
+
             return View(model);
         }
 
