@@ -3,7 +3,7 @@
     ViewBag.Title = "学生详情";
     var photoPath = "~/images/noimage.png";
     // 判断photoPath是否真的有内容
-    if (!string.IsNullOrWhiteSpace(Model.Student.PhotoPath))
+    if (!string.IsNullOrWhiteSpace(Model.Student.PhotoPath) && Model.Student.PhotoPath != "noimage.png")
     {
         photoPath = "~/images/avatars/" + Model.Student.PhotoPath;
     }

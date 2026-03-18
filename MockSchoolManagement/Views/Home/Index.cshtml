@@ -32,7 +32,7 @@
             {
                 var photoPath = "~/images/noimage.png";
 
-                if(student.PhotoPath != null)
+                if (!string.IsNullOrEmpty(student.PhotoPath) && student.PhotoPath != "noimage.png")
                 {
                     photoPath = "~/images/avatars/" + student.PhotoPath;
                 }

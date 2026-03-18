@@ -98,7 +98,12 @@ namespace MockSchoolManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var uniqueFileName = ProcessUploadedFile(model);
+                var uniqueFileName = "noimage.png"; // 默认
+                if (model.Photos != null)
+                {
+                    uniqueFileName = ProcessUploadedFile(model);
+                }
+
                 Student newStudent = new Student
                 {
                     Name = model.Name,
