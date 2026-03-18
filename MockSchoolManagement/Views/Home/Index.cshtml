@@ -2,6 +2,18 @@
 @{
     ViewBag.Title = "学生列表页面";
 }
+<h1>学生列表</h1>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            请输入名称：
+            <input type="text" name="searchString" value="@ViewBag.CurrentFilter" />
+            <input type="submit" value="查询" class="btn btn-outline-dark" />
+            <a asp-action="Index">返回所有列表</a>
+            <a asp-action="Create"> 添加学生</a>
+        </p>
+    </div>
+</form>
 
 <div class="row">
     <table class="table table-bordered table-striped">

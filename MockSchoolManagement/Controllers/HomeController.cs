@@ -28,18 +28,29 @@ namespace MockSchoolManagement.Controllers
             _studentRepository = studentRepository;
             _webHostEnvironment = webHostEnvironment;
             this.logger = logger;
-            this.protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.StudentIdRouteValue);
+            protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.StudentIdRouteValue);
         }
 
         //[Route("")]
         //[Route("Home")]
         //[Route("Home/Index")]
-        public async Task<IActionResult> Index(int?pageNumber,int pageSize = 10, string sortBy = "Id")
+        public async Task<IActionResult> Index(string searchString, string sortBy = "Id")
         {
-            IQueryable<Student> query = _studentRepository.GetAll().OrderBy(sortBy).AsNoTracking();
+            // 判断searchString是否为空，如果不为空，则去除查询参数中的空格
+            ViewBag.CurrentFilter = searchString?.Trim();
+            IQueryable<Student> query = _studentRepository.GetAll();
 
+            if(!string.IsNullOrEmpty(searchString))
+            {
+                // 通过模糊查询表中的Name和Email字段来过滤学生信息
+                query = query.Where(s => 
+                    s.Name.Contains(searchString) || s.Email.Contains(searchString));
+            }
+
+            query = query.OrderBy(sortBy).AsNoTracking();
             var model = query.ToList().Select(s =>
             {
+                // 加密ID值并存储在EncryptedId属性中
                 s.EncryptedId = protector.Protect(s.Id.ToString());
                 return s;
             }).ToList();
