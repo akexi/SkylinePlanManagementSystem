@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Student>
+﻿@using MockSchoolManagement.Application.Dtos;
+@model PaginationModel
 @{
     ViewBag.Title = "学生列表页面";
 }
@@ -40,7 +41,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var student in Model)
+            @foreach(var student in Model.Data)
             {
                 var photoPath = "~/images/noimage.png";
 
@@ -74,6 +75,18 @@
             }
         </tbody>
     </table>
+
+    <div>
+        <ul class="pagination">
+            @for(var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage?"active" : "")">
+                    <a asp-route-currentpage="@i" class="page-link">@i</a>
+                </li>
+            }
+        </ul>
+    </div>
+
 </div>
 
 @section Scripts{

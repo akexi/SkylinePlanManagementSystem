@@ -13,6 +13,7 @@ using System.Runtime;
 using MockSchoolManagement.Security;
 using MockSchoolManagement.Security.CustomTokenProvider;
 using MockSchoolManagement.Infrastructure.Repositories;
+using MockSchoolManagement.Application.Students;
 
 namespace MockSchoolManagement
 {
@@ -39,6 +40,7 @@ namespace MockSchoolManagement
 
             builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
             builder.Services.AddScoped<ICourseRepository, SQLCourseRepository>();
+            builder.Services.AddScoped<IStudentService, StudentService>();  // 注册学生服务
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
             builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // 注册泛型仓储服务
 
