@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -39,7 +39,7 @@ namespace MockSchoolManagement.Controllers
         //[Route("")]
         //[Route("Home")]
         //[Route("Home/Index")]
-        public async Task<IActionResult> Index(string searchString, int currentPage, string sortBy = "Id")
+        public async Task<IActionResult> Index(string searchString, int currentPage = 1, string sortBy = "Id")
         {
             // 判断searchString是否为空，如果不为空，则去除查询参数中的空格
             ViewBag.CurrentFilter = searchString = searchString?.Trim();

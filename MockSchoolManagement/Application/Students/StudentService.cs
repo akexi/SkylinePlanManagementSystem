@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Models;
 using System.Linq.Dynamic.Core;

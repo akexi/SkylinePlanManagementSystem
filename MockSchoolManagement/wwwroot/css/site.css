@@ -1,4 +1,4 @@
-﻿/*.btn{
+/*.btn{
     width:75px;
 }*/
 .imageThumbnail {
@@ -6,7 +6,10 @@
     width: auto;
 }
 
-.indexStudentimage {
+.table-img.imageThumbnail {
     height: 50px;
-    width: auto;
+    width: 50px;
+    object-fit: cover;
+    display: block;
+    border-radius: 10%;
 }
