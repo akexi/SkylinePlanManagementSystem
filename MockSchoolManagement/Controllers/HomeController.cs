@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MockSchoolManagement.Application.Dtos;
 using MockSchoolManagement.Application.Students;
+using MockSchoolManagement.Application.Students.Dtos;
 using MockSchoolManagement.DataRepositories;
 using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Models;
@@ -39,30 +40,18 @@ namespace MockSchoolManagement.Controllers
         //[Route("")]
         //[Route("Home")]
         //[Route("Home/Index")]
-        public async Task<IActionResult> Index(string searchString, int currentPage = 1, string sortBy = "Id")
+        public async Task<IActionResult> Index(GetStudentInput input)
         {
-            // 判断searchString是否为空，如果不为空，则去除查询参数中的空格
-            ViewBag.CurrentFilter = searchString = searchString?.Trim();
-
-            PaginationModel paginationModel = new PaginationModel();
-
-            // 计算总条数
-            paginationModel.Count = await _studentRepository.CountAsync();
-
-            // 当前页
-            paginationModel.CurrentPage = currentPage;
-
             // 获取分页结果
-            var students = await _studentService.GetPaginatedResult(paginationModel.CurrentPage, searchString, sortBy);
-
-            paginationModel.Data = students.Select(s =>
+            var dtos = await _studentService.GetPaginatedResult(input);
+            dtos.Data = dtos.Data.Select(s =>
             {
                 // 加密ID值并存储在EncryptedId属性中
                 s.EncryptedId = protector.Protect(s.Id.ToString());
                 return s;
             }).ToList();
 
-            return View(paginationModel);
+            return View(dtos);
         }
 
         /// <summary>

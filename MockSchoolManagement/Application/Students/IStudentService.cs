@@ -1,9 +1,11 @@
 ﻿using MockSchoolManagement.Models;
+using MockSchoolManagement.Application.Dtos;
+using MockSchoolManagement.Application.Students.Dtos;
 
 namespace MockSchoolManagement.Application.Students
 {
     public interface IStudentService
     {
-        Task<List<Student>> GetPaginatedResult(int currentPage, string searchString, string sortBy, int pageSize = 10);
+        Task<PagedResultDto<Student>> GetPaginatedResult(GetStudentInput input);
     }
 }
