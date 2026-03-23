@@ -14,6 +14,7 @@ using MockSchoolManagement.Security;
 using MockSchoolManagement.Security.CustomTokenProvider;
 using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Application.Students;
+using MockSchoolManagement.Infrastructure.Data;
 
 namespace MockSchoolManagement
 {
@@ -166,6 +167,8 @@ namespace MockSchoolManagement
             }
 
             //app.MapGet("/", () => "Hello World!");
+
+            app.UseDataInitializer();   // 启用数据初始化中间件，确保在应用启动时数据库中有初始数据
 
             app.UseStaticFiles();
 

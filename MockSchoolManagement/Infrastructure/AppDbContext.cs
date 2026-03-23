@@ -22,7 +22,7 @@ namespace MockSchoolManagement.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //modelBuilder.Seed();    // 如果需要添加其他实体的数据初始化，可在此调用Seed方法，具体实现见ModelBuilderExtensions类
+            modelBuilder.Seed();    // 如果需要添加其他实体的数据初始化，可在此调用Seed方法，具体实现见ModelBuilderExtensions类
 
             // 指定实体在数据库中生成的表名
             modelBuilder.Entity<Student>().ToTable("Student");

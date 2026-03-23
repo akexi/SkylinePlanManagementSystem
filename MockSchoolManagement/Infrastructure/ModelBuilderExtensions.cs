@@ -9,26 +9,10 @@ namespace MockSchoolManagement.Infrastructure
         // 将需要初始化到数据库的模型数据写在此方法内
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Student>().HasData(
-                new Student
-                {
-                    Id = 1,
-                    Name = "李天喜",
-                    Major = MajorEnum.ComputerScience,
-                    Email = "xsbnltx@gmail.com",
-                    PhotoPath = "default.jpg"
-                }
-            );
-            modelBuilder.Entity<Student>().HasData(
-                new Student
-                {
-                    Id = 2,
-                    Name = "张三",
-                    Major = MajorEnum.Mathematics,
-                    Email = "zhangsan@163.com",
-                    PhotoPath = "default.jpg"
-                }
-            );
+            // 指定实体在数据库中生成的名称
+            modelBuilder.Entity<Course>().ToTable("School_Course");
+            modelBuilder.Entity<StudentCourse>().ToTable("StudentCourse");
+            modelBuilder.Entity<Student>().ToTable("Student");
         }
     }
 }
