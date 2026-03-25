@@ -15,7 +15,7 @@ namespace MockSchoolManagement.Application.Dtos
         /// </summary>
         public int TotalPages => (int)Math.Ceiling(decimal.Divide(TotalCount, MaxResultCount));
 
-        public List<Student> Data { get; set; }
+        public List<TEntity> Data { get; set; }
 
         /// <summary>
         /// 是否显示上一页按钮

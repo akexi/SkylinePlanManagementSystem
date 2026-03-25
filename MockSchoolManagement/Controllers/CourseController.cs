@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MockSchoolManagement.Application.Courses;
+using MockSchoolManagement.Application.Courses.Dtos;
 using MockSchoolManagement.DataRepositories;
 using MockSchoolManagement.Infrastructure;
 
@@ -6,17 +8,18 @@ namespace MockSchoolManagement.Controllers
 {
     public class CourseController : Controller
     {
-        private readonly ICourseRepository _courseRepository;
+        private readonly ICourseService _courseService;
 
-        public CourseController(ICourseRepository courseRepository)
+        public CourseController(ICourseService courseService)
         {
-            _courseRepository = courseRepository;
+            _courseService = courseService;
         }
 
         // 不写[HttpGet]，默认就是GET请求
-        public IActionResult Index()
+        public async Task<ActionResult> Index(GetCourseInput input)
         {
-            return View();
+            var models = await _courseService.GetPaginatedResult(input);
+            return View(models);
         }
     }
 }

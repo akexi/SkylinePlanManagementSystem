@@ -12,8 +12,8 @@ using MockSchoolManagement.Infrastructure;
 namespace MockSchoolManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260314021023_ChangeEntityTableNames")]
-    partial class ChangeEntityTableNames
+    [Migration("20260325151328_AddCourseSeed")]
+    partial class AddCourseSeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

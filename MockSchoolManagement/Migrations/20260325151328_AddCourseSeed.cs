@@ -5,7 +5,7 @@
 namespace MockSchoolManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class OfficePC : Migration
+    public partial class AddCourseSeed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

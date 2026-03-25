@@ -15,6 +15,7 @@ using MockSchoolManagement.Security.CustomTokenProvider;
 using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Application.Students;
 using MockSchoolManagement.Infrastructure.Data;
+using MockSchoolManagement.Application.Courses;
 
 namespace MockSchoolManagement
 {
@@ -40,8 +41,9 @@ namespace MockSchoolManagement
             .AddXmlSerializerFormatters();
 
             builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
-            builder.Services.AddScoped<ICourseRepository, SQLCourseRepository>();
             builder.Services.AddScoped<IStudentService, StudentService>();  // 注册学生服务
+            builder.Services.AddScoped<ICourseRepository, SQLCourseRepository>();
+            builder.Services.AddScoped<ICourseService,CourseService>(); // 注册课程服务
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
             builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // 注册泛型仓储服务
 
