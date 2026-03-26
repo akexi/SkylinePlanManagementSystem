@@ -242,5 +242,20 @@ namespace MockSchoolManagement.Controllers
             return uniqueFileName;
         }
 
+        public async Task<ActionResult> About()
+        {
+            // 获取IQueryable类型的Student，然后通过student.EnrollmentDate进行分组
+            var data = from student in _studentRepository.GetAll()
+                       group student by student.EnrollmentDate into dateGroup
+                       select new EnrollmentDateGroupDto()
+                       {
+                           EnrollmentDate = dateGroup.Key,
+                           StudentCount = dateGroup.Count()
+                       };
+            var dtos = await data.AsNoTracking().ToListAsync();
+
+            return View(dtos);
+        }
+
     }
 }

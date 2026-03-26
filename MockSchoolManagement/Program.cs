@@ -29,8 +29,8 @@ namespace MockSchoolManagement
             //builder.Logging.ClearProviders();   // 清除默认的日志提供程序（可选）
             builder.Host.UseNLog();
 
-            // 注册MVC服务并启用全局授权过滤器，并注册 XML 序列化格式化程序
-            builder.Services.AddControllersWithViews(config =>
+            // 添加 MVC 服务并启用全局授权过滤器，要求所有控制器和操作方法都需要经过身份验证
+            var mvcBuilder = builder.Services.AddControllersWithViews(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
@@ -39,6 +39,12 @@ namespace MockSchoolManagement
                 config.Filters.Add(new AuthorizeFilter(policy));
             })
             .AddXmlSerializerFormatters();
+
+            // 只在开发环境开启 Razor 运行时编译
+            if (builder.Environment.IsDevelopment())
+            {
+                mvcBuilder.AddRazorRuntimeCompilation();
+            }
 
             builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
             builder.Services.AddScoped<IStudentService, StudentService>();  // 注册学生服务

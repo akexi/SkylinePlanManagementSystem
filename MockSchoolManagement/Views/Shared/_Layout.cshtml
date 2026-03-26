@@ -25,6 +25,12 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="home" asp-action="create">添加学生</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="About">学生信息统计</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Course" asp-action="Index">课程列表</a>
+                    </li>
                     @if(_signInManager.IsSignedIn(User))
                     {
                         <li class="nav-item dropdown">
