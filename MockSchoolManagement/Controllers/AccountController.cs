@@ -322,7 +322,8 @@ namespace MockSchoolManagement.Controllers
                         user = new ApplicationUser
                         {
                             UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
-                            Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                            Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                            City = ""
                         };
                         // 如果不存用户，则创建一个新用户，并将其存储在AspNetUsers数据库表中
                         await _userManager.CreateAsync(user);
