@@ -17,7 +17,6 @@ namespace MockSchoolManagement.Models
         /// 预算
         /// </summary>
         [DataType(DataType.Currency)]
-        [Column(TypeName = "money")]
         public decimal Budget { get; set; }
 
         /// <summary>
