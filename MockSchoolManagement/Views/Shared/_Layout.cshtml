@@ -20,16 +20,19 @@
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="home" asp-action="index">学生列表</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">学生列表</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="home" asp-action="create">添加学生</a>
+                        <a class="nav-link" asp-controller="Course" asp-action="Index">课程管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="About">学生信息统计</a>
+                        <a class="nav-link" asp-controller="Teacher" asp-action="Index">教师管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Course" asp-action="Index">课程列表</a>
+                        <a class="nav-link" asp-controller="Departments" asp-action="Index">学院管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="About">关于我们</a>
                     </li>
                     @if(_signInManager.IsSignedIn(User))
                     {

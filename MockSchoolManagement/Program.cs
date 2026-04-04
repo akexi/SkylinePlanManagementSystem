@@ -16,6 +16,7 @@ using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Application.Students;
 using MockSchoolManagement.Infrastructure.Data;
 using MockSchoolManagement.Application.Courses;
+using NetCore.AutoRegisterDi;
 
 namespace MockSchoolManagement
 {
@@ -39,17 +40,18 @@ namespace MockSchoolManagement
                 config.Filters.Add(new AuthorizeFilter(policy));
             })
             .AddXmlSerializerFormatters();
-
             // 只在开发环境开启 Razor 运行时编译
             if (builder.Environment.IsDevelopment())
             {
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
 
-            builder.Services.AddScoped<IStudentRepository, SQLStudentRepository>();
-            builder.Services.AddScoped<IStudentService, StudentService>();  // 注册学生服务
-            builder.Services.AddScoped<ICourseRepository, SQLCourseRepository>();
-            builder.Services.AddScoped<ICourseService,CourseService>(); // 注册课程服务
+            // 自动注册服务（依赖注入）
+            builder.Services.RegisterAssemblyPublicNonGenericClasses()
+                .Where(c => c.Name.EndsWith("Service")) // 只注册以 "Service" 结尾的类
+                .AsPublicImplementedInterfaces(ServiceLifetime.Scoped);   // 将它们注册为它们实现的接口
+            //builder.Services.AddScoped<IStudentService, StudentService>();  // 注册学生服务
+            //builder.Services.AddScoped<ICourseService,CourseService>(); // 注册课程服务
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
             builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // 注册泛型仓储服务
 
