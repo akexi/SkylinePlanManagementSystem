@@ -4,6 +4,7 @@ using MockSchoolManagement.Models;
 using MockSchoolManagement.Application.Courses.Dtos;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace MockSchoolManagement.Application.Courses
 {
@@ -29,7 +30,7 @@ namespace MockSchoolManagement.Application.Courses
                 .Take(input.MaxResultCount);
 
             // 将查询结果转换为List集合，加载到内存中
-            var models = await query.AsNoTracking().ToListAsync();
+            var models = await query.Include(a => a.Department).AsNoTracking().ToListAsync();
             var dtos = new PagedResultDto<Course>()
             {
                 TotalCount = count,

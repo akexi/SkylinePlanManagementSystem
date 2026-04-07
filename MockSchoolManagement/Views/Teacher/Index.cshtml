@@ -1,0 +1,128 @@
+﻿@model TeacherListViewModel
+@{
+    ViewBag.Title = "教师列表";
+}
+
+<h1>教师列表</h1>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <input type="hidden" name="CurrentPage" value="@Model.Teachers.CurrentPage" />
+        <input type="hidden" name="Sorting" value="@Model.Teachers.Sorting" />
+        <p>
+            请输入名称：
+            <input type="text" name="FilterText" value="@Model.Teachers.FilterText" />
+            <input type="submit" value="查询" class="btn btn-outline-dark" />
+            <a asp-action="Index">返回所有列表</a>|
+            <a asp-action="Create"> 添加教师 </a>
+        </p>
+    </div>
+</form>
+
+<div class="table-responsive-sm">
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th scope="col" class="sort-link">
+                    <a asp-action="Index" 
+                        asp-route-Sorting="Id" 
+                        asp-route-CurrentPage="@Model.Teachers.CurrentPage" 
+                        asp-route-FilterText="@Model.Teachers.FilterText">
+                        编号
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index" 
+                        asp-route-Sorting="Name" 
+                        asp-route-CurrentPage="@Model.Teachers.CurrentPage" 
+                        asp-route-FilterText="@Model.Teachers.FilterText">
+                        教师姓名
+                    </a>
+                </th>
+                <th>
+                    <a asp-action="Index" 
+                        asp-route-Sorting="HireDate" 
+                        asp-route-CurrentPage="@Model.Teachers.CurrentPage" 
+                        asp-route-FilterText="@Model.Teachers.FilterText">
+                        聘用时间
+                    </a>
+                </th>
+                <th>学院</th>
+                <th>课程</th>
+                <th scope="col">操作</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach(var item in Model.Teachers.Data)
+            {
+                string selectedRow = "";
+                if(item.Id == Model.SelectedId)
+                {
+                    selectedRow = "table-succedss"; // 选中行的样式，可以根据需要自定义CSS类名和样式
+                }
+                <tr class="@selectedRow">
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@Html.DisplayFor(modelItem => item.HireDate)</td>
+
+                    @if(item.OfficeLocation != null)
+                    {
+                        <td>@item.OfficeLocation.Location</td>
+                    }
+                    else
+                    {
+                        <td>未分配</td>
+                    }
+
+                    <td>
+                        @{
+                            foreach(var course in item.CourseAssignments)
+                            {
+                                @course.Course.CourseId @: @course.Course.Title <br />
+                            }
+                        }
+                    </td>
+
+                    <td>
+                        <form action="Delete" asp-action="Delete" asp-route-Id="@item.Id" method="post">
+                            <a asp-controller="Teacher" 
+                                asp-action="Index" 
+                                class="btn btn-info" 
+                                asp-route-Sorting="@Model.Teachers.Sorting" 
+                                asp-route-CurrentPage="@Model.Teachers.CurrentPage" 
+                                asp-route-Id="@item.Id">
+                                查看
+                            </a>
+                            <a asp-controller="Teacher" 
+                                asp-action="Edit" 
+                                asp-route-Id="@item.Id" class="btn btn-primary m-1">
+                                编辑
+                            </a>
+                            <span id="confirmDeleteSpan_@item,Id" style="display:none"></span>
+                            <span>您确定要删除？</span>
+
+                            <button type="submit" class="btn btn-danger">是</button>
+                            <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.Id', false)">
+                               否 
+                            <a/>
+
+                            <span id="deleteSpan_@item.Id">
+                                <a href="#" class="btn btn-danger" onclick="confirmDelete('@item.Id', true)"></a>
+                            </span>
+
+                        </form>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @await Html.PartialAsync("_Pagination", Model.Teachers)
+
+</div>
+
+@section Scripts{
+    <script src="~/js/CustomScript.js" asp-append-version="true"></script>
+}

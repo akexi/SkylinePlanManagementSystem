@@ -47,6 +47,14 @@
                             课程学分
                         </a>
                     </th>
+                    <th scope="col" class="sort-link">
+                        <a asp-action="Index" 
+                            asp-route-Sorting="Department" 
+                            asp-route-CurrentPage="@Model.CurrentPage" 
+                            asp-route-FilterText="@Model.FilterText">
+                            学院
+                        </a>
+                    </th>
                     <th scope="col">操作</th>
                 </tr>
             </thead>
@@ -57,6 +65,7 @@
                         <td>@item.CourseId</td>
                         <td>@item.Title</td>
                         <td>@item.Credits</td>
+                        <td>@item.Department.Name</td>
                         <td>
                             <form method="post" asp-action="Delete" asp-route-id="@item.CourseId">
                                 <a asp-controller="Course" 
