@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using MockSchoolManagement.Application.Courses;
 using MockSchoolManagement.Application.Teachers;
 using MockSchoolManagement.Application.Teachers.Dtos;

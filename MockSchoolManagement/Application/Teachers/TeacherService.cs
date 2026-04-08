@@ -7,7 +7,7 @@ using System.Linq.Dynamic.Core;
 
 namespace MockSchoolManagement.Application.Teachers
 {
-    public class TeacherService
+    public class TeacherService:ITeacherService
     {
         private readonly IRepository<Teacher, int> _teacherRepository;
 

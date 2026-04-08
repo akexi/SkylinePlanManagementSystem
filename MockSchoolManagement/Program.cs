@@ -14,8 +14,9 @@ using MockSchoolManagement.Security;
 using MockSchoolManagement.Security.CustomTokenProvider;
 using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Application.Students;
-using MockSchoolManagement.Infrastructure.Data;
 using MockSchoolManagement.Application.Courses;
+using MockSchoolManagement.Application.Teachers;
+using MockSchoolManagement.Infrastructure.Data;
 using NetCore.AutoRegisterDi;
 
 namespace MockSchoolManagement

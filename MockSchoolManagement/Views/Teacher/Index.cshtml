@@ -1,4 +1,4 @@
-﻿@model TeacherListViewModel
+@model TeacherListViewModel
 @{
     ViewBag.Title = "教师列表";
 }
@@ -19,6 +19,10 @@
 </form>
 
 <div class="table-responsive-sm">
+    @if (Model.Teachers.Data.Any())
+    {
+        
+    
     <table class="table table-bordered">
 
         <thead>
@@ -59,7 +63,7 @@
                 string selectedRow = "";
                 if(item.Id == Model.SelectedId)
                 {
-                    selectedRow = "table-succedss"; // 选中行的样式，可以根据需要自定义CSS类名和样式
+                    selectedRow = "table-success"; // 选中行的样式，可以根据需要自定义CSS类名和样式
                 }
                 <tr class="@selectedRow">
                     <td>@item.Id</td>
@@ -85,7 +89,7 @@
                     </td>
 
                     <td>
-                        <form action="Delete" asp-action="Delete" asp-route-Id="@item.Id" method="post">
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post">
                             <a asp-controller="Teacher" 
                                 asp-action="Index" 
                                 class="btn btn-info" 
@@ -99,16 +103,16 @@
                                 asp-route-Id="@item.Id" class="btn btn-primary m-1">
                                 编辑
                             </a>
-                            <span id="confirmDeleteSpan_@item,Id" style="display:none"></span>
-                            <span>您确定要删除？</span>
+                            <span id="confirmDeleteSpan_@item.Id" style="display:none">
+                                <span>您确定要删除？</span>
 
-                            <button type="submit" class="btn btn-danger">是</button>
-                            <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.Id', false)">
-                               否 
-                            <a/>
-
+                                <button type="submit" class="btn btn-danger">是</button>
+                                <a href="#" class="btn btn-primary" onclick="confirmDelete('@item.Id', false)">
+                                   否 
+                                </a>
+                            </span>
                             <span id="deleteSpan_@item.Id">
-                                <a href="#" class="btn btn-danger" onclick="confirmDelete('@item.Id', true)"></a>
+                                <a href="#" class="btn btn-danger" onclick="confirmDelete('@item.Id', true)">删除</a>
                             </span>
 
                         </form>
@@ -118,6 +122,101 @@
             }
         </tbody>
     </table>
+
+    <div class="mt-2 mb-4">
+            @if(Model.Courses != null)
+            {
+                if(Model.Courses.Count > 0)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">教师正在教授的课程信息</div>
+                        <div class="card-body">
+                            <table class=table>
+                                <tr>
+                                    <th>课程编号</th>
+                                    <th>课程名称</th>
+                                    <th>学院</th>
+                                    <th>操作</th>
+                                </tr>
+
+                                @foreach(var item in Model.Courses)
+                                {
+                                    string selectedRow = "";
+
+                                    if(item.CourseId == Model.SelectedCourseId)
+                                    {
+                                        selectedRow = "table-success";
+                                    }
+
+                                    <tr class="@selectedRow">
+                                        <td>@item.CourseId</td>
+                                        <td>@item.Title</td>
+                                        <td>@item.Department.Name</td>
+                                        <td>
+                                            <a asp-controller="Teacher" 
+                                                asp-action="Index" 
+                                                asp-route-Sorting="@Model.Teachers.Sorting"
+                                                asp-route-CurrentPage="@Model.Teachers.CurrentPage"
+                                                asp-route-CourseId="@item.CourseId"
+                                                class="btn btn-info">
+                                                查看
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </table>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            该教师没有正在教授的课程信息
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+    }
+
+    @if(Model.StudentCourses != null)
+    {
+        if(Model.StudentCourses.Count > 0)
+        {
+            <div class="card mb-3">
+                <div class="card-header">该课程的学生信息</div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>学生姓名</th>
+                            <th>成绩</th>
+                            <th>主修科目</th>
+                        </tr>
+
+                        @foreach(var item in Model.StudentCourses)
+                        {
+                            <tr>
+                                <td>@item.Student.Name</td>
+                                <td>@Html.DisplayFor(modelItem => item.Grade)</td>
+                                <td>@item.Student.Major.GetDisplayName()</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    当前课程暂无学生
+                </div>
+            </div>
+        }
+    }
 
     @await Html.PartialAsync("_Pagination", Model.Teachers)
 
