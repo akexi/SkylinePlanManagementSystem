@@ -14,6 +14,6 @@ namespace MockSchoolManagement.Models
         [Display(Name = "办公室位置")]
         public string Location { get; set; }
 
-        public Teacher Teacher { get; set; }
+        public Teacher? Teacher { get; set; }
     }
 }

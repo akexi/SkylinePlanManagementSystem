@@ -10,7 +10,7 @@
         /// <summary>
         /// 课程名称
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// 是否被选中
