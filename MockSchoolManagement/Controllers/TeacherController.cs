@@ -15,6 +15,7 @@ namespace MockSchoolManagement.Controllers
         private readonly IRepository<Course, int> _courseRepository;
         private readonly ITeacherService _teacherService;
 
+        // 构造方法
         public TeacherController(IRepository<Teacher, int> teacherRepository,IRepository<Course, int> courseRepository, ITeacherService teacherService )
         {
             _teacherRepository = teacherRepository;
@@ -152,6 +153,64 @@ namespace MockSchoolManagement.Controllers
 
             return View(input);
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var allCourses = _courseRepository.GetAllList();
+            var viewModel = new List<AssignedCourseViewModel>();
+
+            foreach(var course in allCourses)
+            {
+                viewModel.Add(new AssignedCourseViewModel
+                {
+                    CourseId = course.CourseId,
+                    Title = course.Title,
+                    IsSelected = false
+                });
+            }
+
+            var dto = new TeacherCreateViewModel();
+            dto.AssignedCourses = viewModel;
+
+            return View(dto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(TeacherCreateViewModel input)
+        {
+            if (ModelState.IsValid)
+            {
+                var teacher = new Teacher
+                {
+                    HireDate = input.HireDate,
+                    Name = input.Name,
+                    OfficeLocation = input.OfficeLocation,
+                    CourseAssignments = new List<CourseAssignment>()
+                };
+
+                // 获取用户选中的课程信息
+                var courses = input.AssignedCourses.Where(a => a.IsSelected == true).ToList();
+
+                foreach(var item in courses)
+                {
+                    // 将选中的课程信息添加到导航属性中
+                    teacher.CourseAssignments.Add(new CourseAssignment
+                    {
+                        CourseId = item.CourseId,
+                        TeacherId = teacher.Id
+                    });
+                }
+
+                await _teacherRepository.InsertAsync(teacher);
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(input);
+        }
+
+
 
 
     }
