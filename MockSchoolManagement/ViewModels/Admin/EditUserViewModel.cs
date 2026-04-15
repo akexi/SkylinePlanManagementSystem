@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
-namespace MockSchoolManagement.ViewModels
+namespace MockSchoolManagement.ViewModels.Admin
 {
     public class EditUserViewModel
     {

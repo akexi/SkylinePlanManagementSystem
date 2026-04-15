@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MockSchoolManagement.Models;
-using MockSchoolManagement.ViewModels;
+using MockSchoolManagement.ViewModels.Account;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

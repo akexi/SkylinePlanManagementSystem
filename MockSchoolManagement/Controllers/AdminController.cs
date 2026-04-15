@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Models;
-using MockSchoolManagement.ViewModels;
+using MockSchoolManagement.ViewModels.Admin;
 using System.Security.Claims;
 
 namespace MockSchoolManagement.Controllers

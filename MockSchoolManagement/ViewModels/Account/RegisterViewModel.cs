@@ -2,7 +2,7 @@
 using MockSchoolManagement.CustomerMiddlewares.Utils;
 using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels
+namespace MockSchoolManagement.ViewModels.Account
 {
     public class RegisterViewModel
     {

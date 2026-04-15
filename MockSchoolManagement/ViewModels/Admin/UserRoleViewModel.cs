@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.ViewModels
+﻿namespace MockSchoolManagement.ViewModels.Admin
 {
     public class UserRoleViewModel
     {

@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.ViewModels
+﻿namespace MockSchoolManagement.ViewModels.Admin
 {
     /// <summary>
     /// 用户拥有的角色列表

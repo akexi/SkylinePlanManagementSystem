@@ -1,6 +1,6 @@
 ﻿using MockSchoolManagement.Models;
 
-namespace MockSchoolManagement.ViewModels
+namespace MockSchoolManagement.ViewModels.Admin
 {
     public class UserClaimsViewModel
     {

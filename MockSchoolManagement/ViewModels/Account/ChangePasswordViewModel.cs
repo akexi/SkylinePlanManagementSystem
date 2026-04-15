@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels
+namespace MockSchoolManagement.ViewModels.Account
 {
     public class ChangePasswordViewModel
     {
