@@ -13,13 +13,21 @@ namespace MockSchoolManagement.Controllers
     {
         private readonly IRepository<Teacher, int> _teacherRepository;
         private readonly IRepository<Course, int> _courseRepository;
+        private readonly IRepository<OfficeLocation, int> _officeLocationRepository;
+        private readonly IRepository<CourseAssignment, int> _courseAssignmentRepository;
         private readonly ITeacherService _teacherService;
 
         // 构造方法
-        public TeacherController(IRepository<Teacher, int> teacherRepository,IRepository<Course, int> courseRepository, ITeacherService teacherService )
+        public TeacherController(IRepository<Teacher, int> teacherRepository,
+            IRepository<Course, int> courseRepository, 
+            IRepository<OfficeLocation, int> officeLocationRepository,
+            IRepository<CourseAssignment, int> courseAssignmentRepository,
+            ITeacherService teacherService )
         {
             _teacherRepository = teacherRepository;
             _courseRepository = courseRepository;
+            _officeLocationRepository = officeLocationRepository;
+            _courseAssignmentRepository = courseAssignmentRepository;
             _teacherService = teacherService;
         }
 
@@ -210,7 +218,23 @@ namespace MockSchoolManagement.Controllers
             return View(input);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var model = await _teacherRepository.FirstOrDefaultAsync(a => a.Id == id);
 
+            if(model == null)
+            {
+                ViewBag.ErrorMessage = $"教师信息ID为{id}的信息不存在，请重试";
+                return View("NotFound");
+            }
+
+            await _officeLocationRepository.DeleteAsync(a => a.TeacherId == model.Id);
+            await _courseAssignmentRepository.DeleteAsync(a => a.TeacherId == model.Id);
+            await _teacherRepository.DeleteAsync(a => a.Id == id);
+
+            return RedirectToAction(nameof(Index));
+        }
 
 
     }
