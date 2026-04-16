@@ -245,6 +245,7 @@ namespace MockSchoolManagement.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Budget = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    RowVersion = table.Column<DateTime>(type: "timestamp(6)", rowVersion: true, nullable: false),
                     TeacherId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

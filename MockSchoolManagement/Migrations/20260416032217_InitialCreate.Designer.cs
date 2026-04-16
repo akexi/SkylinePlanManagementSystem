@@ -12,7 +12,7 @@ using MockSchoolManagement.Infrastructure;
 namespace MockSchoolManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260402171038_InitialCreate")]
+    [Migration("20260416032217_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -277,6 +277,11 @@ namespace MockSchoolManagement.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");

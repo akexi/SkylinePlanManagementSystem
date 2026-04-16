@@ -1,17 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using MockSchoolManagement.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.Models
+namespace MockSchoolManagement.ViewModels.Department
 {
-    /// <summary>
-    /// 学院
-    /// </summary>
-    public class Department
+    public class DepartmentCreateViewModel
     {
         public int DepartmentId { get; set; }
 
-        [Display(Name = "学院名称")]
         [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "学院名称")]
         public string Name { get; set; }
 
         /// <summary>
@@ -33,13 +31,10 @@ namespace MockSchoolManagement.Models
         public byte[] RowVersion { get; set; }
 
         [Display(Name = "负责人")]
+        public SelectList TeacherList { get; set; }
+
         public int? TeacherId { get; set; }
 
-        /// <summary>
-        /// 学院主任
-        /// </summary>
         public Teacher Administrator { get; set; }
-
-        public ICollection<Course> Courses { get; set; }
     }
 }
