@@ -28,13 +28,14 @@ namespace MockSchoolManagement.ViewModels.Department
         public DateTime StartDate { get; set; }
 
         [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public byte[]? RowVersion { get; set; }
 
         [Display(Name = "负责人")]
-        public SelectList TeacherList { get; set; }
+        public SelectList? TeacherList { get; set; }
 
-        public int? TeacherId { get; set; }
+        [Required(ErrorMessage = "请选择负责人")]
+        public int TeacherId { get; set; }
 
-        public Teacher Administrator { get; set; }
+        public Teacher? Administrator { get; set; }
     }
 }

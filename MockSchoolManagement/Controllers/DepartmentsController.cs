@@ -90,5 +90,39 @@ namespace MockSchoolManagement.Controllers
 
         #endregion 添加
 
+        public async Task<IActionResult> Details(int id)
+        {
+            // 因为要实现预加载，所以不能直接使用FirstOrDefaultAsync()方法
+            var model = await _departmentRepository
+                .GetAll()
+                .Include(a => a.Administrator)
+                .FirstOrDefaultAsync(a => a.DepartmentId == id);
+
+            // 判断学院信息是否存在
+            if(model == null)
+            {
+                ViewBag.ErrorMessage = $"学院ID为{id}的信息不存在，请重试。";
+                return View("NotFound");
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var model = await _departmentRepository.FirstOrDefaultAsync(a => a.DepartmentId == id);
+
+            if(model == null)
+            {
+                ViewBag.ErrorMessage = $"学院ID为{id}的信息不存在，请重试。";
+                return View("NotFound");
+            }
+
+            await _departmentRepository.DeleteAsync(a => a.DepartmentId == id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

@@ -12,7 +12,7 @@ using MockSchoolManagement.Infrastructure;
 namespace MockSchoolManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260416032217_InitialCreate")]
+    [Migration("20260416131952_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
