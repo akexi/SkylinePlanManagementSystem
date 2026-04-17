@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Application.Departments;
 using MockSchoolManagement.Application.Departments.Dtos;
@@ -124,6 +125,7 @@ namespace MockSchoolManagement.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var model = await _departmentRepository
@@ -152,6 +154,36 @@ namespace MockSchoolManagement.Controllers
             };
 
             return View(dto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(DepartmentCreateViewModel input)
+        {
+            if (ModelState.IsValid)
+            {
+                var model = await _departmentRepository
+                    .GetAll()
+                    .Include(a => a.Administrator)
+                    .FirstOrDefaultAsync(a => a.DepartmentId == input.DepartmentId);
+
+                if(model == null)
+                {
+                    ViewBag.ErrorMessage = $"学院ID为{input.DepartmentId}的信息不存在，请重试。";
+                    return View("NotFound");
+                }
+
+                model.DepartmentId = input.DepartmentId;
+                model.Name = input.Name;
+                model.Budget = input.Budget;
+                model.StartDate = input.StartDate;
+                model.TeacherId = input.TeacherId;
+
+                await _departmentRepository.UpdateAsync(model);
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
         }
 
     }
