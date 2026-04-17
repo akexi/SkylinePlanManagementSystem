@@ -124,5 +124,35 @@ namespace MockSchoolManagement.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = await _departmentRepository
+                .GetAll()
+                .Include(a => a.Administrator)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.DepartmentId == id);
+
+            if(model == null)
+            {
+                ViewBag.ErrorMessage = $"学院ID为{id}的信息不存在，请重试。";
+                return View("NotFound");
+            }
+
+            var teacherList = TeacherDropDownList();
+            var dto = new DepartmentCreateViewModel
+            {
+                DepartmentId = model.DepartmentId,
+                Name = model.Name,
+                Budget = model.Budget,
+                StartDate = model.StartDate,
+                TeacherId = (int)model.TeacherId,
+                Administrator = model.Administrator,
+                RowVersion = model.RowVersion,
+                TeacherList = teacherList
+            };
+
+            return View(dto);
+        }
+
     }
 }
