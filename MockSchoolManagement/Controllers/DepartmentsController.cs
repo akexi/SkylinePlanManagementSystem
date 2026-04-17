@@ -178,13 +178,76 @@ namespace MockSchoolManagement.Controllers
                 model.StartDate = input.StartDate;
                 model.TeacherId = input.TeacherId;
 
-                await _departmentRepository.UpdateAsync(model);
+                // 获取
+                _dbcontext.Entry(model).Property("RowVersion").OriginalValue = input.RowVersion;
 
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _departmentRepository.UpdateAsync(model);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch(DbUpdateConcurrencyException concurrencyEx)
+                {
+                    var exceptionEntry = concurrencyEx.Entries.Single();
+                    var clientValues = (Department)exceptionEntry.Entity;
+
+                    // 从数据库中获取Department实体中的RowVersion值，然后将input.RowVersion赋值到OriginalValue属性中，以便在下一次更新时进行比较
+                    _dbcontext.Entry(model).Property("RowVersion").OriginalValue = input.RowVersion;
+
+                    try
+                    {
+                        // UpdateAsync()方法执行SaveChanges()方法时，如检测到并发冲突，则会抛出DbUpdateConcurrencyException异常
+                        await _departmentRepository.UpdateAsync(model);
+                        return RedirectToAction(nameof(Index));
+                    }
+                    catch (DbUpdateConcurrencyException innerConcurrencyEx)
+                    {
+                        // 触发异常后，获取异常实体
+                        var innerExceptionEntry = innerConcurrencyEx.Entries.Single();
+                        var innerClientValues = (Department)innerExceptionEntry.Entity;
+
+                        // 从数据库中获取该异常实体信息
+                        var databaseEntry = innerExceptionEntry.GetDatabaseValues();
+                        if (databaseEntry == null)
+                        {
+                            // 如果实体null，则表示该数据已经被删除了
+                            ModelState.AddModelError(string.Empty, "无法保存更改。该数据已经被删除了。");
+                        }
+                        else
+                        {
+                            // 将异常实体中的错误信息精确到具体字段并传递到前端
+                            var databaseValues = (Department)databaseEntry.ToObject();
+
+                            if(databaseValues.Name != innerClientValues.Name)
+                                ModelState.AddModelError("Name", $"当前值: {databaseValues.Name}");
+                            if(databaseValues.Budget != innerClientValues.Budget)
+                                ModelState.AddModelError("Budget", $"当前值: {databaseValues.Budget}");
+                            if(databaseValues.StartDate != innerClientValues.StartDate)
+                                ModelState.AddModelError("StartDate", $"当前值: {databaseValues.StartDate}");
+                            if(databaseValues.TeacherId != innerClientValues.TeacherId)
+                            {
+                                var teacherEntity = await _teacherRepository
+                                    .FirstOrDefaultAsync(a => a.Id == databaseValues.TeacherId);
+                                ModelState.AddModelError("TeacherId", $"当前值: {teacherEntity?.Name}");
+                            }
+
+                            ModelState.AddModelError("", "数据已被修改！编辑操作已取消。最新值已显示在各个字段中，请再次尝试提交。");
+                            input.RowVersion = databaseValues.RowVersion;
+
+                            // 初始化教师的下拉列表
+                            input.TeacherList = TeacherDropDownList();
+                            ModelState.Remove("RowVersion");
+                        }
+                    }
+                }
+
+                return View(input);
             }
 
             return View();
         }
+
+
 
     }
 }
