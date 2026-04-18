@@ -3,16 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MockSchoolManagement.Models
 {
-    public class Teacher
+    public class Teacher:Person
     {
-        public int Id { get; set; }
-
-        [Required]
-        [Display(Name = "姓名")]
-        [StringLength(50)]
-        [Column("TeacherName")]
-        public string Name { get; set; }
-
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "聘用时间")]
@@ -21,6 +13,5 @@ namespace MockSchoolManagement.Models
         public ICollection<CourseAssignment> CourseAssignments { get; set; }
 
         public OfficeLocation OfficeLocation { get; set; }
-
     }
 }

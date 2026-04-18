@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Models;
 using MockSchoolManagement.Models.EnumTypes;
+using System.Reflection.PortableExecutable;
 
 namespace MockSchoolManagement.Infrastructure
 {
@@ -21,6 +22,7 @@ namespace MockSchoolManagement.Infrastructure
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<OfficeLocation> OfficeLocations { get; set; }
         public DbSet<CourseAssignment> CourseAssignments { get; set; }
+        public DbSet<Person> People { get; set; }
 
         // 方法内调用Seed创建初始数据方法
         protected override void OnModelCreating(ModelBuilder modelBuilder)

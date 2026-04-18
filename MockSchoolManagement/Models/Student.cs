@@ -7,18 +7,12 @@
     /// <summary>
     /// 学生模型
     /// </summary>
-    public class Student
+    public class Student: Person
     {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
         /// <summary>
         /// 主修科目
         /// </summary>
         public MajorEnum? Major {  get; set; }
-
-        public string Email { get; set; }
 
         /// <summary>
         /// 学生头像路径
@@ -31,6 +25,8 @@
         /// <summary>
         /// 入学时间
         /// </summary>
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime EnrollmentDate { get; set; }
 
         // 导航属性

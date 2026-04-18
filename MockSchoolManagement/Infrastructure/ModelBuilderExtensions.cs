@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Models;
 using MockSchoolManagement.Models.EnumTypes;
+using System.Reflection.PortableExecutable;
 
 namespace MockSchoolManagement.Infrastructure
 {
@@ -12,7 +13,7 @@ namespace MockSchoolManagement.Infrastructure
             // 指定实体在数据库中生成的名称
             modelBuilder.Entity<Course>().ToTable("Course");
             modelBuilder.Entity<StudentCourse>().ToTable("StudentCourse");
-            modelBuilder.Entity<Student>().ToTable("Student");
+            modelBuilder.Entity<Person>().ToTable("Person");
             modelBuilder.Entity<CourseAssignment>().HasKey(c => new { c.CourseId, c.TeacherId });
         }
     }

@@ -72,39 +72,26 @@ namespace MockSchoolManagement.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Student",
+                name: "Person",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Major = table.Column<int>(type: "int", nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PhotoPath = table.Column<string>(type: "longtext", nullable: false)
+                    Discriminator = table.Column<string>(type: "varchar(8)", maxLength: 8, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EnrollmentDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    Major = table.Column<int>(type: "int", nullable: true),
+                    PhotoPath = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EnrollmentDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    HireDate = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Student", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Teachers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TeacherName = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    HireDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Teachers", x => x.Id);
+                    table.PrimaryKey("PK_Person", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -252,9 +239,9 @@ namespace MockSchoolManagement.Migrations
                 {
                     table.PrimaryKey("PK_Departments", x => x.DepartmentId);
                     table.ForeignKey(
-                        name: "FK_Departments_Teachers_TeacherId",
+                        name: "FK_Departments_Person_TeacherId",
                         column: x => x.TeacherId,
-                        principalTable: "Teachers",
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
@@ -272,9 +259,9 @@ namespace MockSchoolManagement.Migrations
                 {
                     table.PrimaryKey("PK_OfficeLocations", x => x.TeacherId);
                     table.ForeignKey(
-                        name: "FK_OfficeLocations_Teachers_TeacherId",
+                        name: "FK_OfficeLocations_Person_TeacherId",
                         column: x => x.TeacherId,
-                        principalTable: "Teachers",
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
@@ -319,9 +306,9 @@ namespace MockSchoolManagement.Migrations
                         principalColumn: "CourseId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_CourseAssignments_Teachers_TeacherId",
+                        name: "FK_CourseAssignments_Person_TeacherId",
                         column: x => x.TeacherId,
-                        principalTable: "Teachers",
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
@@ -347,9 +334,9 @@ namespace MockSchoolManagement.Migrations
                         principalColumn: "CourseId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_StudentCourse_Student_StudentId",
+                        name: "FK_StudentCourse_Person_StudentId",
                         column: x => x.StudentId,
-                        principalTable: "Student",
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 })
@@ -455,13 +442,10 @@ namespace MockSchoolManagement.Migrations
                 name: "Course");
 
             migrationBuilder.DropTable(
-                name: "Student");
-
-            migrationBuilder.DropTable(
                 name: "Departments");
 
             migrationBuilder.DropTable(
-                name: "Teachers");
+                name: "Person");
         }
     }
 }

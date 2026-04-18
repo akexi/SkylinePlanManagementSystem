@@ -12,7 +12,7 @@ using MockSchoolManagement.Infrastructure;
 namespace MockSchoolManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260416131952_InitialCreate")]
+    [Migration("20260418160925_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -311,7 +311,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("OfficeLocations");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Student", b =>
+            modelBuilder.Entity("MockSchoolManagement.Models.Person", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -319,27 +319,27 @@ namespace MockSchoolManagement.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int?>("Major")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhotoPath")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Student", (string)null);
+                    b.ToTable("Person", (string)null);
+
+                    b.HasDiscriminator().HasValue("Person");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("MockSchoolManagement.Models.StudentCourse", b =>
@@ -368,26 +368,31 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("StudentCourse", (string)null);
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Teacher", b =>
+            modelBuilder.Entity("MockSchoolManagement.Models.Student", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.HasBaseType("MockSchoolManagement.Models.Person");
+
+                    b.Property<DateTime>("EnrollmentDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("Major")
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("PhotoPath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasDiscriminator().HasValue("Student");
+                });
+
+            modelBuilder.Entity("MockSchoolManagement.Models.Teacher", b =>
+                {
+                    b.HasBaseType("MockSchoolManagement.Models.Person");
 
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("TeacherName");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Teachers");
+                    b.HasDiscriminator().HasValue("Teacher");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
