@@ -17,13 +17,19 @@ namespace MockSchoolManagement.Controllers
         private readonly IRepository<Department, int> _departmentRepository;
         private readonly IRepository<CourseAssignment, int> _courseAssignmentRepository;
         private readonly ICourseService _courseService;
+        private readonly AppDbContext _dbContext;
 
-        public CourseController(IRepository<Course, int> courseRepository, IRepository<Department, int> departmentRepository, IRepository<CourseAssignment, int> courseAssignmentRepository, ICourseService courseService)
+        public CourseController(IRepository<Course, int> courseRepository, 
+            IRepository<Department, int> departmentRepository, 
+            IRepository<CourseAssignment, int> courseAssignmentRepository, 
+            ICourseService courseService,
+            AppDbContext dbContext)
         {
             _courseRepository = courseRepository;
             _departmentRepository = departmentRepository;
             _courseAssignmentRepository = courseAssignmentRepository;
             _courseService = courseService;
+            _dbContext = dbContext;
         }
 
         public async Task<ActionResult> Index(GetCourseInput input)
@@ -179,6 +185,29 @@ namespace MockSchoolManagement.Controllers
             return View(course);
         }
 
+
+        #region 修改课程学分功能
+
+        [HttpGet]
+        public IActionResult UpdateCourseCredits()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCourseCredits(int? multiplier)
+        {
+            if(multiplier != null)
+            {
+                ViewBag.RowsAffected = await _dbContext.Database.ExecuteSqlRawAsync(
+                    "UPDATE Course SET Credits = Credits * {0}", 
+                    parameters:multiplier);
+            }
+
+            return View();
+        }
+
+        #endregion
 
     }
 }

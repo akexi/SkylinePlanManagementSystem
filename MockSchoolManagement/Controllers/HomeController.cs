@@ -6,9 +6,11 @@ using MockSchoolManagement.Application.Dtos;
 using MockSchoolManagement.Application.Students;
 using MockSchoolManagement.Application.Students.Dtos;
 using MockSchoolManagement.DataRepositories;
+using MockSchoolManagement.Infrastructure;
 using MockSchoolManagement.Infrastructure.Repositories;
 using MockSchoolManagement.Models;
 using MockSchoolManagement.ViewModels;
+using System.Data.Common;
 using System.Linq.Dynamic.Core;
 
 namespace MockSchoolManagement.Controllers
@@ -20,6 +22,7 @@ namespace MockSchoolManagement.Controllers
         private readonly ILogger logger;
         private readonly IDataProtector protector;  // IDataProtector提供了Protect()和Unprotect()方法来加密和解密数据
         private readonly IStudentService _studentService; // 注入学生服务接口
+        private readonly AppDbContext _dbContext;
 
 
         // 使用构造函数注入的方式注入IRepository<Student, int>、IWebHostEnvironment、ILogger<HomeController>、IDataProtectionProvider和DataProtectionPurposeStrings服务
@@ -28,13 +31,15 @@ namespace MockSchoolManagement.Controllers
             ILogger<HomeController> logger, 
             IDataProtectionProvider dataProtectionProvider,
             DataProtectionPurposeStrings dataProtectionPurposeStrings,
-            IStudentService studentService)
+            IStudentService studentService,
+            AppDbContext dbContext)
         {
             _studentRepository = studentRepository;
             _webHostEnvironment = webHostEnvironment;
             this.logger = logger;
             protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.StudentIdRouteValue);
             _studentService = studentService;
+            _dbContext = dbContext;
         }
 
         //[Route("")]
@@ -244,17 +249,50 @@ namespace MockSchoolManagement.Controllers
 
         public async Task<ActionResult> About()
         {
-            // 获取IQueryable类型的Student，然后通过student.EnrollmentDate进行分组
-            var data = from student in _studentRepository.GetAll()
-                       group student by student.EnrollmentDate into dateGroup
-                       select new EnrollmentDateGroupDto()
-                       {
-                           EnrollmentDate = dateGroup.Key,
-                           StudentCount = dateGroup.Count()
-                       };
-            var dtos = await data.AsNoTracking().ToListAsync();
+            List<EnrollmentDateGroupDto> groups = new List<EnrollmentDateGroupDto>();
 
-            return View(dtos);
+            // 获取数据库上下文连接
+            var conn = _dbContext.Database.GetDbConnection();
+
+            try
+            {
+                // 打开数据库连接
+                await conn.OpenAsync();
+
+                // 建立连接，因为非委托资源，所以需要使用using进行内存资源释放
+                using (var command = conn.CreateCommand())
+                {
+                    string query = "SELECT EnrollmentDate, COUNT(*) AS StudentCount FROM Person WHERE Discriminator = 'Student' GROUP BY EnrollmentDate";
+                    command.CommandText = query;    // 赋值SQL查询语句
+                    DbDataReader reader = await command.ExecuteReaderAsync();   // 执行查询
+
+                    // 判断是否有返回行
+                    if (reader.HasRows)
+                    {
+                        // 读取数据，将返回值填充到视图模型中
+                        while(await reader.ReadAsync())
+                        {
+                            var row = new EnrollmentDateGroupDto
+                            {
+                                EnrollmentDate = reader.GetDateTime(0),
+                                StudentCount = reader.GetInt32(1)
+                            };
+
+                            groups.Add(row);
+                        }
+                    }
+
+                    // 释放使用的所有资源
+                    reader.Dispose();
+                }
+            }
+            finally
+            {
+                // 关闭数据库连接
+                conn.Close();
+            }
+
+            return View(groups);
         }
 
     }

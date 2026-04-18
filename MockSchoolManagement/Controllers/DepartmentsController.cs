@@ -93,11 +93,11 @@ namespace MockSchoolManagement.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            // 因为要实现预加载，所以不能直接使用FirstOrDefaultAsync()方法
-            var model = await _departmentRepository
-                .GetAll()
+            string query = "SELECT * FROM Departments WHERE DepartmentId = {0}";
+            var model = await _dbcontext.Departments.FromSqlRaw(query, id)
                 .Include(a => a.Administrator)
-                .FirstOrDefaultAsync(a => a.DepartmentId == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
 
             // 判断学院信息是否存在
             if(model == null)
