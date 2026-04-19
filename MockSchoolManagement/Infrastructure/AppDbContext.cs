@@ -38,5 +38,14 @@ namespace MockSchoolManagement.Infrastructure
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
             }
         }
+
+        // 由于我们在Program.cs中已经通过AddDbContextPool方法配置了DbContext，因此这里不需要再重写OnConfiguring方法来设置连接字符串和数据库提供程序。
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder
+        //        .UseLazyLoadingProxies()
+        //        .UseMySql(_configuration.GetConnectionString("MockStudentDBConnection"));
+        //}
+
     }
 }
