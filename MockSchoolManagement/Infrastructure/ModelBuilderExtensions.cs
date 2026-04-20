@@ -15,6 +15,9 @@ namespace MockSchoolManagement.Infrastructure
             modelBuilder.Entity<StudentCourse>().ToTable("StudentCourse");
             modelBuilder.Entity<Person>().ToTable("Person");
             modelBuilder.Entity<CourseAssignment>().HasKey(c => new { c.CourseId, c.TeacherId });
+
+            modelBuilder.Entity<Blog>().ToTable("Blogs").HasKey(a => a.Id);
+            modelBuilder.Entity<Blog>().Property(a => a.Title).HasMaxLength(50).HasColumnName("BlogTitle");
         }
     }
 }
