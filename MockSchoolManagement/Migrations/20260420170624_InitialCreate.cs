@@ -72,6 +72,23 @@ namespace MockSchoolManagement.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Blogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    BlogTitle = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BloggerName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Blogs", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Person",
                 columns: table => new
                 {
@@ -219,6 +236,53 @@ namespace MockSchoolManagement.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "BlogImage",
+                columns: table => new
+                {
+                    BlogImageId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Image = table.Column<byte[]>(type: "longblob", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BlogId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogImage", x => x.BlogImageId);
+                    table.ForeignKey(
+                        name: "FK_BlogImage_Blogs_BlogId",
+                        column: x => x.BlogId,
+                        principalTable: "Blogs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    PostId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Content = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.PostId);
+                    table.ForeignKey(
+                        name: "FK_Posts_Blogs_BId",
+                        column: x => x.BId,
+                        principalTable: "Blogs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -380,6 +444,12 @@ namespace MockSchoolManagement.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_BlogImage_BlogId",
+                table: "BlogImage",
+                column: "BlogId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Course_DepartmentId",
                 table: "Course",
                 column: "DepartmentId");
@@ -393,6 +463,11 @@ namespace MockSchoolManagement.Migrations
                 name: "IX_Departments_TeacherId",
                 table: "Departments",
                 column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_BId",
+                table: "Posts",
+                column: "BId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentCourse_CourseId",
@@ -424,10 +499,16 @@ namespace MockSchoolManagement.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "BlogImage");
+
+            migrationBuilder.DropTable(
                 name: "CourseAssignments");
 
             migrationBuilder.DropTable(
                 name: "OfficeLocations");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "StudentCourse");
@@ -437,6 +518,9 @@ namespace MockSchoolManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Blogs");
 
             migrationBuilder.DropTable(
                 name: "Course");

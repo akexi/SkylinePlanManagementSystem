@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Models;
+using MockSchoolManagement.Models.BlogManagement;
 using MockSchoolManagement.Models.EnumTypes;
 using System.Reflection.PortableExecutable;
 

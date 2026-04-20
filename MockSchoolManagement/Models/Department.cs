@@ -38,8 +38,8 @@ namespace MockSchoolManagement.Models
         /// <summary>
         /// 学院主任
         /// </summary>
-        public virtual Teacher Administrator { get; set; }
+        public Teacher Administrator { get; set; }
 
-        public virtual ICollection<Course> Courses { get; set; }
+        public ICollection<Course> Courses { get; set; }
     }
 }

@@ -59,7 +59,7 @@ namespace MockSchoolManagement
             // 注册 DbContext(MySQL 8)
             builder.Services.AddDbContextPool<AppDbContext>(options =>
                 options
-                .UseLazyLoadingProxies()    // 启用延迟加载代理
+                //.UseLazyLoadingProxies()    // 启用延迟加载代理
                 .UseMySql(
                     builder.Configuration.GetConnectionString("MockStudentDBConnection"),
                     ServerVersion.AutoDetect(

@@ -17,7 +17,7 @@ namespace MockSchoolManagement.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.23")
+                .HasAnnotation("ProductVersion", "8.0.26")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -220,6 +220,82 @@ namespace MockSchoolManagement.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Blog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BloggerName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("BlogTitle");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Blogs", (string)null);
+                });
+
+            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.BlogImage", b =>
+                {
+                    b.Property<int>("BlogImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BlogImageId"));
+
+                    b.Property<int>("BlogId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("longblob");
+
+                    b.HasKey("BlogImageId");
+
+                    b.HasIndex("BlogId")
+                        .IsUnique();
+
+                    b.ToTable("BlogImage");
+                });
+
+            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Post", b =>
+                {
+                    b.Property<int>("PostId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("PostId"));
+
+                    b.Property<int>("BId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("PostId");
+
+                    b.HasIndex("BId");
+
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("MockSchoolManagement.Models.Course", b =>
@@ -443,6 +519,28 @@ namespace MockSchoolManagement.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.BlogImage", b =>
+                {
+                    b.HasOne("MockSchoolManagement.Models.BlogManagement.Blog", "Blog")
+                        .WithOne("BlogImage")
+                        .HasForeignKey("MockSchoolManagement.Models.BlogManagement.BlogImage", "BlogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+                });
+
+            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Post", b =>
+                {
+                    b.HasOne("MockSchoolManagement.Models.BlogManagement.Blog", "Blog")
+                        .WithMany("Posts")
+                        .HasForeignKey("BId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+                });
+
             modelBuilder.Entity("MockSchoolManagement.Models.Course", b =>
                 {
                     b.HasOne("MockSchoolManagement.Models.Department", "Department")
@@ -511,6 +609,14 @@ namespace MockSchoolManagement.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Blog", b =>
+                {
+                    b.Navigation("BlogImage")
+                        .IsRequired();
+
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("MockSchoolManagement.Models.Course", b =>

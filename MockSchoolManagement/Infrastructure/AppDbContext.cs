@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Models;
+using MockSchoolManagement.Models.BlogManagement;
 using MockSchoolManagement.Models.EnumTypes;
 using System.Reflection.PortableExecutable;
 
@@ -23,6 +24,8 @@ namespace MockSchoolManagement.Infrastructure
         public DbSet<OfficeLocation> OfficeLocations { get; set; }
         public DbSet<CourseAssignment> CourseAssignments { get; set; }
         public DbSet<Person> People { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Post> Posts { get; set; }
 
         // 方法内调用Seed创建初始数据方法
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,6 +40,15 @@ namespace MockSchoolManagement.Infrastructure
                 // 将它们的删除行为配置为Restrict，即无操作
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
             }
+
+            // Blog与Post之间为一对多关联关系
+            modelBuilder.Entity<Post>()
+                .HasOne(p => p.Blog)
+                .WithMany(b => b.Posts)
+                .HasForeignKey(p => p.BId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
 
         // 由于我们在Program.cs中已经通过AddDbContextPool方法配置了DbContext，因此这里不需要再重写OnConfiguring方法来设置连接字符串和数据库提供程序。
