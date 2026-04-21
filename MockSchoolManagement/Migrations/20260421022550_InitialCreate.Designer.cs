@@ -12,7 +12,7 @@ using MockSchoolManagement.Infrastructure;
 namespace MockSchoolManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260420170624_InitialCreate")]
+    [Migration("20260421022550_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -442,6 +442,26 @@ namespace MockSchoolManagement.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("StudentCourse", (string)null);
+                });
+
+            modelBuilder.Entity("MockSchoolManagement.Models.TodoItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TodoItems");
                 });
 
             modelBuilder.Entity("MockSchoolManagement.Models.Student", b =>

@@ -26,6 +26,7 @@ namespace MockSchoolManagement.Infrastructure
         public DbSet<Person> People { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<TodoItem> TodoItems { get; set; }
 
         // 方法内调用Seed创建初始数据方法
         protected override void OnModelCreating(ModelBuilder modelBuilder)
