@@ -18,6 +18,8 @@ using MockSchoolManagement.Application.Courses;
 using MockSchoolManagement.Application.Teachers;
 using MockSchoolManagement.Infrastructure.Data;
 using NetCore.AutoRegisterDi;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace MockSchoolManagement
 {
@@ -157,6 +159,36 @@ namespace MockSchoolManagement
                     options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
                 });
 
+            // 注册 Swagger 生成器，定义一个或多个 Swagger 文件
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "MockSchoolManagement API",
+                    Description = "为 MockSchoolManagement 系统，添加一个简单的 ASP.NET Core Web API 示例，由 李天喜 出品。",
+                    Version = "v1",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "李天喜",
+                        Email = "xsbnltx@163.com",
+                        Url = new Uri("http://www.tanwanland.fun/"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Apache License 2.0",
+                        Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0.html"),
+                    }
+                });
+
+                if (builder.Environment.IsDevelopment())
+                {
+                    // 设置Swagger JSON和UI的注释路径
+                    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    c.IncludeXmlComments(xmlPath);
+                }
+            });
+
             var app = builder.Build();
 
             // 判断环境生成开发异常页面或友好异常页面
@@ -184,6 +216,12 @@ namespace MockSchoolManagement
             app.UseDataInitializer();   // 启用数据初始化中间件，确保在应用启动时数据库中有初始数据
 
             app.UseStaticFiles();
+
+            app.UseSwagger();       // 启用 Swagger 中间件
+            app.UseSwaggerUI(c =>   // 启用 Swagger UI 中间件，它需要与 Swagger 配置在一起
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MockSchoolManagement API V1");
+            });
 
             app.UseAuthentication();// 启用身份验证中间件
             app.UseAuthorization(); // 启用授权中间件

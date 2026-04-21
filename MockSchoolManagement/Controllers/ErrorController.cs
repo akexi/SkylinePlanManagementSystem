@@ -38,6 +38,7 @@ namespace MockSchoolManagement.Controllers
 
         // 如果状态码是404，则路径为 /Error/404
         [Route("Error/{statusCode}")]
+        [HttpGet]
         public IActionResult HttpStatusCodeHandler(int statusCode)
         {
             // 获取异常细节
