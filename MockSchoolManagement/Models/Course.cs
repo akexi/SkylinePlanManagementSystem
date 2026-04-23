@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MockSchoolManagement.Models
+namespace SkylinePlanManagementSystem.Models
 {
     public class Course
     {

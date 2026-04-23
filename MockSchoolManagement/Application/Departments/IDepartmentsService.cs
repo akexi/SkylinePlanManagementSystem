@@ -1,8 +1,8 @@
-﻿using MockSchoolManagement.Application.Departments.Dtos;
-using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Application.Departments.Dtos;
+using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Models;
 
-namespace MockSchoolManagement.Application.Departments
+namespace SkylinePlanManagementSystem.Application.Departments
 {
     public interface IDepartmentsService
     {

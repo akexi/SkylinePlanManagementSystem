@@ -1,12 +1,12 @@
-﻿using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.Application.Courses.Dtos;
+﻿using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Application.Courses.Dtos;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
-namespace MockSchoolManagement.Application.Courses
+namespace SkylinePlanManagementSystem.Application.Courses
 {
     public class CourseService: ICourseService
     {

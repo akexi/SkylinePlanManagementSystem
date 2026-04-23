@@ -1,8 +1,8 @@
 ﻿//using Microsoft.AspNetCore.Mvc;
-//using MockSchoolManagement.Interface;
-//using MockSchoolManagement.Models;
+//using SkylinePlanManagementSystem.Interface;
+//using SkylinePlanManagementSystem.Models;
 
-//namespace MockSchoolManagement.Controller
+//namespace SkylinePlanManagementSystem.Controller
 //{
 //    public class StudentController : Controller
 //    {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace MockSchoolManagement.Security.CustomTokenProvider
+namespace SkylinePlanManagementSystem.Security.CustomTokenProvider
 {
     /// <summary>
     /// 自定义邮箱验证令牌提供程序

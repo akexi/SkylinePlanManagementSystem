@@ -1,7 +1,7 @@
-﻿using MockSchoolManagement.Models.EnumTypes;
+﻿using SkylinePlanManagementSystem.Models.EnumTypes;
 using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels
+namespace SkylinePlanManagementSystem.ViewModels
 {
     public class StudentCreateViewModel
     {

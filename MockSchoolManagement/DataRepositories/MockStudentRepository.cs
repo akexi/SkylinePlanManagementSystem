@@ -1,6 +1,6 @@
-﻿using MockSchoolManagement.Models;
-using MockSchoolManagement.Models.EnumTypes;
-namespace MockSchoolManagement.DataRepositories
+﻿using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Models.EnumTypes;
+namespace SkylinePlanManagementSystem.DataRepositories
 {
     public class MockStudentRepository: IStudentRepository
     {

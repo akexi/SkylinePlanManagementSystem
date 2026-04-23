@@ -1,6 +1,6 @@
-﻿namespace MockSchoolManagement.Models
+﻿namespace SkylinePlanManagementSystem.Models
 {
-    using MockSchoolManagement.Models.EnumTypes;
+    using SkylinePlanManagementSystem.Models.EnumTypes;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 

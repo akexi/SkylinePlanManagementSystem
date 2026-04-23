@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Application.Students.Dtos;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Models;
+using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Application.Students.Dtos;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Models;
 using System.Linq.Dynamic.Core;
 
-namespace MockSchoolManagement.Application.Students
+namespace SkylinePlanManagementSystem.Application.Students
 {
     public class StudentService: IStudentService
     {

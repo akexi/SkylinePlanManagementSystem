@@ -1,7 +1,7 @@
-﻿using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Models;
 using System.Diagnostics.Contracts;
 
-namespace MockSchoolManagement.Application.Dtos
+namespace SkylinePlanManagementSystem.Application.Dtos
 {
     public class PagedResultDto<TEntity> :PagedSortedAndFilterInput
     {

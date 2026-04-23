@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.Models.BlogManagement;
-using MockSchoolManagement.Models.EnumTypes;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Models.BlogManagement;
+using SkylinePlanManagementSystem.Models.EnumTypes;
+using SkylinePlanManagementSystem.Models;
 using System.Reflection.PortableExecutable;
 
-namespace MockSchoolManagement.Infrastructure
+namespace SkylinePlanManagementSystem.Infrastructure
 {
     // 注意：将ApplicationUser作为泛型参数传递给IdentityDbContext
     public class AppDbContext: IdentityDbContext<ApplicationUser>
@@ -27,6 +28,7 @@ namespace MockSchoolManagement.Infrastructure
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<TodoItem> TodoItems { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         // 方法内调用Seed创建初始数据方法
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,13 +54,7 @@ namespace MockSchoolManagement.Infrastructure
 
         }
 
-        // 由于我们在Program.cs中已经通过AddDbContextPool方法配置了DbContext，因此这里不需要再重写OnConfiguring方法来设置连接字符串和数据库提供程序。
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder
-        //        .UseLazyLoadingProxies()
-        //        .UseMySql(_configuration.GetConnectionString("MockStudentDBConnection"));
-        //}
+
 
     }
 }

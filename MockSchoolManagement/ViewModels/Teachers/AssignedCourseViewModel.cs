@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.ViewModels.Teachers
+﻿namespace SkylinePlanManagementSystem.ViewModels.Teachers
 {
     public class AssignedCourseViewModel
     {

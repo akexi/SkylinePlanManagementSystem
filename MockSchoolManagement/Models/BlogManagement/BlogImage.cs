@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Proxies.Internal;
 
-namespace MockSchoolManagement.Models.BlogManagement
+namespace SkylinePlanManagementSystem.Models.BlogManagement
 {
     public class BlogImage
     {

@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.ViewModels
+﻿namespace SkylinePlanManagementSystem.ViewModels
 {
     /// <summary>
     /// 编辑学生视图模型

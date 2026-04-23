@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.Models
+﻿namespace SkylinePlanManagementSystem.Models
 {
     public class UserClaim
     {

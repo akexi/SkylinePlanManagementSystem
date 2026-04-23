@@ -1,7 +1,7 @@
-﻿using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels.Teachers
+namespace SkylinePlanManagementSystem.ViewModels.Teachers
 {
     public class TeacherCreateViewModel
     {

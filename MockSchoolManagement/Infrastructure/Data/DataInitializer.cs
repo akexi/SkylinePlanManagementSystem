@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.Models.EnumTypes;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Models.EnumTypes;
 
-namespace MockSchoolManagement.Infrastructure.Data
+namespace SkylinePlanManagementSystem.Infrastructure.Data
 {
     public static class DataInitializer
     {

@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.Application.Courses;
-using MockSchoolManagement.Application.Teachers;
-using MockSchoolManagement.Application.Teachers.Dtos;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.ViewModels.Teachers;
+using SkylinePlanManagementSystem.Application.Courses;
+using SkylinePlanManagementSystem.Application.Teachers;
+using SkylinePlanManagementSystem.Application.Teachers.Dtos;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.ViewModels.Teachers;
 
-namespace MockSchoolManagement.Controllers
+namespace SkylinePlanManagementSystem.Controllers
 {
     public class TeacherController : Controller
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.Application.Dtos
+namespace SkylinePlanManagementSystem.Application.Dtos
 {
     public class PagedSortedAndFilterInput
     {

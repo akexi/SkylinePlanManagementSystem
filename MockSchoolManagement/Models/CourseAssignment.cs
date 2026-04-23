@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.Models
+﻿namespace SkylinePlanManagementSystem.Models
 {
     /// <summary>
     /// 课程分配设置

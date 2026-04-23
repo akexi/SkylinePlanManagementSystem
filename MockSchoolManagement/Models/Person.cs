@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.Models
+namespace SkylinePlanManagementSystem.Models
 {
     public abstract class Person
     {

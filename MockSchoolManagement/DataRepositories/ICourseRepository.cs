@@ -1,6 +1,6 @@
-﻿using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Models;
 
-namespace MockSchoolManagement.DataRepositories
+namespace SkylinePlanManagementSystem.DataRepositories
 {
     public interface ICourseRepository
     {

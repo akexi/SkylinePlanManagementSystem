@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.ViewModels.Admin;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.ViewModels.Admin;
 using System.Security.Claims;
 
-namespace MockSchoolManagement.Controllers
+namespace SkylinePlanManagementSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller

@@ -1,8 +1,8 @@
-﻿using MockSchoolManagement.Models;
-using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Application.Students.Dtos;
+﻿using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Application.Students.Dtos;
 
-namespace MockSchoolManagement.Application.Students
+namespace SkylinePlanManagementSystem.Application.Students
 {
     public interface IStudentService
     {

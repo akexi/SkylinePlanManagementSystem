@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MockSchoolManagement.Models.BlogManagement;
+using SkylinePlanManagementSystem.Models.BlogManagement;
 
-namespace MockSchoolManagement.Infrastructure.EntityMapper
+namespace SkylinePlanManagementSystem.Infrastructure.EntityMapper
 {
     public class PostMapper:IEntityTypeConfiguration<Post>
     {

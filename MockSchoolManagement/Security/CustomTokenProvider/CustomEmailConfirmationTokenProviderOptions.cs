@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace MockSchoolManagement.Security.CustomTokenProvider
+namespace SkylinePlanManagementSystem.Security.CustomTokenProvider
 {
     /// <summary>
     /// 自定义邮箱验证令牌有效期配置类

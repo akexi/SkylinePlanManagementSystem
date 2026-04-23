@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Application.Teachers.Dtos;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Models;
+using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Application.Teachers.Dtos;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Models;
 using System.Linq.Dynamic.Core;
 
-namespace MockSchoolManagement.Application.Teachers
+namespace SkylinePlanManagementSystem.Application.Teachers
 {
     public class TeacherService:ITeacherService
     {

@@ -2,26 +2,26 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.CustomerMiddlewares;
-using MockSchoolManagement.DataRepositories;
-using MockSchoolManagement.Infrastructure;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.Security;
+using SkylinePlanManagementSystem.CustomerMiddlewares;
+using SkylinePlanManagementSystem.DataRepositories;
+using SkylinePlanManagementSystem.Infrastructure;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Security;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System.Runtime;
-using MockSchoolManagement.Security;
-using MockSchoolManagement.Security.CustomTokenProvider;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Application.Students;
-using MockSchoolManagement.Application.Courses;
-using MockSchoolManagement.Application.Teachers;
-using MockSchoolManagement.Infrastructure.Data;
+using SkylinePlanManagementSystem.Security;
+using SkylinePlanManagementSystem.Security.CustomTokenProvider;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Application.Students;
+using SkylinePlanManagementSystem.Application.Courses;
+using SkylinePlanManagementSystem.Application.Teachers;
+using SkylinePlanManagementSystem.Infrastructure.Data;
 using NetCore.AutoRegisterDi;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
-namespace MockSchoolManagement
+namespace SkylinePlanManagementSystem
 {
     public class Program
     {
@@ -53,8 +53,6 @@ namespace MockSchoolManagement
             builder.Services.RegisterAssemblyPublicNonGenericClasses()
                 .Where(c => c.Name.EndsWith("Service")) // 只注册以 "Service" 结尾的类
                 .AsPublicImplementedInterfaces(ServiceLifetime.Scoped);   // 将它们注册为它们实现的接口
-            //builder.Services.AddScoped<IStudentService, StudentService>();  // 注册学生服务
-            //builder.Services.AddScoped<ICourseService,CourseService>(); // 注册课程服务
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
             builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // 注册泛型仓储服务
 
@@ -63,9 +61,9 @@ namespace MockSchoolManagement
                 options
                 //.UseLazyLoadingProxies()    // 启用延迟加载代理
                 .UseMySql(
-                    builder.Configuration.GetConnectionString("MockStudentDBConnection"),
+                    builder.Configuration.GetConnectionString("SkylinePlanDBConnection"),
                     ServerVersion.AutoDetect(
-                        builder.Configuration.GetConnectionString("MockStudentDBConnection")
+                        builder.Configuration.GetConnectionString("SkylinePlanDBConnection")
                     )
                 ) 
             );
@@ -164,8 +162,8 @@ namespace MockSchoolManagement
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "MockSchoolManagement API",
-                    Description = "为 MockSchoolManagement 系统，添加一个简单的 ASP.NET Core Web API 示例，由 李天喜 出品。",
+                    Title = "SkylinePlanManagementSystem API",
+                    Description = "为 SkylinePlanManagementSystem 系统，添加一个简单的 ASP.NET Core Web API 示例，由 李天喜 出品。",
                     Version = "v1",
                     Contact = new OpenApiContact
                     {
@@ -220,7 +218,7 @@ namespace MockSchoolManagement
             app.UseSwagger();       // 启用 Swagger 中间件
             app.UseSwaggerUI(c =>   // 启用 Swagger UI 中间件，它需要与 Swagger 配置在一起
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MockSchoolManagement API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SkylinePlanManagementSystem API V1");
             });
 
             app.UseAuthentication();// 启用身份验证中间件

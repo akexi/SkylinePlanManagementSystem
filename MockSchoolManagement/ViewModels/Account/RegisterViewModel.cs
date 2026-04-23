@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MockSchoolManagement.CustomerMiddlewares.Utils;
+using SkylinePlanManagementSystem.CustomerMiddlewares.Utils;
 using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels.Account
+namespace SkylinePlanManagementSystem.ViewModels.Account
 {
     public class RegisterViewModel
     {

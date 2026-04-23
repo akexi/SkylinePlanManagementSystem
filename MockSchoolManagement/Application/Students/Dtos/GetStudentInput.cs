@@ -1,6 +1,6 @@
-﻿using MockSchoolManagement.Application.Dtos;
+﻿using SkylinePlanManagementSystem.Application.Dtos;
 
-namespace MockSchoolManagement.Application.Students.Dtos
+namespace SkylinePlanManagementSystem.Application.Students.Dtos
 {
     public class GetStudentInput:PagedSortedAndFilterInput
     {

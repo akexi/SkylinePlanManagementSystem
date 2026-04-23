@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.Models.EnumTypes
+namespace SkylinePlanManagementSystem.Models.EnumTypes
 {
     public enum MajorEnum
     {

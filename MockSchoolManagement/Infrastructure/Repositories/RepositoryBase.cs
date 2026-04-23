@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace MockSchoolManagement.Infrastructure.Repositories
+namespace SkylinePlanManagementSystem.Infrastructure.Repositories
 {
     /// <summary>
     /// 默认仓储的通用功能实现，用于所有的领域模型

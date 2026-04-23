@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MockSchoolManagement.Controllers
+namespace SkylinePlanManagementSystem.Controllers
 {
     [Authorize(Roles = "Admin, User")]
     public class SomeController : Controller

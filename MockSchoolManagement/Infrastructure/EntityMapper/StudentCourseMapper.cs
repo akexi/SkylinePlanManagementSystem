@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MockSchoolManagement.Models;
+using SkylinePlanManagementSystem.Models;
 
-namespace MockSchoolManagement.Infrastructure.EntityMapper
+namespace SkylinePlanManagementSystem.Infrastructure.EntityMapper
 {
     public class StudentCourseMapper:IEntityTypeConfiguration<StudentCourse>
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MockSchoolManagement.Models.BlogManagement
+namespace SkylinePlanManagementSystem.Models.BlogManagement
 {
     public class Post
     {

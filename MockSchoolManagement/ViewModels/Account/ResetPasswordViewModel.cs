@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels.Account
+namespace SkylinePlanManagementSystem.ViewModels.Account
 {
     public class ResetPasswordViewModel
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using MockSchoolManagement.Models;
+using SkylinePlanManagementSystem.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels.Department
+namespace SkylinePlanManagementSystem.ViewModels.Department
 {
     public class DepartmentCreateViewModel
     {

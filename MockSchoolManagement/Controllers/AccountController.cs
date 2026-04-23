@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.ViewModels.Account;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.ViewModels.Account;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace MockSchoolManagement.Controllers
+namespace SkylinePlanManagementSystem.Controllers
 {
     [AllowAnonymous]
     public class AccountController : Controller

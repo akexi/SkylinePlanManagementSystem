@@ -1,7 +1,7 @@
-﻿using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Models;
 
-namespace MockSchoolManagement.ViewModels.Teachers
+namespace SkylinePlanManagementSystem.ViewModels.Teachers
 {
     public class TeacherListViewModel
     {

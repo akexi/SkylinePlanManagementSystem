@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.Application.Departments;
-using MockSchoolManagement.Application.Departments.Dtos;
-using MockSchoolManagement.Infrastructure;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.ViewModels.Department;
+using SkylinePlanManagementSystem.Application.Departments;
+using SkylinePlanManagementSystem.Application.Departments.Dtos;
+using SkylinePlanManagementSystem.Infrastructure;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.ViewModels.Department;
 
-namespace MockSchoolManagement.Controllers
+namespace SkylinePlanManagementSystem.Controllers
 {
     public class DepartmentsController : Controller
     {

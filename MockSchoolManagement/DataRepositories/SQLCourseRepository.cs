@@ -1,7 +1,7 @@
-﻿using MockSchoolManagement.Infrastructure;
-using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Infrastructure;
+using SkylinePlanManagementSystem.Models;
 
-namespace MockSchoolManagement.DataRepositories
+namespace SkylinePlanManagementSystem.DataRepositories
 {
     public class SQLCourseRepository: ICourseRepository
     {

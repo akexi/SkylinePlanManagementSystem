@@ -2,18 +2,18 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Application.Students;
-using MockSchoolManagement.Application.Students.Dtos;
-using MockSchoolManagement.DataRepositories;
-using MockSchoolManagement.Infrastructure;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.ViewModels;
+using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Application.Students;
+using SkylinePlanManagementSystem.Application.Students.Dtos;
+using SkylinePlanManagementSystem.DataRepositories;
+using SkylinePlanManagementSystem.Infrastructure;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.ViewModels;
 using System.Data.Common;
 using System.Linq.Dynamic.Core;
 
-namespace MockSchoolManagement.Controllers
+namespace SkylinePlanManagementSystem.Controllers
 {
     public class HomeController : Controller
     {

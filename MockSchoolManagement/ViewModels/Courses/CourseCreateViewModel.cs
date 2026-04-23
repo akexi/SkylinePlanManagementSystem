@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels.Courses
+namespace SkylinePlanManagementSystem.ViewModels.Courses
 {
     public class CourseCreateViewModel
     {

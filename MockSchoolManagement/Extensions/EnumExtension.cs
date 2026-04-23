@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace MockSchoolManagement.Extensions
+namespace SkylinePlanManagementSystem.Extensions
 {
     /// <summary>
     /// 枚举的扩展类

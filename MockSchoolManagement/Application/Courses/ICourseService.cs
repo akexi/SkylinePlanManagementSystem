@@ -1,8 +1,8 @@
-﻿using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Models;
-using MockSchoolManagement.Application.Courses.Dtos;
+﻿using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Application.Courses.Dtos;
 
-namespace MockSchoolManagement.Application.Courses
+namespace SkylinePlanManagementSystem.Application.Courses
 {
     public interface ICourseService
     {

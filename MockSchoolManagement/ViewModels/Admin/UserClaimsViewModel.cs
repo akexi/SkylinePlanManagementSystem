@@ -1,6 +1,6 @@
-﻿using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Models;
 
-namespace MockSchoolManagement.ViewModels.Admin
+namespace SkylinePlanManagementSystem.ViewModels.Admin
 {
     public class UserClaimsViewModel
     {

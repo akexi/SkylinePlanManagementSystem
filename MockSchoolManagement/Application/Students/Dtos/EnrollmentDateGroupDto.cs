@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.Application.Students.Dtos
+namespace SkylinePlanManagementSystem.Application.Students.Dtos
 {
     /// <summary>
     /// 入学时间分组Dto

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace MockSchoolManagement.CustomerMiddlewares
+namespace SkylinePlanManagementSystem.CustomerMiddlewares
 {
     public class CutsomIdentityErrorDescriber : IdentityErrorDescriber
     {

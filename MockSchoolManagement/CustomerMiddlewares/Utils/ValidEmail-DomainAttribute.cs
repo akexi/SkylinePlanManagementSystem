@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.CustomerMiddlewares.Utils
+namespace SkylinePlanManagementSystem.CustomerMiddlewares.Utils
 {
     public class ValidEmailDomainAttribute:ValidationAttribute
     {

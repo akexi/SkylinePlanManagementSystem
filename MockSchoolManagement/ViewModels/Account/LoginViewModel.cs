@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.ViewModels.Account
+namespace SkylinePlanManagementSystem.ViewModels.Account
 {
     public class LoginViewModel
     {

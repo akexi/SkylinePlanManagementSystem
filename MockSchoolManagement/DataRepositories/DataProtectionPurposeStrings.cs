@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.DataRepositories
+﻿namespace SkylinePlanManagementSystem.DataRepositories
 {
     /// <summary>
     /// 数据保护字符串

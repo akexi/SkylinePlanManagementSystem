@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.ViewModels.Admin
+﻿namespace SkylinePlanManagementSystem.ViewModels.Admin
 {
     public class UserRoleViewModel
     {

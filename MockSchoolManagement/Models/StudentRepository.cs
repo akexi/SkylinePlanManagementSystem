@@ -1,6 +1,6 @@
-﻿//using MockSchoolManagement.DataRepositories;
+﻿//using SkylinePlanManagementSystem.DataRepositories;
 
-//namespace MockSchoolManagement.Models
+//namespace SkylinePlanManagementSystem.Models
 //{
 //    public class StudentRepository: IStudentRepository
 //    {

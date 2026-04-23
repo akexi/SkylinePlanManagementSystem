@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace MockSchoolManagement.Models
+namespace SkylinePlanManagementSystem.Models
 {
     public static class ClaimsStore
     {

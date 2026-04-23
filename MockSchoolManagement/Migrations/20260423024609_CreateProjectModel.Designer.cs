@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MockSchoolManagement.Infrastructure;
+using SkylinePlanManagementSystem.Infrastructure;
 
 #nullable disable
 
-namespace MockSchoolManagement.Migrations
+namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260421133117_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260423024609_CreateProjectModel")]
+    partial class CreateProjectModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,7 +157,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.ApplicationUser", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -225,7 +225,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Blog", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.BlogManagement.Blog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,7 +248,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("Blogs", (string)null);
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.BlogImage", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.BlogManagement.BlogImage", b =>
                 {
                     b.Property<int>("BlogImageId")
                         .ValueGeneratedOnAdd()
@@ -275,7 +275,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("BlogImage");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Post", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.BlogManagement.Post", b =>
                 {
                     b.Property<int>("PostId")
                         .ValueGeneratedOnAdd()
@@ -301,7 +301,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Course", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Course", b =>
                 {
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -323,7 +323,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("Course", (string)null);
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.CourseAssignment", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.CourseAssignment", b =>
                 {
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -338,7 +338,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("CourseAssignments");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Department", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Department", b =>
                 {
                     b.Property<int>("DepartmentId")
                         .ValueGeneratedOnAdd()
@@ -372,7 +372,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.OfficeLocation", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.OfficeLocation", b =>
                 {
                     b.Property<int>("TeacherId")
                         .HasColumnType("int");
@@ -387,7 +387,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("OfficeLocations");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Person", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Person", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -418,7 +418,30 @@ namespace MockSchoolManagement.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.StudentCourse", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Project", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProjectId"));
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Remark")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProjectId");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.StudentCourse", b =>
                 {
                     b.Property<int>("StudentCourseId")
                         .ValueGeneratedOnAdd()
@@ -444,7 +467,7 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("StudentCourse", (string)null);
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.TodoItem", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.TodoItem", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -464,9 +487,9 @@ namespace MockSchoolManagement.Migrations
                     b.ToTable("TodoItems");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Student", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Student", b =>
                 {
-                    b.HasBaseType("MockSchoolManagement.Models.Person");
+                    b.HasBaseType("SkylinePlanManagementSystem.Models.Person");
 
                     b.Property<DateTime>("EnrollmentDate")
                         .HasColumnType("datetime(6)");
@@ -481,9 +504,9 @@ namespace MockSchoolManagement.Migrations
                     b.HasDiscriminator().HasValue("Student");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Teacher", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Teacher", b =>
                 {
-                    b.HasBaseType("MockSchoolManagement.Models.Person");
+                    b.HasBaseType("SkylinePlanManagementSystem.Models.Person");
 
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime(6)");
@@ -502,7 +525,7 @@ namespace MockSchoolManagement.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.ApplicationUser", null)
+                    b.HasOne("SkylinePlanManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -511,7 +534,7 @@ namespace MockSchoolManagement.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.ApplicationUser", null)
+                    b.HasOne("SkylinePlanManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -526,7 +549,7 @@ namespace MockSchoolManagement.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MockSchoolManagement.Models.ApplicationUser", null)
+                    b.HasOne("SkylinePlanManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -535,27 +558,27 @@ namespace MockSchoolManagement.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.ApplicationUser", null)
+                    b.HasOne("SkylinePlanManagementSystem.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.BlogImage", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.BlogManagement.BlogImage", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.BlogManagement.Blog", "Blog")
+                    b.HasOne("SkylinePlanManagementSystem.Models.BlogManagement.Blog", "Blog")
                         .WithOne("BlogImage")
-                        .HasForeignKey("MockSchoolManagement.Models.BlogManagement.BlogImage", "BlogId")
+                        .HasForeignKey("SkylinePlanManagementSystem.Models.BlogManagement.BlogImage", "BlogId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Blog");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Post", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.BlogManagement.Post", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.BlogManagement.Blog", "Blog")
+                    b.HasOne("SkylinePlanManagementSystem.Models.BlogManagement.Blog", "Blog")
                         .WithMany("Posts")
                         .HasForeignKey("BId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -564,9 +587,9 @@ namespace MockSchoolManagement.Migrations
                     b.Navigation("Blog");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Course", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Course", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.Department", "Department")
+                    b.HasOne("SkylinePlanManagementSystem.Models.Department", "Department")
                         .WithMany("Courses")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -575,15 +598,15 @@ namespace MockSchoolManagement.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.CourseAssignment", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.CourseAssignment", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.Course", "Course")
+                    b.HasOne("SkylinePlanManagementSystem.Models.Course", "Course")
                         .WithMany("CourseAssignments")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MockSchoolManagement.Models.Teacher", "Teacher")
+                    b.HasOne("SkylinePlanManagementSystem.Models.Teacher", "Teacher")
                         .WithMany("CourseAssignments")
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -594,9 +617,9 @@ namespace MockSchoolManagement.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Department", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Department", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.Teacher", "Administrator")
+                    b.HasOne("SkylinePlanManagementSystem.Models.Teacher", "Administrator")
                         .WithMany()
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -604,26 +627,26 @@ namespace MockSchoolManagement.Migrations
                     b.Navigation("Administrator");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.OfficeLocation", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.OfficeLocation", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.Teacher", "Teacher")
+                    b.HasOne("SkylinePlanManagementSystem.Models.Teacher", "Teacher")
                         .WithOne("OfficeLocation")
-                        .HasForeignKey("MockSchoolManagement.Models.OfficeLocation", "TeacherId")
+                        .HasForeignKey("SkylinePlanManagementSystem.Models.OfficeLocation", "TeacherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.StudentCourse", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.StudentCourse", b =>
                 {
-                    b.HasOne("MockSchoolManagement.Models.Course", "Course")
+                    b.HasOne("SkylinePlanManagementSystem.Models.Course", "Course")
                         .WithMany("StudentCourses")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MockSchoolManagement.Models.Student", "Student")
+                    b.HasOne("SkylinePlanManagementSystem.Models.Student", "Student")
                         .WithMany("StudentCourses")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -634,7 +657,7 @@ namespace MockSchoolManagement.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.BlogManagement.Blog", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.BlogManagement.Blog", b =>
                 {
                     b.Navigation("BlogImage")
                         .IsRequired();
@@ -642,24 +665,24 @@ namespace MockSchoolManagement.Migrations
                     b.Navigation("Posts");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Course", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Course", b =>
                 {
                     b.Navigation("CourseAssignments");
 
                     b.Navigation("StudentCourses");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Department", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Department", b =>
                 {
                     b.Navigation("Courses");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Student", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Student", b =>
                 {
                     b.Navigation("StudentCourses");
                 });
 
-            modelBuilder.Entity("MockSchoolManagement.Models.Teacher", b =>
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.Teacher", b =>
                 {
                     b.Navigation("CourseAssignments");
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MockSchoolManagement.Models
+namespace SkylinePlanManagementSystem.Models
 {
     /// <summary>
     /// 办公室地点

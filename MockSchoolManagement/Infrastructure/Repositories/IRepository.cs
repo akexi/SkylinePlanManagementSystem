@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace MockSchoolManagement.Infrastructure.Repositories
+namespace SkylinePlanManagementSystem.Infrastructure.Repositories
 {
     /// <summary>
     /// 此接口是所有仓储的约定接口

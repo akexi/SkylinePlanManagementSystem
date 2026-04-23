@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MockSchoolManagement.Application.Departments.Dtos;
-using MockSchoolManagement.Application.Dtos;
-using MockSchoolManagement.Infrastructure.Repositories;
-using MockSchoolManagement.Models;
+using SkylinePlanManagementSystem.Application.Departments.Dtos;
+using SkylinePlanManagementSystem.Application.Dtos;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
+using SkylinePlanManagementSystem.Models;
 using System.Globalization;
 using System.Linq.Dynamic.Core;
 
-namespace MockSchoolManagement.Application.Departments
+namespace SkylinePlanManagementSystem.Application.Departments
 {
     public class DepartmentsService : IDepartmentsService
     {

@@ -1,6 +1,6 @@
-﻿using MockSchoolManagement.Models;
+﻿using SkylinePlanManagementSystem.Models;
 
-namespace MockSchoolManagement.ViewModels
+namespace SkylinePlanManagementSystem.ViewModels
 {
     public class HomeDetailsViewModel
     {

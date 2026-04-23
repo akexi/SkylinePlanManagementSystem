@@ -1,4 +1,4 @@
-﻿namespace MockSchoolManagement.Models.EnumTypes
+﻿namespace SkylinePlanManagementSystem.Models.EnumTypes
 {
     /// <summary>
     /// 成绩

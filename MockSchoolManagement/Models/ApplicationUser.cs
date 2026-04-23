@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace MockSchoolManagement.Models
+namespace SkylinePlanManagementSystem.Models
 {
     public class ApplicationUser:IdentityUser
     {

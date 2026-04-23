@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace MockSchoolManagement.Security
+namespace SkylinePlanManagementSystem.Security
 {
     /// <summary>
     /// 只有编辑其他Admin角色和声明的处理程序
