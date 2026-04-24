@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace SkylinePlanManagementSystem.Controllers
             _dbcontext = dbcontext;
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(GetDepartmentInput input)
         {
             var models = await _departmentsService.GetPagedDepartmentsList(input);
@@ -91,6 +93,7 @@ namespace SkylinePlanManagementSystem.Controllers
 
         #endregion 添加
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int id)
         {
             string query = "SELECT * FROM Departments WHERE DepartmentId = {0}";
@@ -109,6 +112,7 @@ namespace SkylinePlanManagementSystem.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -125,6 +129,7 @@ namespace SkylinePlanManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -156,6 +161,7 @@ namespace SkylinePlanManagementSystem.Controllers
             return View(dto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Edit(DepartmentCreateViewModel input)
         {

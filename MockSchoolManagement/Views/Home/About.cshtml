@@ -1,24 +1,169 @@
-﻿@using SkylinePlanManagementSystem.Application.Students.Dtos;
-@model IEnumerable<EnrollmentDateGroupDto>
-@{
-    ViewBag.Title = "学生信息统计";
+﻿@{
+    ViewBag.Title = "关于系统";
 }
 
-<h1>学生信息统计</h1>
+<div class="container-fluid">
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>入学时间</th>
-            <th>学生人数</th>
-        </tr>
-    </thead>
+    <!-- 标题 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">关于系统</h3>
+            <div class="text-muted">项目开发节点与部门计划管理系统</div>
+        </div>
 
-    @foreach(var item in Model)
-    {
-        <tr>
-            <td>@Html.DisplayFor(modelItem => item.EnrollmentDate)</td>
-            <td>@item.StudentCount</td>
-        </tr>
-    }
-</table>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+            ← 返回主页
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- 系统信息 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="background:#f0f7ff">
+                <div class="card-body">
+                    <div class="text-primary fw-bold mb-2">系统版本</div>
+                    <h4 class="fw-bold">V1.0.0</h4>
+
+                    <div class="mt-3 text-muted">上线时间</div>
+                    <div>2026 年 4 月</div>
+
+                    <div class="mt-3 text-muted">运行环境</div>
+                    <div>.NET 8 / IIS / MySQL</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术架构 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="background:#f6fff2">
+                <div class="card-body">
+                    <div class="text-success fw-bold mb-3">技术架构</div>
+
+                    <div class="mb-2">ASP.NET Core MVC</div>
+                    <div class="mb-2">Entity Framework Core</div>
+                    <div class="mb-2">MySQL 8.0</div>
+                    <div>Bootstrap 5</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 开发者 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="background:#fff7ed">
+                <div class="card-body">
+                    <div class="text-warning fw-bold mb-2">系统开发</div>
+
+                    <h5 class="fw-bold mb-0">李天喜</h5>
+                    <div class="text-muted">综合管理部 · 信息专员</div>
+
+                    <div class="mt-3 text-muted">技术支持</div>
+                    <div>内部系统独立开发与维护</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系统说明 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <div class="fw-bold mb-3">系统建设说明</div>
+
+                    <div class="text-muted">
+                        为规范公司项目开发节点管理流程，统一部门月度工作计划填报方式，
+                        提升项目推进效率及部门协同能力，特开发本系统用于项目节点计划、
+                        部门工作任务填报及执行情况跟踪管理。
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <div class="fw-bold mb-3">系统功能</div>
+
+                    <div class="row text-center">
+
+                        <div class="col-md-3">
+                            <div class="p-3 rounded" style="background:#f8f9fa">
+                                <div class="fw-bold">项目节点管理</div>
+                                <div class="text-muted small">一级/二级/三级节点</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="p-3 rounded" style="background:#f8f9fa">
+                                <div class="fw-bold">部门工作计划</div>
+                                <div class="text-muted small">月度计划填报</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="p-3 rounded" style="background:#f8f9fa">
+                                <div class="fw-bold">进度跟踪</div>
+                                <div class="text-muted small">执行情况记录</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="p-3 rounded" style="background:#f8f9fa">
+                                <div class="fw-bold">统计分析</div>
+                                <div class="text-muted small">计划汇总统计</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用对象 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <div class="fw-bold mb-2">使用对象</div>
+
+                    <div class="text-muted">
+                        公司各职能部门、项目管理人员及相关领导，
+                        用于项目节点计划填报、部门月度工作计划管理及执行情况查看。
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+
+                    <div class="text-muted">
+                        © 2026 项目开发节点与部门计划管理系统
+                    </div>
+
+                    <div>
+                        <span class="text-muted me-2">开发：</span>
+                        <span class="fw-bold me-3">
+                            李天喜（综合管理部 · 信息专员）
+                        </span>
+
+                        <span class="text-muted me-2">邮箱：</span>
+                        <span class="fw-bold">
+                            xsbnltx@163.com
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

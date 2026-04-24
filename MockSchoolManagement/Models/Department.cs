@@ -10,7 +10,7 @@ namespace SkylinePlanManagementSystem.Models
     {
         public int DepartmentId { get; set; }
 
-        [Display(Name = "学院名称")]
+        [Display(Name = "部门名称")]
         [StringLength(50, MinimumLength = 3)]
         public string Name { get; set; }
 
@@ -32,7 +32,7 @@ namespace SkylinePlanManagementSystem.Models
         [Timestamp]
         public byte[] RowVersion { get; set; }
 
-        [Display(Name = "负责人")]
+        [Display(Name = "部门负责人")]
         public int? TeacherId { get; set; }
 
         /// <summary>

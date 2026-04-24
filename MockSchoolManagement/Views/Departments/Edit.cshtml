@@ -1,7 +1,7 @@
 ﻿@using SkylinePlanManagementSystem.ViewModels.Department
 @model DepartmentCreateViewModel
 @{
-    ViewBag.Title = "编辑学院";
+    ViewBag.Title = "编辑部门";
 }
 
 <form asp-action="Edit" method="post" class="mt-3">
@@ -12,7 +12,7 @@
     <div class="form-group row">
         <label asp-for="Name" class="col-sm-2 col-form-label"></label>
         <div class="col-sm-10">
-            <input asp-for="Name" class="form-control" placeholder="请输入学院名称" />
+            <input asp-for="Name" class="form-control" placeholder="请输入部门名称" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
     </div>

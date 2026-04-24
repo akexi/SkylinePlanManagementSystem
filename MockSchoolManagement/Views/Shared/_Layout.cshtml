@@ -12,6 +12,7 @@
 <body>
 
     @inject SignInManager<ApplicationUser> _signInManager
+    @inject UserManager<ApplicationUser> _userManager
 
     <nav class="navbar navbar-expand-sm navbar-light bg-white">
         <div class="container-fluid">
@@ -69,14 +70,6 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           asp-controller="Departments"
-                           asp-action="Index">
-                            学院管理
-                        </a>
-                    </li>
-
                     <!-- 系统管理菜单：仅管理员可见 -->
                     @if (User.IsInRole("Admin"))
                     {
@@ -85,6 +78,9 @@
                                 系统管理
                             </a>
                             <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Departments" asp-action="Index">
+                                    部门管理
+                                </a>
                                 <a class="dropdown-item" asp-controller="Admin" asp-action="ListUsers">
                                     用户管理
                                 </a>
@@ -102,21 +98,33 @@
 
                     @if (_signInManager.IsSignedIn(User))
                     {
+                        var appUser = await _userManager.GetUserAsync(User);
+
                         <li class="nav-item dropdown">
 
                             <a class="nav-link dropdown-toggle"
                                href="#"
                                data-toggle="dropdown">
 
-                                👤 @User.Identity.Name
+                                👤 @appUser.Name
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right">
-                                <!-- 保留修改密码功能 -->
+                                <!-- 用户相关功能 -->
+                                <a class="dropdown-item"
+                                   asp-controller="Account"
+                                   asp-action="Profile">
+                                    用户中心
+                                </a>
                                 <a class="dropdown-item"
                                    asp-controller="Account"
                                    asp-action="ChangePassword">
                                     修改密码
+                                </a>
+                                <a class="dropdown-item"
+                                   asp-controller="Home"
+                                   asp-action="About">
+                                    关于
                                 </a>
 
                                 <div class="dropdown-divider"></div>

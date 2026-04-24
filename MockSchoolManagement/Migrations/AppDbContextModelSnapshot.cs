@@ -162,13 +162,12 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -182,6 +181,10 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -211,6 +214,8 @@ namespace SkylinePlanManagementSystem.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -566,6 +571,16 @@ namespace SkylinePlanManagementSystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("SkylinePlanManagementSystem.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("SkylinePlanManagementSystem.Models.BlogManagement.BlogImage", b =>

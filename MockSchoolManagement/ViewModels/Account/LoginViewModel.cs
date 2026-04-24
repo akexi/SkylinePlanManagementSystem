@@ -6,9 +6,11 @@ namespace SkylinePlanManagementSystem.ViewModels.Account
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "请输入邮箱地址")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "请输入用户名")]
+        [Display(Name = "用户名")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "用户名长度应在3-30个字符之间")]
+        [RegularExpression("^[a-zA-Z0-9_]+$", ErrorMessage = "用户名仅支持字母、数字和下划线")]
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "请输入您的密码")]
         [DataType(DataType.Password)]

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SkylinePlanManagementSystem.Models;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
 using SkylinePlanManagementSystem.ViewModels.Account;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,13 +15,25 @@ namespace SkylinePlanManagementSystem.Controllers
     {
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
+        private readonly IRepository<Department, int> _departmentRepository;
         private readonly ILogger<AdminController> _logger;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AdminController> logger)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IRepository<Department, int> departmentRepository,
+            ILogger<AdminController> logger)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
+            _departmentRepository = departmentRepository;
             _logger = logger;
+        }
+
+        private SelectList DepartmentsDropDownList(object selectedDepartment = null)
+        {
+            var departments = _departmentRepository.GetAll().OrderBy(a => a.Name).ToList();
+            return new SelectList(departments, "DepartmentId", "Name", selectedDepartment);
         }
 
         [HttpGet]
@@ -323,7 +337,8 @@ namespace SkylinePlanManagementSystem.Controllers
                         {
                             UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
                             Email = info.Principal.FindFirstValue(ClaimTypes.Email),
-                            City = ""
+                            Name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? "外部用户",
+                            DepartmentId = null
                         };
                         // 如果不存用户，则创建一个新用户，并将其存储在AspNetUsers数据库表中
                         await _userManager.CreateAsync(user);
@@ -382,7 +397,7 @@ namespace SkylinePlanManagementSystem.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByNameAsync(model.UserName);
                 if(user != null && !user.EmailConfirmed && (await _userManager.CheckPasswordAsync(user, model.Password)))
                 {
                     ModelState.AddModelError(string.Empty, "您的电子邮箱还未进行验证。");
@@ -393,7 +408,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 // 每次登录失败后，都会将AspNetUsers表中的AccessFailedCount字段加1，当连续登录失败次数达到指定值时，
                 // MaxFailedAccessAttempts将会锁定账户，然后修改LockoutEnd字段，添加解锁时间
                 // 即使提供了正确的密码，PasswordSignInAsync()方法返回的值依然是LocakedOut
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, true);
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(returnUrl))
@@ -423,20 +438,27 @@ namespace SkylinePlanManagementSystem.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            var model = new RegisterViewModel
+            {
+                DepartmentList = DepartmentsDropDownList()
+            };
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            model.DepartmentList = DepartmentsDropDownList(model.DepartmentId);
             if(ModelState.IsValid)
             {
                 // 将数据从RegisterViewModel复制到IdentityUser
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email,
+                    UserName = model.UserName,
                     Email = model.Email,
-                    City = model.City
+                    Name = model.Name,
+                    PhoneNumber = model.PhoneNumber,
+                    DepartmentId = model.DepartmentId
                 };
 
                 // 将用户存储在AspNetUsers数据库表中
@@ -472,6 +494,120 @@ namespace SkylinePlanManagementSystem.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var model = new UserProfileViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Name = user.Name,
+                PhoneNumber = user.PhoneNumber,
+                DepartmentId = user.DepartmentId,
+                DepartmentList = DepartmentsDropDownList(user.DepartmentId)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(UserProfileViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // 仅验证客户端校验通过的情形
+            if (!ModelState.IsValid)
+            {
+                model.DepartmentList = DepartmentsDropDownList(model.DepartmentId);
+                return View(model);
+            }
+
+            bool anyUpdated = false;
+
+            // 更新手机号（仅在变化时）
+            if (user.PhoneNumber != model.PhoneNumber)
+            {
+                var phoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+                if (!phoneResult.Succeeded)
+                {
+                    foreach (var error in phoneResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                else
+                {
+                    anyUpdated = true;
+                }
+            }
+
+            // 更新邮箱（仅在变化时）
+            if (user.Email != model.Email)
+            {
+                var emailResult = await _userManager.SetEmailAsync(user, model.Email);
+                if (!emailResult.Succeeded)
+                {
+                    foreach (var error in emailResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                else
+                {
+                    // 为安全起见，通常应要求邮箱确认流程；这里将 EmailConfirmed 置为 false 并保存。
+                    user.EmailConfirmed = false;
+                    var upd = await _userManager.UpdateAsync(user);
+                    if (!upd.Succeeded)
+                    {
+                        foreach (var error in upd.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                    else
+                    {
+                        anyUpdated = true;
+                    }
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.DepartmentList = DepartmentsDropDownList(model.DepartmentId);
+                return View(model);
+            }
+
+            if (anyUpdated)
+            {
+                await _signInManager.RefreshSignInAsync(user);
+                ViewBag.Message = "更新成功";
+            }
+            else
+            {
+                ViewBag.Message = "未发现变更";
+            }
+
+            model.Id = user.Id;
+            model.UserName = user.UserName;
+            model.Name = user.Name;
+            model.DepartmentId = user.DepartmentId;
+            model.DepartmentList = DepartmentsDropDownList(user.DepartmentId);
 
             return View(model);
         }

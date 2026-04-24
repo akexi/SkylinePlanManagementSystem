@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
 using SkylinePlanManagementSystem.Models;
 using SkylinePlanManagementSystem.ViewModels.Admin;
 using System.Security.Claims;
@@ -13,13 +15,25 @@ namespace SkylinePlanManagementSystem.Controllers
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IRepository<Department, int> _departmentRepository;
         private readonly ILogger<AdminController> _logger;
 
-        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ILogger<AdminController> logger)
+        public AdminController(
+            RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
+            IRepository<Department, int> departmentRepository,
+            ILogger<AdminController> logger)
         {
             this._roleManager = roleManager;
             this._userManager = userManager;
+            _departmentRepository = departmentRepository;
             _logger = logger;
+        }
+
+        private SelectList DepartmentsDropDownList(object selectedDepartment = null)
+        {
+            var departments = _departmentRepository.GetAll().OrderBy(a => a.Name).ToList();
+            return new SelectList(departments, "DepartmentId", "Name", selectedDepartment);
         }
 
         [HttpGet]
@@ -60,6 +74,12 @@ namespace SkylinePlanManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                model.DepartmentList = DepartmentsDropDownList(model.DepartmentId);
+                return View(model);
+            }
+
             var user = await _userManager.FindByIdAsync(model.Id);
 
             if(user == null)
@@ -71,7 +91,9 @@ namespace SkylinePlanManagementSystem.Controllers
             {
                 user.Email = model.Email;
                 user.UserName = model.UserName;
-                user.City = model.City;
+                user.Name = model.Name;
+                user.PhoneNumber = model.PhoneNumber;
+                user.DepartmentId = model.DepartmentId;
 
                 var result = await _userManager.UpdateAsync(user);
 
@@ -85,6 +107,7 @@ namespace SkylinePlanManagementSystem.Controllers
                     ModelState.AddModelError("",error.Description);
                 }
 
+                model.DepartmentList = DepartmentsDropDownList(model.DepartmentId);
                 return View(model);
             }
 
@@ -111,7 +134,10 @@ namespace SkylinePlanManagementSystem.Controllers
                 Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
-                City = user.City,
+                Name = user.Name,
+                PhoneNumber = user.PhoneNumber,
+                DepartmentId = user.DepartmentId,
+                DepartmentList = DepartmentsDropDownList(user.DepartmentId),
                 Claims = userClaims,    // 不再进行过滤条件查询
                 Roles = userRoles
             };

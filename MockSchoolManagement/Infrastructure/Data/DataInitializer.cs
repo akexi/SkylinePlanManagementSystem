@@ -197,9 +197,12 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
                 }
 
                 var user = new ApplicationUser { 
-                    UserName = "admin@ddxc.org", 
+                    UserName = "admin", 
                     Email = "admin@ddxc.org", 
-                    EmailConfirmed = true, City = "昆明" 
+                    EmailConfirmed = true,
+                    Name = "系统管理员",
+                    PhoneNumber = "13800000000",
+                    DepartmentId = departments.First().DepartmentId
                 };
 
                 userManager.CreateAsync(user, "Admin@123").Wait();  // 等待异步操作完成

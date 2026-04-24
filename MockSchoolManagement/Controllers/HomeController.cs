@@ -253,52 +253,9 @@ namespace SkylinePlanManagementSystem.Controllers
             return uniqueFileName;
         }
 
-        public async Task<ActionResult> About()
+        public IActionResult About()
         {
-            List<EnrollmentDateGroupDto> groups = new List<EnrollmentDateGroupDto>();
-
-            // 获取数据库上下文连接
-            var conn = _dbContext.Database.GetDbConnection();
-
-            try
-            {
-                // 打开数据库连接
-                await conn.OpenAsync();
-
-                // 建立连接，因为非委托资源，所以需要使用using进行内存资源释放
-                using (var command = conn.CreateCommand())
-                {
-                    string query = "SELECT EnrollmentDate, COUNT(*) AS StudentCount FROM Person WHERE Discriminator = 'Student' GROUP BY EnrollmentDate";
-                    command.CommandText = query;    // 赋值SQL查询语句
-                    DbDataReader reader = await command.ExecuteReaderAsync();   // 执行查询
-
-                    // 判断是否有返回行
-                    if (reader.HasRows)
-                    {
-                        // 读取数据，将返回值填充到视图模型中
-                        while(await reader.ReadAsync())
-                        {
-                            var row = new EnrollmentDateGroupDto
-                            {
-                                EnrollmentDate = reader.GetDateTime(0),
-                                StudentCount = reader.GetInt32(1)
-                            };
-
-                            groups.Add(row);
-                        }
-                    }
-
-                    // 释放使用的所有资源
-                    reader.Dispose();
-                }
-            }
-            finally
-            {
-                // 关闭数据库连接
-                conn.Close();
-            }
-
-            return View(groups);
+            return View();
         }
 
     }
