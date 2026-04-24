@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,11 @@ namespace SkylinePlanManagementSystem.Controllers
             protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.StudentIdRouteValue);
             _studentService = studentService;
             _dbContext = dbContext;
+        }
+
+        public IActionResult NewIndex()
+        {
+            return View();
         }
 
         //[Route("")]

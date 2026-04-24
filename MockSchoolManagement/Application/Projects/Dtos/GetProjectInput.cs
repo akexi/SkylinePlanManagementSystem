@@ -7,7 +7,7 @@ namespace SkylinePlanManagementSystem.Application.Projects.Dtos
         public GetProjectInput()
         {
             Sorting = "ProjectId";
-            MaxResultCount = 3;
+            MaxResultCount = 5;
         }
     }
 }

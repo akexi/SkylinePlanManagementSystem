@@ -1,0 +1,90 @@
+/* 欢迎区 */
+.welcome-box {
+    background: #f8f9fa;
+    padding: 20px 24px;
+    border-radius: 8px;
+    border-left: 4px solid #0d6efd;
+}
+
+/* 统计卡片 */
+.stat-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+    height: 100%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.stat-icon {
+    font-size: 28px;
+    margin-right: 16px;
+}
+
+.stat-info h4 {
+    margin: 0;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.stat-info span {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.stat-blue {
+    border-left: 4px solid #0d6efd;
+}
+
+.stat-green {
+    border-left: 4px solid #198754;
+}
+
+.stat-orange {
+    border-left: 4px solid #fd7e14;
+}
+
+.stat-purple {
+    border-left: 4px solid #6f42c1;
+}
+
+/* 功能卡片 */
+.func-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    height: 100%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    transition: 0.2s;
+}
+
+    .func-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        color: #0d6efd;
+    }
+
+.func-icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.func-text {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* 表格卡片 */
+.table-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}

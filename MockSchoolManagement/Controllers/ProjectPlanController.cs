@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Mvc;
-using SkylinePlanManagementSystem.Application.Departments.Dtos;
+﻿using Microsoft.AspNetCore.Mvc;
 using SkylinePlanManagementSystem.Application.Projects;
 using SkylinePlanManagementSystem.Application.Projects.Dtos;
-using SkylinePlanManagementSystem.DataRepositories;
-using SkylinePlanManagementSystem.Infrastructure;
 using SkylinePlanManagementSystem.Infrastructure.Repositories;
 using SkylinePlanManagementSystem.Models;
 using SkylinePlanManagementSystem.ViewModels.ProjectPlan;
@@ -41,8 +37,14 @@ namespace SkylinePlanManagementSystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProjectCreateViewModel input)
         {
+            if (input.StartTime.HasValue && input.EndTime.HasValue && input.EndTime < input.StartTime)
+            {
+                ModelState.AddModelError(nameof(input.EndTime), "结束时间不能早于开始时间");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(input);
@@ -52,6 +54,8 @@ namespace SkylinePlanManagementSystem.Controllers
             {
                 ProjectName = input.ProjectName,
                 Remark = input.Remark,
+                StartTime = input.StartTime,
+                EndTime = input.EndTime,
                 Status = input.Status
             };
 
@@ -60,7 +64,73 @@ namespace SkylinePlanManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var project = await _projectRepository.FirstOrDefaultAsync(a => a.ProjectId == id);
+            if (project == null)
+            {
+                ViewBag.ErrorMessage = $"项目编号为{id}的信息不存在，请重试";
+                return View("NotFound");
+            }
 
+            var model = new ProjectCreateViewModel
+            {
+                ProjectId = project.ProjectId,
+                ProjectName = project.ProjectName,
+                Remark = project.Remark,
+                StartTime = project.StartTime,
+                EndTime = project.EndTime,
+                Status = project.Status
+            };
 
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ProjectCreateViewModel input)
+        {
+            if (input.StartTime.HasValue && input.EndTime.HasValue && input.EndTime < input.StartTime)
+            {
+                ModelState.AddModelError(nameof(input.EndTime), "结束时间不能早于开始时间");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(input);
+            }
+
+            var project = await _projectRepository.FirstOrDefaultAsync(a => a.ProjectId == input.ProjectId);
+            if (project == null)
+            {
+                ViewBag.ErrorMessage = $"项目编号为{input.ProjectId}的信息不存在，请重试";
+                return View("NotFound");
+            }
+
+            project.ProjectName = input.ProjectName;
+            project.Remark = input.Remark;
+            project.StartTime = input.StartTime;
+            project.EndTime = input.EndTime;
+            project.Status = input.Status;
+
+            await _projectRepository.UpdateAsync(project);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var project = await _projectRepository.FirstOrDefaultAsync(a => a.ProjectId == id);
+            if (project == null)
+            {
+                ViewBag.ErrorMessage = $"项目编号为{id}的信息不存在，请重试";
+                return View("NotFound");
+            }
+
+            await _projectRepository.DeleteAsync(project);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -228,7 +228,7 @@ namespace SkylinePlanManagementSystem
             app.MapControllers();   // 启用属性路由   
             app.MapControllerRoute( // 启用默认路由
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=NewIndex}/{id?}");
 
             app.Run();
         }

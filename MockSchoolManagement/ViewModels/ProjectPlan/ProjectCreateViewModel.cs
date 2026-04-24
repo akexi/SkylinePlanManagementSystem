@@ -5,6 +5,8 @@ namespace SkylinePlanManagementSystem.ViewModels.ProjectPlan
 {
     public class ProjectCreateViewModel
     {
+        public int ProjectId { get; set; }
+
         [Display(Name = "项目名称")]
         [Required(ErrorMessage = "请输入项目名称")]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "项目名称长度应在2-100个字符之间")]
@@ -13,6 +15,16 @@ namespace SkylinePlanManagementSystem.ViewModels.ProjectPlan
         [Display(Name = "备注")]
         [StringLength(500, ErrorMessage = "备注长度不能超过500个字符")]
         public string? Remark { get; set; }
+
+        [Display(Name = "开始时间")]
+        [DataType(DataType.Date)]
+        [Required(ErrorMessage = "请选择项目开始时间")]
+        public DateTime? StartTime { get; set; }
+
+        [Display(Name = "结束时间")]
+        [DataType(DataType.Date)]
+        [Required(ErrorMessage = "请选择项目结束时间")]
+        public DateTime? EndTime { get; set; }
 
         [Display(Name = "状态")]
         [Required(ErrorMessage = "请选择项目状态")]

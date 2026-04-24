@@ -1,0 +1,38 @@
+.project-list-page .project-header h3 {
+    font-weight: 700;
+}
+
+.project-list-page .project-search-box {
+    max-width: 520px;
+}
+
+.project-list-page .project-table-wrap {
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.project-list-page table thead th {
+    background-color: #f8f9fa;
+    border-top: 0;
+    white-space: nowrap;
+}
+
+.project-list-page table tbody td {
+    vertical-align: middle;
+}
+
+.project-list-page .badge {
+    font-size: 12px;
+    padding: 6px 10px;
+}
+
+.project-list-page .page-link {
+    color: #495057;
+}
+
+.project-list-page .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}

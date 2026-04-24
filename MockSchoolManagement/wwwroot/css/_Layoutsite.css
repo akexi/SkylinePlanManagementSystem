@@ -1,0 +1,25 @@
+﻿body {
+    background-color: #f5f6fa;
+}
+
+.main-container {
+    padding-top: 20px;
+}
+
+.navbar {
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.navbar-brand img {
+    margin-right: 10px;
+}
+
+.nav-link {
+    font-size: 14px;
+}
+
+.content-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);

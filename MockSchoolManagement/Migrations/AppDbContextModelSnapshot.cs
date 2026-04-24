@@ -423,12 +423,18 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProjectId"));
 
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Remark")
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

@@ -12,8 +12,8 @@ using SkylinePlanManagementSystem.Infrastructure;
 namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260423024609_CreateProjectModel")]
-    partial class CreateProjectModel
+    [Migration("20260424032612_NewCreateDb")]
+    partial class NewCreateDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -426,12 +426,18 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProjectId"));
 
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Remark")
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
