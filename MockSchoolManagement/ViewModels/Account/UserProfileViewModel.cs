@@ -28,6 +28,10 @@ namespace SkylinePlanManagementSystem.ViewModels.Account
         [Display(Name = "所属部门")]
         public int? DepartmentId { get; set; }
 
+        // 新增：用于在视图中显示部门名称
+        [Display(Name = "所属部门")]
+        public string DepartmentName { get; set; }
+
         public SelectList? DepartmentList { get; set; }
     }
 }

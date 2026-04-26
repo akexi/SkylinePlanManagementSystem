@@ -4,155 +4,98 @@
     ViewBag.Title = "用户中心 - 个人资料";
 }
 
-<h1>用户中心</h1>
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9 col-md-10">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary bg-gradient text-white py-3">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="bi bi-person-circle me-2"></i>个人资料
+                    </h4>
+                </div>
 
-<form asp-action="Profile" method="post" class="mt-3" id="profileForm">
-    <div class="form-group row">
-        <label asp-for="Id" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="Id" class="form-control" readonly />
+                <div class="card-body p-4">
+                    <form asp-action="Profile" method="post" id="profileForm">
+                        <div class="mb-3 row align-items-center">
+                            <label asp-for="Id" class="col-sm-2 col-form-label fw-medium text-muted"></label>
+                            <div class="col-sm-10">
+                                <input asp-for="Id" class="form-control bg-light" readonly />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label asp-for="UserName" class="col-sm-2 col-form-label fw-medium text-muted"></label>
+                            <div class="col-sm-10">
+                                <input asp-for="UserName" class="form-control bg-light" readonly />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label asp-for="Email" class="col-sm-2 col-form-label fw-medium text-muted"></label>
+                            <div class="col-sm-7">
+                                <input asp-for="Email" class="form-control bg-light" id="Email" readonly />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-3 text-end">
+                                <button type="button" id="editEmailBtn" class="btn btn-outline-primary btn-sm">修改邮箱</button>
+                                <button type="button" id="cancelEmailBtn" class="btn btn-outline-secondary btn-sm d-none">取消</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label asp-for="PhoneNumber" class="col-sm-2 col-form-label fw-medium text-muted"></label>
+                            <div class="col-sm-7">
+                                <input asp-for="PhoneNumber" class="form-control bg-light" id="PhoneNumber" readonly />
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-3 text-end">
+                                <button type="button" id="editPhoneBtn" class="btn btn-outline-primary btn-sm">修改手机号</button>
+                                <button type="button" id="cancelPhoneBtn" class="btn btn-outline-secondary btn-sm d-none">取消</button>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted">
+
+                        <div class="mb-3 row align-items-center">
+                            <label asp-for="Name" class="col-sm-2 col-form-label fw-medium text-muted"></label>
+                            <div class="col-sm-10">
+                                <input asp-for="Name" class="form-control bg-light" readonly />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label asp-for="DepartmentId" class="col-sm-2 col-form-label fw-medium text-muted"></label>
+                            <div class="col-sm-10">
+                                <input asp-for="DepartmentName" class="form-control bg-light" readonly />
+                            </div>
+                        </div>
+
+                        <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+
+                        <div class="form-group row d-none mt-4" id="saveRow">
+                            <div class="col-sm-10 offset-sm-2">
+                                <button type="submit" class="btn btn-primary px-4 me-2" id="saveBtn">
+                                    <i class="bi bi-check-lg me-1"></i>保存修改
+                                </button>
+                                <button type="button" class="btn btn-secondary px-4" id="cancelAllBtn">
+                                    <i class="bi bi-x-lg me-1"></i>取消
+                                </button>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(ViewBag.Message))
+                        {
+                            <div class="alert alert-success mt-4 rounded-3">
+                                <i class="bi bi-check-circle-fill me-2"></i>@ViewBag.Message
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="form-group row">
-        <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="UserName" class="form-control" readonly />
-        </div>
-    </div>
-
-    <div class="form-group row align-items-center">
-        <label asp-for="Email" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-7">
-            <input asp-for="Email" class="form-control" id="Email" readonly />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        <div class="col-sm-3">
-            <button type="button" id="editEmailBtn" class="btn btn-outline-primary">修改邮箱</button>
-            <button type="button" id="cancelEmailBtn" class="btn btn-outline-secondary d-none">取消</button>
-        </div>
-    </div>
-
-    <div class="form-group row align-items-center">
-        <label asp-for="PhoneNumber" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-7">
-            <input asp-for="PhoneNumber" class="form-control" id="PhoneNumber" readonly />
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-        </div>
-        <div class="col-sm-3">
-            <button type="button" id="editPhoneBtn" class="btn btn-outline-primary">修改手机号</button>
-            <button type="button" id="cancelPhoneBtn" class="btn btn-outline-secondary d-none">取消</button>
-        </div>
-    </div>
-
-    <div class="form-group row">
-        <label asp-for="Name" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="Name" class="form-control" readonly />
-        </div>
-    </div>
-
-    <div class="form-group row">
-        <label asp-for="DepartmentId" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <select asp-for="DepartmentId" asp-items="Model.DepartmentList" class="form-control" disabled>
-                <option value="">-- 请选择所属部门 --</option>
-            </select>
-        </div>
-    </div>
-
-    <div asp-validation-summary="All" class="text-danger"></div>
-
-    <div class="form-group row d-none" id="saveRow">
-        <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary" id="saveBtn">保存</button>
-            <button type="button" class="btn btn-secondary" id="cancelAllBtn">取消</button>
-        </div>
-    </div>
-
-    @if (!string.IsNullOrEmpty(ViewBag.Message))
-    {
-        <div class="alert alert-success mt-3">@ViewBag.Message</div>
-    }
-</form>
+</div>
 
 @section Scripts {
-    <script>
-        (function () {
-            const emailInput = document.getElementById('Email');
-            const phoneInput = document.getElementById('PhoneNumber');
-
-            const editEmailBtn = document.getElementById('editEmailBtn');
-            const cancelEmailBtn = document.getElementById('cancelEmailBtn');
-
-            const editPhoneBtn = document.getElementById('editPhoneBtn');
-            const cancelPhoneBtn = document.getElementById('cancelPhoneBtn');
-
-            const saveRow = document.getElementById('saveRow');
-            const cancelAllBtn = document.getElementById('cancelAllBtn');
-
-            const originalEmail = emailInput.value;
-            const originalPhone = phoneInput.value;
-
-            function showSaveRow() {
-                saveRow.classList.remove('d-none');
-            }
-            function hideSaveRowIfNoEdit() {
-                if (emailInput.readOnly && phoneInput.readOnly) {
-                    saveRow.classList.add('d-none');
-                }
-            }
-
-            // Email edit
-            editEmailBtn.addEventListener('click', function () {
-                emailInput.readOnly = false;
-                emailInput.focus();
-                editEmailBtn.classList.add('d-none');
-                cancelEmailBtn.classList.remove('d-none');
-                showSaveRow();
-            });
-            cancelEmailBtn.addEventListener('click', function () {
-                emailInput.value = originalEmail;
-                emailInput.readOnly = true;
-                cancelEmailBtn.classList.add('d-none');
-                editEmailBtn.classList.remove('d-none');
-                hideSaveRowIfNoEdit();
-            });
-
-            // Phone edit
-            editPhoneBtn.addEventListener('click', function () {
-                phoneInput.readOnly = false;
-                phoneInput.focus();
-                editPhoneBtn.classList.add('d-none');
-                cancelPhoneBtn.classList.remove('d-none');
-                showSaveRow();
-            });
-            cancelPhoneBtn.addEventListener('click', function () {
-                phoneInput.value = originalPhone;
-                phoneInput.readOnly = true;
-                cancelPhoneBtn.classList.add('d-none');
-                editPhoneBtn.classList.remove('d-none');
-                hideSaveRowIfNoEdit();
-            });
-
-            // 全部取消（表单级）
-            cancelAllBtn.addEventListener('click', function () {
-                // 恢复原值并禁用
-                emailInput.value = originalEmail;
-                phoneInput.value = originalPhone;
-                emailInput.readOnly = true;
-                phoneInput.readOnly = true;
-
-                // 按钮状态
-                cancelEmailBtn.classList.add('d-none');
-                editEmailBtn.classList.remove('d-none');
-                cancelPhoneBtn.classList.add('d-none');
-                editPhoneBtn.classList.remove('d-none');
-
-                hideSaveRowIfNoEdit();
-            });
-
-            // 页面卸载或提交时，不做额外处理；提交后服务器端刷新模型和视图。
-        })();
-    </script>
+    <script src="~/js/account/Profile.js"></script>
 }

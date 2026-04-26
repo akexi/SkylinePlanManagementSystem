@@ -518,6 +518,13 @@ namespace SkylinePlanManagementSystem.Controllers
                 DepartmentList = DepartmentsDropDownList(user.DepartmentId)
             };
 
+            // 读取部门名称并赋值（如果有部门）
+            if (user.DepartmentId.HasValue)
+            {
+                var dept = await _departmentRepository.FirstOrDefaultAsync(d => d.DepartmentId == user.DepartmentId.Value);
+                model.DepartmentName = dept?.Name;
+            }
+
             return View(model);
         }
 
@@ -570,8 +577,8 @@ namespace SkylinePlanManagementSystem.Controllers
                 }
                 else
                 {
-                    // 为安全起见，通常应要求邮箱确认流程；这里将 EmailConfirmed 置为 false 并保存。
-                    user.EmailConfirmed = false;
+                    // 不需要邮箱验证：将 EmailConfirmed 置为 true 并保存
+                    user.EmailConfirmed = true;
                     var upd = await _userManager.UpdateAsync(user);
                     if (!upd.Succeeded)
                     {
@@ -616,7 +623,7 @@ namespace SkylinePlanManagementSystem.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("NewIndex", "Home");
         }
 
     }
