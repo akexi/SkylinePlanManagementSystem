@@ -5,95 +5,139 @@
 }
 
 <div class="container mt-4 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-xl-8 col-lg-9 col-md-10">
-            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                <div class="card-header bg-primary bg-gradient text-white py-3">
-                    <h4 class="mb-0 fw-bold">
-                        <i class="bi bi-person-circle me-2"></i>个人资料
-                    </h4>
-                </div>
 
-                <div class="card-body p-4">
-                    <form asp-action="Profile" method="post" id="profileForm">
-                        <div class="mb-3 row align-items-center">
-                            <label asp-for="Id" class="col-sm-2 col-form-label fw-medium text-muted"></label>
-                            <div class="col-sm-10">
-                                <input asp-for="Id" class="form-control bg-light" readonly />
-                            </div>
-                        </div>
-
-                        <div class="mb-3 row align-items-center">
-                            <label asp-for="UserName" class="col-sm-2 col-form-label fw-medium text-muted"></label>
-                            <div class="col-sm-10">
-                                <input asp-for="UserName" class="form-control bg-light" readonly />
-                            </div>
-                        </div>
-
-                        <div class="mb-3 row align-items-center">
-                            <label asp-for="Email" class="col-sm-2 col-form-label fw-medium text-muted"></label>
-                            <div class="col-sm-7">
-                                <input asp-for="Email" class="form-control bg-light" id="Email" readonly />
-                                <span asp-validation-for="Email" class="text-danger small"></span>
-                            </div>
-                            <div class="col-sm-3 text-end">
-                                <button type="button" id="editEmailBtn" class="btn btn-outline-primary btn-sm">修改邮箱</button>
-                                <button type="button" id="cancelEmailBtn" class="btn btn-outline-secondary btn-sm d-none">取消</button>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 row align-items-center">
-                            <label asp-for="PhoneNumber" class="col-sm-2 col-form-label fw-medium text-muted"></label>
-                            <div class="col-sm-7">
-                                <input asp-for="PhoneNumber" class="form-control bg-light" id="PhoneNumber" readonly />
-                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
-                            </div>
-                            <div class="col-sm-3 text-end">
-                                <button type="button" id="editPhoneBtn" class="btn btn-outline-primary btn-sm">修改手机号</button>
-                                <button type="button" id="cancelPhoneBtn" class="btn btn-outline-secondary btn-sm d-none">取消</button>
-                            </div>
-                        </div>
-
-                        <hr class="my-4 text-muted">
-
-                        <div class="mb-3 row align-items-center">
-                            <label asp-for="Name" class="col-sm-2 col-form-label fw-medium text-muted"></label>
-                            <div class="col-sm-10">
-                                <input asp-for="Name" class="form-control bg-light" readonly />
-                            </div>
-                        </div>
-
-                        <div class="mb-3 row align-items-center">
-                            <label asp-for="DepartmentId" class="col-sm-2 col-form-label fw-medium text-muted"></label>
-                            <div class="col-sm-10">
-                                <input asp-for="DepartmentName" class="form-control bg-light" readonly />
-                            </div>
-                        </div>
-
-                        <div asp-validation-summary="All" class="text-danger small mb-3"></div>
-
-                        <div class="form-group row d-none mt-4" id="saveRow">
-                            <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-primary px-4 me-2" id="saveBtn">
-                                    <i class="bi bi-check-lg me-1"></i>保存修改
-                                </button>
-                                <button type="button" class="btn btn-secondary px-4" id="cancelAllBtn">
-                                    <i class="bi bi-x-lg me-1"></i>取消
-                                </button>
-                            </div>
-                        </div>
-
-                        @if (!string.IsNullOrEmpty(ViewBag.Message))
-                        {
-                            <div class="alert alert-success mt-4 rounded-3">
-                                <i class="bi bi-check-circle-fill me-2"></i>@ViewBag.Message
-                            </div>
-                        }
-                    </form>
-                </div>
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">个人资料</h5>
+                <span class="text-muted">用户中心</span>
             </div>
         </div>
+
+        <div class="card-body">
+
+            <form asp-action="Profile" method="post" id="profileForm">
+
+                <!-- 基本信息 -->
+                <div class="mb-4">
+                    <div class="fw-bold mb-3 text-primary">基本信息</div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">用户ID</label>
+                        <div class="col-sm-10">
+                            <input asp-for="Id" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">用户名</label>
+                        <div class="col-sm-10">
+                            <input asp-for="UserName" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">姓名</label>
+                        <div class="col-sm-10">
+                            <input asp-for="Name" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">所属部门</label>
+                        <div class="col-sm-10">
+                            <input asp-for="DepartmentName" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 联系方式 -->
+                <div class="mb-4">
+                    <div class="fw-bold mb-3 text-primary">联系方式</div>
+
+                    <div class="row mb-3">
+                        <label asp-for="Email" class="col-sm-2 col-form-label"></label>
+
+                        <div class="col-sm-7">
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   id="Email"
+                                   readonly />
+                        </div>
+
+                        <div class="col-sm-3 text-end">
+                            <button type="button"
+                                    id="editEmailBtn"
+                                    class="btn btn-outline-primary btn-sm">
+                                修改
+                            </button>
+
+                            <button type="button"
+                                    id="cancelEmailBtn"
+                                    class="btn btn-outline-secondary btn-sm d-none">
+                                取消
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+                        <label asp-for="PhoneNumber" class="col-sm-2 col-form-label"></label>
+
+                        <div class="col-sm-7">
+                            <input asp-for="PhoneNumber"
+                                   class="form-control"
+                                   id="PhoneNumber"
+                                   readonly />
+                        </div>
+
+                        <div class="col-sm-3 text-end">
+                            <button type="button"
+                                    id="editPhoneBtn"
+                                    class="btn btn-outline-primary btn-sm">
+                                修改
+                            </button>
+
+                            <button type="button"
+                                    id="cancelPhoneBtn"
+                                    class="btn btn-outline-secondary btn-sm d-none">
+                                取消
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div asp-validation-summary="All"
+                     class="text-danger mb-3"></div>
+
+                <div class="text-end d-none" id="saveRow">
+                    <button type="submit"
+                            class="btn btn-primary"
+                            id="saveBtn">
+                        保存修改
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            id="cancelAllBtn">
+                        取消
+                    </button>
+                </div>
+
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    <div class="alert alert-success mt-3">
+                        @ViewBag.Message
+                    </div>
+                }
+
+            </form>
+
+        </div>
     </div>
+
 </div>
 
 @section Scripts {

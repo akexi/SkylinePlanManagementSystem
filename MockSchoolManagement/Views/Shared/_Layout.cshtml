@@ -8,6 +8,13 @@
     <title>@ViewBag.Title</title>
 </head>
 
+<style>
+
+    .layout-footer {
+        
+    }
+</style>
+
 <body>
 
     @inject SignInManager<ApplicationUser> _signInManager
@@ -21,7 +28,7 @@
                asp-action="NewIndex">
                 <img src="~/images/horon.png" width="120" />
                 <span class="ml-2 font-weight-bold">
-                    项目计划管理系统
+                    计划填报系统
                 </span>
             </a>
 
@@ -36,38 +43,40 @@
 
                 <!-- 左侧菜单 -->
                 <ul class="navbar-nav">
+                    @if (_signInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="ProjectPlan"
+                               asp-action="Index">
+                                项目计划
+                            </a>
+                        </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           asp-controller="ProjectPlan"
-                           asp-action="Index">
-                            项目计划
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Index">
+                                学生管理
+                            </a>
+                        </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           asp-controller="Home"
-                           asp-action="Index">
-                            学生管理
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Course"
+                               asp-action="Index">
+                                课程管理
+                            </a>
+                        </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           asp-controller="Course"
-                           asp-action="Index">
-                            课程管理
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           asp-controller="Teacher"
-                           asp-action="Index">
-                            教师管理
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Teacher"
+                               asp-action="Index">
+                                教师管理
+                            </a>
+                        </li>
+                    }  
 
                     <!-- 系统管理菜单：仅管理员可见 -->
                     @if (User.IsInRole("Admin"))
@@ -147,8 +156,8 @@
                     {
                         <li class="nav-item">
                             <a class="nav-link"
-                               asp-controller="account"
-                               asp-action="login">
+                               asp-controller="home"
+                               asp-action="NewIndex">
                                 登录
                             </a>
                         </li>
@@ -168,6 +177,18 @@
         </div>
     </div>
 
+    <div style="position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        color: #999;
+        font-size: 13px;
+        background: #fff;
+        border-top: 1px solid #eee;">
+        © 2026 计划填报系统 · 西双版纳可见旅游发展有限公司 · 综合管理部
+    </div>
 
 
     <script src="~/lib/jquery/jquery.js"></script>

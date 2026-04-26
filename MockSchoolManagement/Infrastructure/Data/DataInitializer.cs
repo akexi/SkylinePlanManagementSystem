@@ -36,7 +36,7 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
 
                 #endregion 学生种子信息
 
-                #region 学院种子数据
+                #region 部门种子数据
 
                 var teachers = new[]
                 {
@@ -62,10 +62,10 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
 
                 var departments = new[]
                 {
-                    new Department { Name = "a", Budget = 350000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "刘老师").Id },
-                    new Department { Name = "b", Budget = 100000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "赵老师").Id },
-                    new Department { Name = "c", Budget = 350000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "胡老师").Id },
-                    new Department { Name = "d", Budget = 100000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "王老师").Id },
+                    new Department { Name = "综合管理部", Budget = 350000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "刘老师").Id },
+                    new Department { Name = "财务管理部", Budget = 100000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "赵老师").Id },
+                    new Department { Name = "工程管理中心", Budget = 350000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "胡老师").Id },
+                    new Department { Name = "营销管理中心", Budget = 100000, StartDate = DateTime.Parse("2017-09-01"), TeacherId = teachers.Single(i => i.Name == "王老师").Id },
 
                 };
                 foreach(var d in departments)
