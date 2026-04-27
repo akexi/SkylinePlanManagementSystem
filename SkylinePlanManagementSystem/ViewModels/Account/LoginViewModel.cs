@@ -14,6 +14,7 @@ namespace SkylinePlanManagementSystem.ViewModels.Account
 
         [Required(ErrorMessage = "请输入您的密码")]
         [DataType(DataType.Password)]
+        [Display(Name ="密码")]
         public string Password { get; set; }
 
         [Display(Name = "记住我")]
