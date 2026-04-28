@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width" />
     <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
     <link href="~/css/_Layoutsite.css" rel="stylesheet" />
+    <link href="~/iconfont/font_5169369_4ex6qd0dral/iconfont.css" rel="stylesheet" />
     @RenderSection("Style", required: false)
     <title>@ViewBag.Title</title>
 </head>
@@ -12,6 +13,14 @@
 
     .layout-footer {
         
+    }
+
+    .icon {
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        fill: currentColor;
+        overflow: hidden;
     }
 </style>
 
@@ -47,8 +56,22 @@
                     {
                         <li class="nav-item">
                             <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="NewIndex">
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-shouye"></use>
+                                </svg>
+                                首页
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
                                asp-controller="ProjectPlan"
                                asp-action="Index">
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-hetongleixing-L"></use>
+                                </svg>
                                 项目计划
                             </a>
                         </li>
@@ -57,7 +80,10 @@
                             <a class="nav-link"
                                asp-controller="Home"
                                asp-action="Index">
-                                学生管理
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-yewubaobiao"></use>
+                                </svg>
+                                部门工作部署
                             </a>
                         </li>
 
@@ -65,7 +91,10 @@
                             <a class="nav-link"
                                asp-controller="Course"
                                asp-action="Index">
-                                课程管理
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-xinxijilu"></use>
+                                </svg>
+                                部门工作评分
                             </a>
                         </li>
 
@@ -73,7 +102,10 @@
                             <a class="nav-link"
                                asp-controller="Teacher"
                                asp-action="Index">
-                                教师管理
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-shujufenxi"></use>
+                                </svg>
+                                统计查询
                             </a>
                         </li>
                     }  
@@ -83,16 +115,28 @@
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-yusuantiaozheng"></use>
+                                </svg>
                                 系统管理
                             </a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" asp-controller="Departments" asp-action="Index">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-jigoubianzhi"></use>
+                                    </svg>
                                     部门管理
                                 </a>
                                 <a class="dropdown-item" asp-controller="Admin" asp-action="ListUsers">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-yonghuguanli"></use>
+                                    </svg>
                                     用户管理
                                 </a>
                                 <a class="dropdown-item" asp-controller="Admin" asp-action="ListRoles">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-jiaoseguanli"></use>
+                                    </svg>
                                     角色管理
                                 </a>
                             </div>
@@ -113,8 +157,10 @@
                             <a class="nav-link dropdown-toggle"
                                href="#"
                                data-toggle="dropdown">
-
-                                👤 @appUser.Name
+                                @appUser.Name
+                                <svg class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-yusuanguanli"></use>
+                                </svg>
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right">
@@ -122,16 +168,25 @@
                                 <a class="dropdown-item"
                                    asp-controller="Account"
                                    asp-action="Profile">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-hetongshenpi"></use>
+                                    </svg>
                                     用户中心
                                 </a>
                                 <a class="dropdown-item"
                                    asp-controller="Account"
                                    asp-action="ChangePassword">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-jiaoseguanli"></use>
+                                    </svg>
                                     修改密码
                                 </a>
                                 <a class="dropdown-item"
                                    asp-controller="Home"
                                    asp-action="About">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use xlink:href="#icon-hetongxinxi"></use>
+                                    </svg>
                                     关于
                                 </a>
 
@@ -141,8 +196,10 @@
                                       asp-controller="account"
                                       asp-action="logout">
 
-                                    <button type="submit"
-                                            class="dropdown-item">
+                                    <button type="submit"class="dropdown-item">
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#icon-tuichu"></use>
+                                        </svg>
                                         退出登录
                                     </button>
 
@@ -195,6 +252,7 @@
     <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
     <script src="~/lib/jquery-validate/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/iconfont/font_5169369_4ex6qd0dral/iconfont.js"></script>
 
     @RenderSection("Scripts", required: false)
 

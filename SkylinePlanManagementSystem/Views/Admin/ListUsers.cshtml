@@ -6,7 +6,12 @@
 <div class="card shadow-sm">
 
     <div class="card-header bg-light d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">用户管理</h5>
+        <h5 class="mb-0">
+            <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-yonghuguanli"></use>
+            </svg>
+            用户管理
+        </h5>
 
         <a asp-controller="Account"
            asp-action="Register"
@@ -28,7 +33,7 @@
                         <th>手机号</th>
                         <th>部门</th>
                         <th>账户状态</th>
-                        <th width="200">操作</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
 
@@ -54,6 +59,9 @@
                                        asp-action="EditUser"
                                        asp-route-id="@user.Id"
                                        class="btn btn-sm btn-outline-primary">
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#icon-bianji1"></use>
+                                        </svg>
                                         编辑
                                     </a>
 
@@ -61,6 +69,9 @@
                                        asp-action="ResetPassword"
                                        asp-route-userId="@user.Id"
                                        class="btn btn-sm btn-outline-secondary">
+                                        <svg class="icon" aria-hidden="true">
+                                            <use xlink:href="#icon-xiugaimima"></use>
+                                        </svg>
                                         重置密码
                                     </a>
 
@@ -83,6 +94,9 @@
                                         <a href="#"
                                            class="btn btn-sm btn-outline-danger"
                                            onclick="confirmDelete('@user.Id',true)">
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-shanchu"></use>
+                                            </svg>
                                             删除
                                         </a>
                                     </span>

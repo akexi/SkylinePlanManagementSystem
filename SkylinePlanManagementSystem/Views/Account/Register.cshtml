@@ -1,59 +1,113 @@
 ﻿@using SkylinePlanManagementSystem.ViewModels.Account
 @model RegisterViewModel
 @{
-    ViewBag.Title = "用户注册";
+    ViewBag.Title = "创建用户";
 }
-<h1>用户注册</h1>
 
-<div class="row">
-    <div class="col-md-12">
-        <form method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+<div class="container mt-4">
 
-            <div class="form-group">
-                <label asp-for="UserName"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
+    <div class="card shadow-sm border-0">
 
-            <div class="form-group">
-                <label asp-for="Name"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+        <!-- 标题 -->
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0">创建用户</h5>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="PhoneNumber"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
+        <div class="card-body">
 
-            <div class="form-group">
-                <label asp-for="DepartmentId"></label>
-                <select asp-for="DepartmentId" asp-items="Model.DepartmentList" class="form-control">
-                    <option value="">-- 请选择所属部门 --</option>
-                </select>
-                <span asp-validation-for="DepartmentId" class="text-danger"></span>
-            </div>
+            <form method="post">
 
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
+                <div class="row">
 
-            <button type="submit" class="btn btn-primary">注册</button>
-        </form>
+                    <div class="col-md-6 mb-3">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-youxiang"></use>
+                        </svg>
+                        <label asp-for="Email" class="form-label fw-semibold"></label>
+                        <input asp-for="Email" class="form-control" placeholder="请输入邮箱" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-yonghuming"></use>
+                        </svg>
+                        <label asp-for="UserName" class="form-label fw-semibold"></label>
+                        <input asp-for="UserName" class="form-control" placeholder="请输入用户名（用于登录系统）" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-yonghuming"></use>
+                        </svg>
+                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <input asp-for="Name" class="form-control" placeholder="请输入姓名" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-shouji"></use>
+                        </svg>
+                        <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="请输入手机号" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-jigoubianzhi"></use>
+                        </svg>
+                        <label asp-for="DepartmentId" class="form-label fw-semibold"></label>
+                        <select asp-for="DepartmentId"
+                                asp-items="Model.DepartmentList"
+                                class="form-select">
+                            <option value="">请选择所属部门</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-mima"></use>
+                        </svg>
+                        <label asp-for="Password" class="form-label fw-semibold"></label>
+                        <input asp-for="Password" class="form-control" placeholder="请输入密码" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-mima"></use>
+                        </svg>
+                        <label asp-for="ConfirmPassword" class="form-label fw-semibold"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="请再次输入密码" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="text-end mt-3">
+                    <a asp-controller="Admin" asp-action="ListUsers" class="btn btn-light me-2">
+                        取消
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        创建用户
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
     </div>
+
 </div>
