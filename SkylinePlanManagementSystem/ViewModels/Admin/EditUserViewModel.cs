@@ -17,10 +17,12 @@ namespace SkylinePlanManagementSystem.ViewModels.Admin
         [Required]
         [StringLength(30, MinimumLength = 3, ErrorMessage = "用户名长度应在3-30个字符之间")]
         [RegularExpression("^[a-zA-Z0-9_]+$", ErrorMessage = "用户名仅支持字母、数字和下划线")]
+        [Display(Name = "用户名")]
         public string UserName { get; set; }
 
         [Required]
         [EmailAddress]
+        [Display(Name = "电子邮箱")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "请输入姓名")]

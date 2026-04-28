@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkylinePlanManagementSystem.Models
 {
@@ -33,12 +32,12 @@ namespace SkylinePlanManagementSystem.Models
         public byte[] RowVersion { get; set; }
 
         [Display(Name = "部门负责人")]
-        public int? TeacherId { get; set; }
+        public string? AdministratorId { get; set; }
 
         /// <summary>
-        /// 学院主任
+        /// 部门负责人
         /// </summary>
-        public Teacher Administrator { get; set; }
+        public ApplicationUser? Administrator { get; set; }
 
         public ICollection<Course> Courses { get; set; }
     }

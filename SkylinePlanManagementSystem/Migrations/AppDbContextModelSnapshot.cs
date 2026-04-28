@@ -351,6 +351,9 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("DepartmentId"));
 
+                    b.Property<string>("AdministratorId")
+                        .HasColumnType("varchar(255)");
+
                     b.Property<decimal>("Budget")
                         .HasColumnType("decimal(65,30)");
 
@@ -367,12 +370,10 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("TeacherId")
-                        .HasColumnType("int");
-
                     b.HasKey("DepartmentId");
 
-                    b.HasIndex("TeacherId");
+                    b.HasIndex("AdministratorId")
+                        .IsUnique();
 
                     b.ToTable("Departments");
                 });
@@ -580,8 +581,7 @@ namespace SkylinePlanManagementSystem.Migrations
                 {
                     b.HasOne("SkylinePlanManagementSystem.Models.Department", "Department")
                         .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });
@@ -640,9 +640,9 @@ namespace SkylinePlanManagementSystem.Migrations
 
             modelBuilder.Entity("SkylinePlanManagementSystem.Models.Department", b =>
                 {
-                    b.HasOne("SkylinePlanManagementSystem.Models.Teacher", "Administrator")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
+                    b.HasOne("SkylinePlanManagementSystem.Models.ApplicationUser", "Administrator")
+                        .WithOne()
+                        .HasForeignKey("SkylinePlanManagementSystem.Models.Department", "AdministratorId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Administrator");

@@ -31,11 +31,10 @@ namespace SkylinePlanManagementSystem.ViewModels.Department
         public byte[]? RowVersion { get; set; }
 
         [Display(Name = "负责人")]
-        public SelectList? TeacherList { get; set; }
+        public SelectList? AdministratorList { get; set; }
 
-        [Required(ErrorMessage = "请选择负责人")]
-        public int TeacherId { get; set; }
+        public string? AdministratorId { get; set; }
 
-        public Teacher? Administrator { get; set; }
+        public ApplicationUser? Administrator { get; set; }
     }
 }

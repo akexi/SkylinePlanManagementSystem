@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using SkylinePlanManagementSystem.Application.Departments;
 using SkylinePlanManagementSystem.Application.Departments.Dtos;
@@ -15,20 +15,20 @@ namespace SkylinePlanManagementSystem.Controllers
     public class DepartmentsController : Controller
     {
         private readonly IRepository<Department, int> _departmentRepository;
-        private readonly IRepository<Teacher, int> _teacherRepository;
         private readonly IDepartmentsService _departmentsService;
         private readonly AppDbContext _dbcontext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public DepartmentsController(
-            IRepository<Department, int> departmentRepository, 
-            IRepository<Teacher, int> teacherRepository, 
-            IDepartmentsService departmentsService, 
-            AppDbContext dbcontext)
+            IRepository<Department, int> departmentRepository,
+            IDepartmentsService departmentsService,
+            AppDbContext dbcontext,
+            UserManager<ApplicationUser> userManager)
         {
             _departmentRepository = departmentRepository;
-            _teacherRepository = teacherRepository;
             _departmentsService = departmentsService;
             _dbcontext = dbcontext;
+            _userManager = userManager;
         }
 
         [Authorize(Roles = "Admin")]
@@ -40,20 +40,17 @@ namespace SkylinePlanManagementSystem.Controllers
         }
 
         /// <summary>
-        /// 教师的下拉列表
+        /// 用户的下拉列表
         /// </summary>
-        /// <param name="selectedTeacher"></param>
-        private SelectList TeacherDropDownList(object selectedTeacher = null)
+        /// <param name="selectedAdministratorId"></param>
+        private SelectList AdministratorDropDownList(object selectedAdministratorId = null)
         {
-            var models = _teacherRepository
-                .GetAll()
+            var models = _userManager.Users
                 .OrderBy(a => a.Name)
                 .AsNoTracking()
                 .ToList();
 
-            var dtos = new SelectList(models, "Id", "Name", selectedTeacher);
-
-            return dtos;
+            return new SelectList(models, "Id", "Name", selectedAdministratorId);
         }
 
         #region 添加
@@ -63,7 +60,7 @@ namespace SkylinePlanManagementSystem.Controllers
         {
             var dto = new DepartmentCreateViewModel
             {
-                TeacherList = TeacherDropDownList()
+                AdministratorList = AdministratorDropDownList()
             };
 
             return View(dto);
@@ -78,7 +75,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 {
                     StartDate = input.StartDate,
                     DepartmentId = input.DepartmentId,
-                    TeacherId = input.TeacherId,
+                    AdministratorId = input.AdministratorId,
                     Budget = input.Budget,
                     Name = input.Name
                 };
@@ -88,7 +85,8 @@ namespace SkylinePlanManagementSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View();
+            input.AdministratorList = AdministratorDropDownList(input.AdministratorId);
+            return View(input);
         }
 
         #endregion 添加
@@ -103,7 +101,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 .FirstOrDefaultAsync();
 
             // 判断学院信息是否存在
-            if(model == null)
+            if (model == null)
             {
                 ViewBag.ErrorMessage = $"学院ID为{id}的信息不存在，请重试。";
                 return View("NotFound");
@@ -118,7 +116,7 @@ namespace SkylinePlanManagementSystem.Controllers
         {
             var model = await _departmentRepository.FirstOrDefaultAsync(a => a.DepartmentId == id);
 
-            if(model == null)
+            if (model == null)
             {
                 ViewBag.ErrorMessage = $"学院ID为{id}的信息不存在，请重试。";
                 return View("NotFound");
@@ -139,23 +137,22 @@ namespace SkylinePlanManagementSystem.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.DepartmentId == id);
 
-            if(model == null)
+            if (model == null)
             {
                 ViewBag.ErrorMessage = $"学院ID为{id}的信息不存在，请重试。";
                 return View("NotFound");
             }
 
-            var teacherList = TeacherDropDownList();
             var dto = new DepartmentCreateViewModel
             {
                 DepartmentId = model.DepartmentId,
                 Name = model.Name,
                 Budget = model.Budget,
                 StartDate = model.StartDate,
-                TeacherId = (int)model.TeacherId,
+                AdministratorId = model.AdministratorId,
                 Administrator = model.Administrator,
                 RowVersion = model.RowVersion,
-                TeacherList = teacherList
+                AdministratorList = AdministratorDropDownList(model.AdministratorId)
             };
 
             return View(dto);
@@ -172,7 +169,7 @@ namespace SkylinePlanManagementSystem.Controllers
                     .Include(a => a.Administrator)
                     .FirstOrDefaultAsync(a => a.DepartmentId == input.DepartmentId);
 
-                if(model == null)
+                if (model == null)
                 {
                     ViewBag.ErrorMessage = $"学院ID为{input.DepartmentId}的信息不存在，请重试。";
                     return View("NotFound");
@@ -182,9 +179,8 @@ namespace SkylinePlanManagementSystem.Controllers
                 model.Name = input.Name;
                 model.Budget = input.Budget;
                 model.StartDate = input.StartDate;
-                model.TeacherId = input.TeacherId;
+                model.AdministratorId = input.AdministratorId;
 
-                // 获取
                 _dbcontext.Entry(model).Property("RowVersion").OriginalValue = input.RowVersion;
 
                 try
@@ -192,7 +188,7 @@ namespace SkylinePlanManagementSystem.Controllers
                     await _departmentRepository.UpdateAsync(model);
                     return RedirectToAction(nameof(Index));
                 }
-                catch(DbUpdateConcurrencyException concurrencyEx)
+                catch (DbUpdateConcurrencyException concurrencyEx)
                 {
                     var exceptionEntry = concurrencyEx.Entries.Single();
                     var clientValues = (Department)exceptionEntry.Entity;
@@ -224,24 +220,26 @@ namespace SkylinePlanManagementSystem.Controllers
                             // 将异常实体中的错误信息精确到具体字段并传递到前端
                             var databaseValues = (Department)databaseEntry.ToObject();
 
-                            if(databaseValues.Name != innerClientValues.Name)
+                            if (databaseValues.Name != innerClientValues.Name)
                                 ModelState.AddModelError("Name", $"当前值: {databaseValues.Name}");
-                            if(databaseValues.Budget != innerClientValues.Budget)
+                            if (databaseValues.Budget != innerClientValues.Budget)
                                 ModelState.AddModelError("Budget", $"当前值: {databaseValues.Budget}");
-                            if(databaseValues.StartDate != innerClientValues.StartDate)
+                            if (databaseValues.StartDate != innerClientValues.StartDate)
                                 ModelState.AddModelError("StartDate", $"当前值: {databaseValues.StartDate}");
-                            if(databaseValues.TeacherId != innerClientValues.TeacherId)
+                            if (databaseValues.AdministratorId != innerClientValues.AdministratorId)
                             {
-                                var teacherEntity = await _teacherRepository
-                                    .FirstOrDefaultAsync(a => a.Id == databaseValues.TeacherId);
-                                ModelState.AddModelError("TeacherId", $"当前值: {teacherEntity?.Name}");
+                                var adminUser = databaseValues.AdministratorId == null
+                                    ? null
+                                    : await _userManager.FindByIdAsync(databaseValues.AdministratorId);
+
+                                ModelState.AddModelError("AdministratorId", $"当前值：{adminUser?.Name ?? "未设置"}");
                             }
 
                             ModelState.AddModelError("", "数据已被修改！编辑操作已取消。最新值已显示在各个字段中，请再次尝试提交。");
                             input.RowVersion = databaseValues.RowVersion;
 
-                            // 初始化教师的下拉列表
-                            input.TeacherList = TeacherDropDownList();
+                            // 初始化用户的下拉列表
+                            input.AdministratorList = AdministratorDropDownList(input.AdministratorId);
                             ModelState.Remove("RowVersion");
                         }
                     }
@@ -250,7 +248,8 @@ namespace SkylinePlanManagementSystem.Controllers
                 return View(input);
             }
 
-            return View();
+            input.AdministratorList = AdministratorDropDownList(input.AdministratorId);
+            return View(input);
         }
 
 

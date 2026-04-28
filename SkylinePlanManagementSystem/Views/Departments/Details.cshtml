@@ -23,7 +23,7 @@
                     @Html.DisplayNameFor(a => a.Budget): @Html.DisplayFor(a => a.Budget)
                 </h5>
                 <h5 class="card-title">
-                    @Html.DisplayNameFor(a => a.TeacherId): @Model.Administrator.Name
+                    @Html.DisplayNameFor(a => a.AdministratorId): @(Model.Administrator?.Name ?? "未设置")
                 </h5>
             </div>
 

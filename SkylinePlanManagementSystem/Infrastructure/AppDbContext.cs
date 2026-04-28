@@ -52,6 +52,13 @@ namespace SkylinePlanManagementSystem.Infrastructure
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // 告诉 EF：Department 是依赖方（有外键）
+            modelBuilder.Entity<Department>()
+                .HasOne(d => d.Administrator)
+                .WithOne()
+                .HasForeignKey<Department>(d => d.AdministratorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
 
 
