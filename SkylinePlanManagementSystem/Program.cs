@@ -29,11 +29,11 @@ namespace SkylinePlanManagementSystem
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Çå³ıÄ¬ÈÏµÄÈÕÖ¾Ìá¹©³ÌĞò²¢Ê¹ÓÃ NLog
-            //builder.Logging.ClearProviders();   // Çå³ıÄ¬ÈÏµÄÈÕÖ¾Ìá¹©³ÌĞò£¨¿ÉÑ¡£©
+            // æ¸…é™¤é»˜è®¤çš„æ—¥å¿—æä¾›ç¨‹åºå¹¶ä½¿ç”¨ NLog
+            //builder.Logging.ClearProviders();   // æ¸…é™¤é»˜è®¤çš„æ—¥å¿—æä¾›ç¨‹åºï¼ˆå¯é€‰ï¼‰
             builder.Host.UseNLog();
 
-            // Ìí¼Ó MVC ·şÎñ²¢ÆôÓÃÈ«¾ÖÊÚÈ¨¹ıÂËÆ÷£¬ÒªÇóËùÓĞ¿ØÖÆÆ÷ºÍ²Ù×÷·½·¨¶¼ĞèÒª¾­¹ıÉí·İÑéÖ¤
+            // æ·»åŠ  MVC æœåŠ¡å¹¶å¯ç”¨å…¨å±€æˆæƒè¿‡æ»¤å™¨ï¼Œè¦æ±‚æ‰€æœ‰æ§åˆ¶å™¨å’Œæ“ä½œæ–¹æ³•éƒ½éœ€è¦ç»è¿‡èº«ä»½éªŒè¯
             var mvcBuilder = builder.Services.AddControllersWithViews(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -43,23 +43,23 @@ namespace SkylinePlanManagementSystem
                 config.Filters.Add(new AuthorizeFilter(policy));
             })
             .AddXmlSerializerFormatters();
-            // Ö»ÔÚ¿ª·¢»·¾³¿ªÆô Razor ÔËĞĞÊ±±àÒë
+            // åªåœ¨å¼€å‘ç¯å¢ƒå¼€å¯ Razor è¿è¡Œæ—¶ç¼–è¯‘
             if (builder.Environment.IsDevelopment())
             {
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
 
-            // ×Ô¶¯×¢²á·şÎñ£¨ÒÀÀµ×¢Èë£©
+            // è‡ªåŠ¨æ³¨å†ŒæœåŠ¡ï¼ˆä¾èµ–æ³¨å…¥ï¼‰
             builder.Services.RegisterAssemblyPublicNonGenericClasses()
-                .Where(c => c.Name.EndsWith("Service")) // Ö»×¢²áÒÔ "Service" ½áÎ²µÄÀà
-                .AsPublicImplementedInterfaces(ServiceLifetime.Scoped);   // ½«ËüÃÇ×¢²áÎªËüÃÇÊµÏÖµÄ½Ó¿Ú
+                .Where(c => c.Name.EndsWith("Service")) // åªæ³¨å†Œä»¥ "Service" ç»“å°¾çš„ç±»
+                .AsPublicImplementedInterfaces(ServiceLifetime.Scoped);   // å°†å®ƒä»¬æ³¨å†Œä¸ºå®ƒä»¬å®ç°çš„æ¥å£
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
-            builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // ×¢²á·ºĞÍ²Ö´¢·şÎñ
+            builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // æ³¨å†Œæ³›å‹ä»“å‚¨æœåŠ¡
 
-            // ×¢²á DbContext(MySQL 8)
+            // æ³¨å†Œ DbContext(MySQL 8)
             builder.Services.AddDbContextPool<AppDbContext>(options =>
                 options
-                //.UseLazyLoadingProxies()    // ÆôÓÃÑÓ³Ù¼ÓÔØ´úÀí
+                //.UseLazyLoadingProxies()    // å¯ç”¨å»¶è¿ŸåŠ è½½ä»£ç†
                 .UseMySql(
                     builder.Configuration.GetConnectionString("SkylinePlanDBConnection"),
                     ServerVersion.AutoDetect(
@@ -68,79 +68,79 @@ namespace SkylinePlanManagementSystem
                 ) 
             );
 
-            // ×¢²á Identity ·şÎñ
+            // æ³¨å†Œ Identity æœåŠ¡
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddErrorDescriber<CutsomIdentityErrorDescriber>()  // Ê¹ÓÃ×Ô¶¨ÒåµÄ´íÎóÃèÊöÆ÷
+                .AddErrorDescriber<CutsomIdentityErrorDescriber>()  // ä½¿ç”¨è‡ªå®šä¹‰çš„é”™è¯¯æè¿°å™¨
                 .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders()                         // Ìí¼ÓÄ¬ÈÏµÄÁîÅÆÌá¹©³ÌĞò£¨ÓÃÓÚÉú³ÉÃÜÂëÖØÖÃÁîÅÆ¡¢µç×ÓÓÊ¼şÈ·ÈÏÁîÅÆµÈ£©
-                .AddTokenProvider<CustomEmailConfirmationTokenProvider<ApplicationUser>>("CustomEmailConfirmation"); // Ìí¼Ó×Ô¶¨ÒåµÄÓÊÏäÈ·ÈÏÁîÅÆÌá¹©³ÌĞò£¬²¢Ö¸¶¨Ãû³Æ
+                .AddDefaultTokenProviders()                         // æ·»åŠ é»˜è®¤çš„ä»¤ç‰Œæä¾›ç¨‹åºï¼ˆç”¨äºç”Ÿæˆå¯†ç é‡ç½®ä»¤ç‰Œã€ç”µå­é‚®ä»¶ç¡®è®¤ä»¤ç‰Œç­‰ï¼‰
+                .AddTokenProvider<CustomEmailConfirmationTokenProvider<ApplicationUser>>("CustomEmailConfirmation"); // æ·»åŠ è‡ªå®šä¹‰çš„é‚®ç®±ç¡®è®¤ä»¤ç‰Œæä¾›ç¨‹åºï¼Œå¹¶æŒ‡å®šåç§°
 
-            // ÅäÖÃ Identity Ñ¡Ïî
+            // é…ç½® Identity é€‰é¡¹
             builder.Services.Configure<IdentityOptions>(options =>
             {
-                // ÃÜÂëÏà¹ØÉèÖÃ
+                // å¯†ç ç›¸å…³è®¾ç½®
                 options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 3;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
 
-                // Í¨¹ı×Ô¶¨ÒåµÄCustomEmailConfirmationÃû³ÆÀ´¸²¸Ç¾ÉÓĞtokenÃû³Æ£¬
-                // ÊÇËüÓëAddTokenProvider<CustomEmailConfirmationTokenProvider<ApplicationUser>>£¨"CustomEmailConfirmation")¹ØÁªÔÚÒ»Æğ
-                options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation"; // Ê¹ÓÃ×Ô¶¨ÒåµÄÓÊÏäÈ·ÈÏÁîÅÆÌá¹©³ÌĞò
+                // é€šè¿‡è‡ªå®šä¹‰çš„CustomEmailConfirmationåç§°æ¥è¦†ç›–æ—§æœ‰tokenåç§°ï¼Œ
+                // æ˜¯å®ƒä¸AddTokenProvider<CustomEmailConfirmationTokenProvider<ApplicationUser>>ï¼ˆ"CustomEmailConfirmation")å…³è”åœ¨ä¸€èµ·
+                options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation"; // ä½¿ç”¨è‡ªå®šä¹‰çš„é‚®ç®±ç¡®è®¤ä»¤ç‰Œæä¾›ç¨‹åº
 
-                // ÆäËüÉèÖÃ£¨ÈçËø¶¨¡¢ÓÃ»§µÈ£©¿ÉÒÔÔÚÕâÀïÅäÖÃ
-                options.SignIn.RequireConfirmedEmail = true; // ÊÇ·ñÒªÇóÈ·ÈÏÓÊÏä²ÅÄÜµÇÂ¼
-                options.Lockout.MaxFailedAccessAttempts = 5; // ×î´óÊ§°ÜµÇÂ¼³¢ÊÔ´ÎÊı
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Ëø¶¨Ê±¼ä
+                // å…¶å®ƒè®¾ç½®ï¼ˆå¦‚é”å®šã€ç”¨æˆ·ç­‰ï¼‰å¯ä»¥åœ¨è¿™é‡Œé…ç½®
+                options.SignIn.RequireConfirmedEmail = true; // æ˜¯å¦è¦æ±‚ç¡®è®¤é‚®ç®±æ‰èƒ½ç™»å½•
+                options.Lockout.MaxFailedAccessAttempts = 5; // æœ€å¤§å¤±è´¥ç™»å½•å°è¯•æ¬¡æ•°
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // é”å®šæ—¶é—´
             });
 
-            // ĞŞ¸ÄËùÓĞÁîÅÆµÄÄ¬ÈÏÓĞĞ§ÆÚÎª5Ğ¡Ê±£¨°üÀ¨ÃÜÂëÖØÖÃÁîÅÆ¡¢ÓÊÏäÈ·ÈÏÁîÅÆµÈ£©
+            // ä¿®æ”¹æ‰€æœ‰ä»¤ç‰Œçš„é»˜è®¤æœ‰æ•ˆæœŸä¸º5å°æ—¶ï¼ˆåŒ…æ‹¬å¯†ç é‡ç½®ä»¤ç‰Œã€é‚®ç®±ç¡®è®¤ä»¤ç‰Œç­‰ï¼‰
             builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
             {
                 o.TokenLifespan = TimeSpan.FromHours(5);
             });
 
-            // ½ö¸ü¸ÄÓÊÏäÑéÖ¤ÁîÅÆµÄÓĞĞ§ÆÚÎª3Ìì
+            // ä»…æ›´æ”¹é‚®ç®±éªŒè¯ä»¤ç‰Œçš„æœ‰æ•ˆæœŸä¸º3å¤©
             builder.Services.Configure<CustomEmailConfirmationTokenProviderOptions>(o =>
             {
                 o.TokenLifespan = TimeSpan.FromDays(3);
             });
 
-            // ÅäÖÃ Identity µÇÂ¼Ïà¹ØµÄ Cookie ĞĞÎª
+            // é…ç½® Identity ç™»å½•ç›¸å…³çš„ Cookie è¡Œä¸º
             builder.Services.ConfigureApplicationCookie(options =>
             {
-                // ÒÑµÇÂ¼µ«ÎŞÈ¨ÏŞÊ±Ìø×ªµÄÒ³Ãæ
+                // å·²ç™»å½•ä½†æ— æƒé™æ—¶è·³è½¬çš„é¡µé¢
                 options.AccessDeniedPath = "/Admin/AccessDenied";
             });
 
-            // ×¢²á HttpContextAccessor ·şÎñ ÔÊĞíÔÚ×Ô¶¨ÒåÊÚÈ¨´¦Àí³ÌĞò
+            // æ³¨å†Œ HttpContextAccessor æœåŠ¡ å…è®¸åœ¨è‡ªå®šä¹‰æˆæƒå¤„ç†ç¨‹åº
             builder.Services.AddHttpContextAccessor();
 
-            // ÅäÖÃÏµÍ³ÊÚÈ¨²ßÂÔ£¨»ùÓÚ½ÇÉ«ºÍÉùÃ÷£©
+            // é…ç½®ç³»ç»Ÿæˆæƒç­–ç•¥ï¼ˆåŸºäºè§’è‰²å’Œå£°æ˜ï¼‰
             builder.Services.AddAuthorization(options =>
             {
-                // »ùÓÚ½ÇÉ«µÄ²ßÂÔ£ºÖ»ÒªÊôÓÚÖ¸¶¨½ÇÉ«Ö®Ò»¼´¿É·ÃÎÊ
+                // åŸºäºè§’è‰²çš„ç­–ç•¥ï¼šåªè¦å±äºæŒ‡å®šè§’è‰²ä¹‹ä¸€å³å¯è®¿é—®
                 options.AddPolicy("SuperAdminPolicy", policy =>
                     policy.RequireRole("Admin", "User", "SuperManager"));
 
-                // Ìí¼ÓÃûÎª "EditRolePolicy" µÄÊÚÈ¨²ßÂÔ
+                // æ·»åŠ åä¸º "EditRolePolicy" çš„æˆæƒç­–ç•¥
                 options.AddPolicy("EditRolePolicy", policy =>
                 {
-                    // Ïò¸Ã²ßÂÔÖĞÌí¼ÓÒ»¸ö×Ô¶¨ÒåÊÚÈ¨ĞèÇó£¨Requirement£©
-                    // Requirement ½öÓÃÓÚ¶¨Òå¡°ĞèÒªÂú×ãµÄ¹æÔòÀàĞÍ¡±
-                    // ¾ßÌåµÄÅĞ¶ÏÂß¼­ÔÚ¶ÔÓ¦µÄ AuthorizationHandler ÖĞÊµÏÖ
+                    // å‘è¯¥ç­–ç•¥ä¸­æ·»åŠ ä¸€ä¸ªè‡ªå®šä¹‰æˆæƒéœ€æ±‚ï¼ˆRequirementï¼‰
+                    // Requirement ä»…ç”¨äºå®šä¹‰â€œéœ€è¦æ»¡è¶³çš„è§„åˆ™ç±»å‹â€
+                    // å…·ä½“çš„åˆ¤æ–­é€»è¾‘åœ¨å¯¹åº”çš„ AuthorizationHandler ä¸­å®ç°
                     policy.AddRequirements(
                         new ManageAdminRolesAndClaimsRequirement());
                 });
 
             });
 
-            // ×¢²á×Ô¶¨ÒåÊÚÈ¨´¦Àí³ÌĞò£¨Handler£©
+            // æ³¨å†Œè‡ªå®šä¹‰æˆæƒå¤„ç†ç¨‹åºï¼ˆHandlerï¼‰
             builder.Services.AddSingleton<IAuthorizationHandler,
                 CanEditOnlyOtherAdminRolesAndClaimsHandler>();
 
-            // ×¢²áµÇÂ¼Ìá¹©³ÌĞò£¨Microsoft ºÍ GitHub£©
+            // æ³¨å†Œç™»å½•æä¾›ç¨‹åºï¼ˆMicrosoft å’Œ GitHubï¼‰
             builder.Services
                 .AddAuthentication()
                 .AddMicrosoftAccount(microsoftOptions =>
@@ -157,17 +157,17 @@ namespace SkylinePlanManagementSystem
                     options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
                 });
 
-            // ×¢²á Swagger Éú³ÉÆ÷£¬¶¨ÒåÒ»¸ö»ò¶à¸ö Swagger ÎÄ¼ş
+            // æ³¨å†Œ Swagger ç”Ÿæˆå™¨ï¼Œå®šä¹‰ä¸€ä¸ªæˆ–å¤šä¸ª Swagger æ–‡ä»¶
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "SkylinePlanManagementSystem API",
-                    Description = "Îª SkylinePlanManagementSystem ÏµÍ³£¬Ìí¼ÓÒ»¸ö¼òµ¥µÄ ASP.NET Core Web API Ê¾Àı£¬ÓÉ ÀîÌìÏ² ³öÆ·¡£",
+                    Description = "ä¸º SkylinePlanManagementSystem ç³»ç»Ÿï¼Œæ·»åŠ ä¸€ä¸ªç®€å•çš„ ASP.NET Core Web API ç¤ºä¾‹ï¼Œç”± æå¤©å–œ å‡ºå“ã€‚",
                     Version = "v1",
                     Contact = new OpenApiContact
                     {
-                        Name = "ÀîÌìÏ²",
+                        Name = "æå¤©å–œ",
                         Email = "xsbnltx@163.com",
                         Url = new Uri("http://www.tanwanland.fun/"),
                     },
@@ -180,7 +180,7 @@ namespace SkylinePlanManagementSystem
 
                 if (builder.Environment.IsDevelopment())
                 {
-                    // ÉèÖÃSwagger JSONºÍUIµÄ×¢ÊÍÂ·¾¶
+                    // è®¾ç½®Swagger JSONå’ŒUIçš„æ³¨é‡Šè·¯å¾„
                     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                     c.IncludeXmlComments(xmlPath);
@@ -189,44 +189,44 @@ namespace SkylinePlanManagementSystem
 
             var app = builder.Build();
 
-            // ÅĞ¶Ï»·¾³Éú³É¿ª·¢Òì³£Ò³Ãæ»òÓÑºÃÒì³£Ò³Ãæ
+            // åˆ¤æ–­ç¯å¢ƒç”Ÿæˆå¼€å‘å¼‚å¸¸é¡µé¢æˆ–å‹å¥½å¼‚å¸¸é¡µé¢
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                // Ê¹ÓÃ×Ô¶¨ÒåµÄÒì³£´¦ÀíÒ³Ãæ
+                // ä½¿ç”¨è‡ªå®šä¹‰çš„å¼‚å¸¸å¤„ç†é¡µé¢
                 app.UseExceptionHandler("/Error");
 
-                // Ê¹ÓÃÄ¬ÈÏµÄ×´Ì¬ÂëÒ³Ãæ
+                // ä½¿ç”¨é»˜è®¤çš„çŠ¶æ€ç é¡µé¢
                 //app.UseStatusCodePages();
 
-                // Ê¹ÓÃ×Ô¶¨ÒåµÄ×´Ì¬ÂëÒ³Ãæ
+                // ä½¿ç”¨è‡ªå®šä¹‰çš„çŠ¶æ€ç é¡µé¢
                 //app.UseStatusCodePagesWithRedirects("/Error/{0}");
 
-                // Ê¹ÓÃ×Ô¶¨ÒåµÄ×´Ì¬ÂëÒ³Ãæ£¬²¢±£ÁôÔ­Ê¼ÇëÇóµÄÂ·¾¶ºÍ²éÑ¯×Ö·û´®
+                // ä½¿ç”¨è‡ªå®šä¹‰çš„çŠ¶æ€ç é¡µé¢ï¼Œå¹¶ä¿ç•™åŸå§‹è¯·æ±‚çš„è·¯å¾„å’ŒæŸ¥è¯¢å­—ç¬¦ä¸²
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
 
             //app.MapGet("/", () => "Hello World!");
 
-            app.UseDataInitializer();   // ÆôÓÃÊı¾İ³õÊ¼»¯ÖĞ¼ä¼ş£¬È·±£ÔÚÓ¦ÓÃÆô¶¯Ê±Êı¾İ¿âÖĞÓĞ³õÊ¼Êı¾İ
+            app.UseDataInitializer();   // å¯ç”¨æ•°æ®åˆå§‹åŒ–ä¸­é—´ä»¶ï¼Œç¡®ä¿åœ¨åº”ç”¨å¯åŠ¨æ—¶æ•°æ®åº“ä¸­æœ‰åˆå§‹æ•°æ®
 
             app.UseStaticFiles();
 
-            app.UseSwagger();       // ÆôÓÃ Swagger ÖĞ¼ä¼ş
-            app.UseSwaggerUI(c =>   // ÆôÓÃ Swagger UI ÖĞ¼ä¼ş£¬ËüĞèÒªÓë Swagger ÅäÖÃÔÚÒ»Æğ
+            app.UseSwagger();       // å¯ç”¨ Swagger ä¸­é—´ä»¶
+            app.UseSwaggerUI(c =>   // å¯ç”¨ Swagger UI ä¸­é—´ä»¶ï¼Œå®ƒéœ€è¦ä¸ Swagger é…ç½®åœ¨ä¸€èµ·
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SkylinePlanManagementSystem API V1");
             });
 
-            app.UseAuthentication();// ÆôÓÃÉí·İÑéÖ¤ÖĞ¼ä¼ş
-            app.UseAuthorization(); // ÆôÓÃÊÚÈ¨ÖĞ¼ä¼ş
+            app.UseAuthentication();// å¯ç”¨èº«ä»½éªŒè¯ä¸­é—´ä»¶
+            app.UseAuthorization(); // å¯ç”¨æˆæƒä¸­é—´ä»¶
 
             //app.UseRouting();       
-            app.MapControllers();   // ÆôÓÃÊôĞÔÂ·ÓÉ   
-            app.MapControllerRoute( // ÆôÓÃÄ¬ÈÏÂ·ÓÉ
+            app.MapControllers();   // å¯ç”¨å±æ€§è·¯ç”±   
+            app.MapControllerRoute( // å¯ç”¨é»˜è®¤è·¯ç”±
                 name: "default",
                 pattern: "{controller=Home}/{action=NewIndex}/{id?}");
 

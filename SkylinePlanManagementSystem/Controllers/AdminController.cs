@@ -94,6 +94,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 user.Name = model.Name;
                 user.PhoneNumber = model.PhoneNumber;
                 user.DepartmentId = model.DepartmentId;
+                user.IsActive = model.IsActive;
 
                 var result = await _userManager.UpdateAsync(user);
 
@@ -137,6 +138,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 Name = user.Name,
                 PhoneNumber = user.PhoneNumber,
                 DepartmentId = user.DepartmentId,
+                IsActive = user.IsActive,
                 DepartmentList = DepartmentsDropDownList(user.DepartmentId),
                 Claims = userClaims,    // 不再进行过滤条件查询
                 Roles = userRoles
@@ -151,10 +153,63 @@ namespace SkylinePlanManagementSystem.Controllers
         [HttpGet]
         public IActionResult ListUsers()
         {
-            var users = _userManager.Users.ToList();
+            var users = _userManager.Users
+                .Include(u => u.Department)
+                .ToList();
             return View(users);
 
             #endregion
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"无法找到ID为{userId}的用户";
+                return View("NotFound");
+            }
+
+            var model = new AdminResetPasswordViewModel
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                Email = user.Email
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(AdminResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"无法找到ID为{model.UserId}的用户";
+                return View("NotFound");
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View(model);
+            }
+
+            ViewBag.Message = "密码已重置成功";
+            return View(model);
         }
 
         [HttpGet]

@@ -30,7 +30,7 @@ namespace SkylinePlanManagementSystem.Controllers
             _logger = logger;
         }
 
-        private SelectList DepartmentsDropDownList(object selectedDepartment = null)
+        private SelectList DepartmentsDropDownList(object? selectedDepartment = null)
         {
             var departments = _departmentRepository.GetAll().OrderBy(a => a.Name).ToList();
             return new SelectList(departments, "DepartmentId", "Name", selectedDepartment);
@@ -186,8 +186,8 @@ namespace SkylinePlanManagementSystem.Controllers
                 // 通过邮箱地址查询用户地址
                 var user = await _userManager.FindByEmailAsync(model.Email);
 
-                // 如果找到了用户并且确认了电子邮箱
-                if(user != null && await _userManager.IsEmailConfirmedAsync(user))
+                // 如果找到了用户
+                if(user != null)
                 {
                     // 生成重置密码令牌
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -279,17 +279,17 @@ namespace SkylinePlanManagementSystem.Controllers
             }
         }
 
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
 
-            LoginViewModel loginViewModel = new LoginViewModel()
+            var loginViewModel = new LoginViewModel()
             {
                 ReturnUrl = returnUrl,
                 ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
             };
 
-            if(remoteError != null)
+            if (remoteError != null)
             {
                 ModelState.AddModelError(string.Empty, $"第三方登录提供程序错误: {remoteError}");
                 return View("Login", loginViewModel);
@@ -300,72 +300,73 @@ namespace SkylinePlanManagementSystem.Controllers
             if (info == null)
             {
                 ModelState.AddModelError(string.Empty, "加载第三方登录信息失败");
-                return View("Login", loginViewModel);       
+                return View("Login", loginViewModel);
             }
 
             // 获取邮箱地址
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            ApplicationUser user = null;
+            ApplicationUser? user = null;
 
-            if(email != null)
+            if (email != null)
             {
                 // 通过邮箱地址查询用户是否已存在
                 user = await _userManager.FindByEmailAsync(email);
 
-                // 如果邮箱未确认，返回登录视图，并显示错误信息
-                if(user != null && !user.EmailConfirmed)
+                if (user != null && !user.IsActive)
                 {
-                    ModelState.AddModelError(string.Empty, "您的电子邮箱还未进行验证");
+                    ModelState.AddModelError(string.Empty, "您的账户已被禁用，请联系管理员。");
                     return View("Login", loginViewModel);
                 }
             }
 
-            // 如果之前已经登录过了，则会在AspNetUserLogins表中有记录，这时无需创建新记录，直接登录即可
-            var sigInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
-            if (sigInResult.Succeeded)
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            if (signInResult.Succeeded)
             {
                 return LocalRedirect(returnUrl);
             }
-            // 如果AspNetUserLogins表中没有记录，则代表用户没有一个本地账户，此时需要创建一个记录
-            else
+
+            if (email != null)
             {
-                if (email != null)
+                if (user == null)
                 {
-                    if (user == null)
+                    user = new ApplicationUser
                     {
-                        user = new ApplicationUser
+                        UserName = email,
+                        Email = email,
+                        Name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? "外部用户",
+                        DepartmentId = null,
+                        EmailConfirmed = true,
+                        IsActive = true
+                    };
+
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (!createResult.Succeeded)
+                    {
+                        foreach (var error in createResult.Errors)
                         {
-                            UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
-                            Email = info.Principal.FindFirstValue(ClaimTypes.Email),
-                            Name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? "外部用户",
-                            DepartmentId = null
-                        };
-                        // 如果不存用户，则创建一个新用户，并将其存储在AspNetUsers数据库表中
-                        await _userManager.CreateAsync(user);
-
-                        // 生成电子邮件确认令牌
-                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        // 生成电子邮件确认链接
-                        var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
-                        _logger.Log(LogLevel.Warning, confirmationLink);
-                        ViewBag.ErrorTitle = "注册成功";
-                        ViewBag.ErrorMessage = "在您登入系统前，我们已经给您发了一份邮件，需要您先进行邮件验证，单击确认链接即可完成";
-                        return View("Error");
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        return View("Login", loginViewModel);
                     }
-
-                    // 在AspNetUserLogins表中创建一条记录，然后将挡当前用户登录到系统中
-                    await _userManager.AddLoginAsync(user, info);
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-
-                    return LocalRedirect(returnUrl);
                 }
 
-                // 如果获取不到电子邮件地址，则需要将请求重定向到错误视图中
-                ViewBag.ErrorTitle = $"无法从提供商 {info.LoginProvider} 获取用户的邮箱地址";
-                ViewBag.ErrorMessage = "请联系管理员，获取更多帮助。";
+                var addLoginResult = await _userManager.AddLoginAsync(user, info);
+                if (!addLoginResult.Succeeded)
+                {
+                    foreach (var error in addLoginResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View("Login", loginViewModel);
+                }
 
-                return View("Error");
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return LocalRedirect(returnUrl);
             }
+
+            ViewBag.ErrorTitle = $"无法从提供商 {info.LoginProvider} 获取用户的邮箱地址";
+            ViewBag.ErrorMessage = "请联系管理员，获取更多帮助。";
+            return View("Error");
         }
 
         [HttpPost]
@@ -398,9 +399,9 @@ namespace SkylinePlanManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByNameAsync(model.UserName);
-                if(user != null && !user.EmailConfirmed && (await _userManager.CheckPasswordAsync(user, model.Password)))
+                if (user != null && !user.IsActive)
                 {
-                    ModelState.AddModelError(string.Empty, "您的电子邮箱还未进行验证。");
+                    ModelState.AddModelError(string.Empty, "您的账户已被禁用，请联系管理员。" );
                     return View(model);
                 }
 
@@ -458,7 +459,9 @@ namespace SkylinePlanManagementSystem.Controllers
                     Email = model.Email,
                     Name = model.Name,
                     PhoneNumber = model.PhoneNumber,
-                    DepartmentId = model.DepartmentId
+                    DepartmentId = model.DepartmentId,
+                    EmailConfirmed = true,
+                    IsActive = true
                 };
 
                 // 将用户存储在AspNetUsers数据库表中
@@ -468,23 +471,14 @@ namespace SkylinePlanManagementSystem.Controllers
                 // 然后重定向到Home控制器的Index方法
                 if (result.Succeeded)
                 {
-                    // 生成电子邮件确认令牌
-                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    // 生成电子邮件确认链接
-                    var confirmationLink = Url.Action("ConfirmEmail", "Account", new {userId = user.Id, token = token }, Request.Scheme);
-
-                    // 需注入ILogger<AccountController> _logger;服务，记录生成的URL链接到日志中，方便调试使用
-                    _logger.Log(LogLevel.Warning, confirmationLink);
-
                     // 如果用户已登录且角色为Admin，就重定向到ListUsers视图中
                     if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         return RedirectToAction("ListUsers", "Admin");
                     }
 
-                    ViewBag.ErrorTitle = "注册成功";
-                    ViewBag.ErrorMessage = "在您登入系统前，我们已经给您发了一份邮件，需要您先进行邮件验证，单击确认链接即可完成";
-                    return View("Error");
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
                 }
 
                 // 如果创建用户失败，则将错误信息添加到ModelState对象中

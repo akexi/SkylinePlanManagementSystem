@@ -12,8 +12,8 @@ using SkylinePlanManagementSystem.Infrastructure;
 namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260424215329_CreateDB")]
-    partial class CreateDB
+    [Migration("20260428015051_UpdateDB")]
+    partial class UpdateDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,6 +177,9 @@ namespace SkylinePlanManagementSystem.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("LockoutEnabled")

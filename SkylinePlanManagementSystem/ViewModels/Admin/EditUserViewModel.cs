@@ -36,6 +36,9 @@ namespace SkylinePlanManagementSystem.ViewModels.Admin
         [Display(Name = "所属部门")]
         public int? DepartmentId { get; set; }
 
+        [Display(Name = "账户有效")]
+        public bool IsActive { get; set; } = true;
+
         public SelectList? DepartmentList { get; set; }
 
         public IList<Claim> Claims {  get; set; }

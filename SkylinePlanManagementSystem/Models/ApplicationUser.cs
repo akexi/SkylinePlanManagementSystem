@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace SkylinePlanManagementSystem.Models
 {
@@ -9,5 +10,8 @@ namespace SkylinePlanManagementSystem.Models
         public int? DepartmentId { get; set; }
 
         public Department? Department { get; set; }
+
+        [Display(Name = "账户有效")] 
+        public bool IsActive { get; set; } = true;
     }
 }

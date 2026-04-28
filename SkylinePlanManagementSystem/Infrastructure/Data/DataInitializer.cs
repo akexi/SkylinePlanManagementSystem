@@ -83,14 +83,14 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
                 }
                 var courses = new[]
                 {
-                    new Course { CourseId = 1050, Title = "数据结构", Credits = 3, DepartmentId = departments.Single(s => s.Name == "a").DepartmentId },
-                    new Course { CourseId = 4022, Title = "算法分析", Credits = 3, DepartmentId = departments.Single(s => s.Name == "a").DepartmentId },
-                    new Course { CourseId = 4041, Title = "操作系统", Credits = 3, DepartmentId = departments.Single(s => s.Name == "b").DepartmentId },
-                    new Course { CourseId = 1045, Title = "微积分", Credits = 4, DepartmentId = departments.Single(s => s.Name == "b").DepartmentId },
-                    new Course { CourseId = 3141, Title = "线性代数", Credits = 4, DepartmentId = departments.Single(s => s.Name == "c").DepartmentId },
-                    new Course { CourseId = 2021, Title = "市场营销", Credits = 3, DepartmentId = departments.Single(s => s.Name == "c").DepartmentId },
-                    new Course { CourseId = 2042, Title = "财务会计", Credits = 3, DepartmentId = departments.Single(s => s.Name == "d").DepartmentId },
-                    new Course { CourseId = 2043, Title = "管理学", Credits = 3, DepartmentId = departments.Single(s => s.Name == "d").DepartmentId },
+                    new Course { CourseId = 1050, Title = "数据结构", Credits = 3, DepartmentId = departments.Single(s => s.Name == "综合管理部").DepartmentId },
+                    new Course { CourseId = 4022, Title = "算法分析", Credits = 3, DepartmentId = departments.Single(s => s.Name == "综合管理部").DepartmentId },
+                    new Course { CourseId = 4041, Title = "操作系统", Credits = 3, DepartmentId = departments.Single(s => s.Name == "财务管理部").DepartmentId },
+                    new Course { CourseId = 1045, Title = "微积分", Credits = 4, DepartmentId = departments.Single(s => s.Name == "财务管理部").DepartmentId },
+                    new Course { CourseId = 3141, Title = "线性代数", Credits = 4, DepartmentId = departments.Single(s => s.Name == "工程管理中心").DepartmentId },
+                    new Course { CourseId = 2021, Title = "市场营销", Credits = 3, DepartmentId = departments.Single(s => s.Name == "工程管理中心").DepartmentId },
+                    new Course { CourseId = 2042, Title = "财务会计", Credits = 3, DepartmentId = departments.Single(s => s.Name == "营销管理中心").DepartmentId },
+                    new Course { CourseId = 2043, Title = "管理学", Credits = 3, DepartmentId = departments.Single(s => s.Name == "营销管理中心").DepartmentId },
                 };
 
                 foreach (var c in courses)
