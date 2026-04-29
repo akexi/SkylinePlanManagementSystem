@@ -6,6 +6,14 @@
 }
 
 <div class="project-list-page">
+    @if(TempData["ProjectError"] != null)
+    {
+        <div class="alert alert-warning">@TempData["ProjectError"]</div>
+    }
+    @if(TempData["ProjectSuccess"] != null)
+    {
+        <div class="alert alert-success">@TempData["ProjectSuccess"]</div>
+    }
     <div class="project-header d-flex justify-content-between align-items-center mb-3">
         <div>
             <h3 class="mb-1">项目列表</h3>
@@ -78,7 +86,7 @@
 
                         <th>状态</th>
 
-                        <th width="140">操作</th>
+                        <th width="220">操作</th>
                     </tr>
                 </thead>
 
@@ -102,6 +110,11 @@
                             </td>
 
                             <td>
+                                <a class="btn btn-sm btn-outline-info"
+                                   asp-action="Project"
+                                   asp-route-id="@project.ProjectId">
+                                    项目视图
+                                </a>
                                 <a class="btn btn-sm btn-outline-primary"
                                    asp-action="Edit"
                                    asp-route-id="@project.ProjectId">

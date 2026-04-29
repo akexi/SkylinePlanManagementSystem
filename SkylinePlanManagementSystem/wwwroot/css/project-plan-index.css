@@ -2,6 +2,13 @@
     font-weight: 700;
 }
 
+.project-list-page .project-header {
+    background: linear-gradient(135deg, #f8fbff, #eef4ff);
+    border: 1px solid #e7eefc;
+    border-radius: 12px;
+    padding: 16px;
+}
+
 .project-list-page .project-search-box {
     max-width: 520px;
 }
@@ -11,6 +18,10 @@
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.project-list-page table tbody tr:hover {
+    background-color: #f8fbff;
 }
 
 .project-list-page table thead th {
@@ -35,4 +46,30 @@
 .project-list-page .page-item.active .page-link {
     background-color: #007bff;
     border-color: #007bff;
+}
+
+.project-detail-page .project-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(120deg, #f6f9ff, #edf3ff);
+    border: 1px solid #dfe9ff;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+
+.project-detail-page .project-info-card {
+    border: 1px solid #edf0f5;
+    border-radius: 12px;
+    padding: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(7, 30, 69, 0.05);
+}
+
+.project-detail-page .node-panel {
+    border: 1px solid #edf0f5;
+    border-radius: 12px;
+    background-color: #fff;
+    padding: 18px;
+    box-shadow: 0 3px 10px rgba(10, 20, 40, 0.05);
 }

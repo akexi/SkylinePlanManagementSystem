@@ -1,0 +1,102 @@
+﻿@model SkylinePlanManagementSystem.ViewModels.ProjectPlan.ProjectCreateViewModel
+@{
+    ViewBag.Title = "项目视图";
+    var nodes = ViewBag.ProjectNodes as List<ProjectNode> ?? new List<ProjectNode>();
+}
+
+<div class="project-detail-page">
+    <div class="project-detail-header">
+        <div>
+            <h3 class="mb-1">@Model.ProjectName</h3>
+            <p class="text-muted mb-0">项目ID：@Model.ProjectId</p>
+        </div>
+        <div class="project-detail-actions">
+            <a asp-action="Edit" asp-route-id="@Model.ProjectId" class="btn btn-outline-primary">编辑项目</a>
+            <a asp-action="Index" class="btn btn-outline-secondary ml-2">返回列表</a>
+        </div>
+    </div>
+
+    <div class="project-info-card mt-3">
+        <div class="row">
+            <div class="col-md-3"><strong>状态：</strong><span class="badge badge-info ml-1">@Model.Status</span></div>
+            <div class="col-md-3"><strong>开始时间：</strong>@(Model.StartTime?.ToString("yyyy-MM-dd") ?? "-")</div>
+            <div class="col-md-3"><strong>结束时间：</strong>@(Model.EndTime?.ToString("yyyy-MM-dd") ?? "-")</div>
+            <div class="col-md-3"><strong>备注：</strong>@(string.IsNullOrWhiteSpace(Model.Remark) ? "-" : Model.Remark)</div>
+        </div>
+    </div>
+
+    <div class="node-panel mt-4">
+        <h5 class="mb-3">一级节点管理</h5>
+
+        @if (TempData["ProjectNodeError"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ProjectNodeError"]</div>
+        }
+
+        <form asp-action="AddNode" method="post" class="node-create-form mb-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+            <div class="form-row align-items-center">
+                <div class="col-md-5 mb-2">
+                    <input type="text" name="Title" class="form-control" placeholder="输入一级节点名称" required />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="date" name="PlanTime" class="form-control" />
+                </div>
+                <div class="col-md-2 mb-2">
+                    <button type="submit" class="btn btn-primary btn-block">新增节点</button>
+                </div>
+            </div>
+        </form>
+
+        @if (nodes.Any())
+        {
+            <div class="table-responsive project-table-wrap">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width:80px;">ID</th>
+                            <th>节点名称</th>
+                            <th style="width:180px;">计划时间</th>
+                            <th style="width:220px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var node in nodes.OrderBy(n => n.ProjectNodeId))
+                        {
+                            <tr>
+                                <td>@node.ProjectNodeId</td>
+                                <td colspan="3">
+                                    <form asp-action="UpdateNode" method="post" class="form-inline d-flex flex-wrap">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                                        <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+                                        <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm mr-2 mb-2" style="min-width:260px;" required />
+                                        <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm mr-2 mb-2" />
+                                        <button type="submit" class="btn btn-sm btn-outline-primary mr-2 mb-2">保存</button>
+                                        <button type="submit"
+                                                formaction="@Url.Action("DeleteNode", "ProjectPlan")"
+                                                name="projectNodeId"
+                                                value="@node.ProjectNodeId"
+                                                class="btn btn-sm btn-outline-danger mb-2"
+                                                onclick="return confirm('确定要删除节点【@node.Title】吗？');">
+                                            删除
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mb-0">当前项目暂无一级节点，可在上方新增。</div>
+        }
+    </div>
+</div>
+
+@section Style {
+    <link href="~/css/project-plan-index.css" rel="stylesheet" />
+}

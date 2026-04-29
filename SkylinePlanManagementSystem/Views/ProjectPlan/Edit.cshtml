@@ -1,7 +1,6 @@
 @model SkylinePlanManagementSystem.ViewModels.ProjectPlan.ProjectCreateViewModel
 @{
     ViewBag.Title = "编辑项目";
-    var nodes = ViewBag.ProjectNodes as List<ProjectNode> ?? new List<ProjectNode>();
 }
 
 <h1>编辑项目</h1>
@@ -56,70 +55,6 @@
     </div>
 </form>
 
-<hr />
-<h4>项目一级节点</h4>
-
-@if (TempData["ProjectNodeError"] != null)
-{
-    <div class="alert alert-danger">@TempData["ProjectNodeError"]</div>
-}
-
-<form asp-action="AddNode" method="post" class="mb-3">
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
-    <div class="form-row">
-        <div class="col-md-5">
-            <input type="text" name="Title" class="form-control" placeholder="节点名称，如：前期准备" required />
-        </div>
-        <div class="col-md-3">
-            <input type="date" name="PlanTime" class="form-control" />
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-primary">+ 新增节点</button>
-        </div>
-    </div>
-</form>
-
-@if (nodes.Any())
-{
-    <table class="table table-bordered table-sm align-middle">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>节点名称</th>
-                <th>计划时间</th>
-                <th style="width:220px;">操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var node in nodes.OrderBy(n => n.ProjectNodeId))
-            {
-                <tr>
-                    <td colspan="4">
-                        <form asp-action="UpdateNode" method="post" class="form-inline d-flex gap-2">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
-                            <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
-                            <span class="mr-2">@node.ProjectNodeId</span>
-                            <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm mr-2" required />
-                            <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm mr-2" />
-                            <button type="submit" class="btn btn-sm btn-outline-primary mr-2">保存</button>
-                            <button type="submit"
-                                    formaction="@Url.Action("DeleteNode", "ProjectPlan")"
-                                    name="projectNodeId"
-                                    value="@node.ProjectNodeId"
-                                    class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('确定要删除节点【@node.Title】吗？');">
-                                删除
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <div class="alert alert-info">当前项目还没有一级节点，请先新增。</div>
-}
+<div class="alert alert-info mt-4 mb-0">
+    如需维护一级节点请返回【项目列表】，点击【项目视图】进行管理。
+</div>

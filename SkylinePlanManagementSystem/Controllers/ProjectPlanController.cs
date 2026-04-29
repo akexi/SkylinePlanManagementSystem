@@ -71,8 +71,34 @@ namespace SkylinePlanManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var project = await _projectRepository.GetAll().Include(p => p.Nodes).FirstOrDefaultAsync(a => a.ProjectId == id);
+            var project = await _projectRepository.GetAll().FirstOrDefaultAsync(a => a.ProjectId == id);
             if (project == null)
+            {
+                ViewBag.ErrorMessage = $"项目编号为{id}的信息不存在，请重试";
+                return View("NotFound");
+            }
+
+            var model = new ProjectCreateViewModel
+            {
+                ProjectId = project.ProjectId,
+                ProjectName = project.ProjectName,
+                Remark = project.Remark,
+                StartTime = project.StartTime,
+                EndTime = project.EndTime,
+                Status = project.Status
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Project(int id)
+        {
+            var project = await _projectRepository.GetAll()
+                .Include(p => p.Nodes)
+                .FirstOrDefaultAsync(a => a.ProjectId == id);
+
+            if(project == null)
             {
                 ViewBag.ErrorMessage = $"项目编号为{id}的信息不存在，请重试";
                 return View("NotFound");
@@ -130,7 +156,7 @@ namespace SkylinePlanManagementSystem.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["ProjectNodeError"] = "节点数据不完整，请检查后重试";
-                return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
             var project = await _projectRepository.GetAll().Include(p => p.Nodes).FirstOrDefaultAsync(a => a.ProjectId == input.ProjectId);
@@ -151,10 +177,8 @@ namespace SkylinePlanManagementSystem.Controllers
             project.Nodes.Add(node);
             await _projectRepository.UpdateAsync(project);
 
-            return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+            return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -163,21 +187,21 @@ namespace SkylinePlanManagementSystem.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["ProjectNodeError"] = "节点数据不完整，请检查后重试";
-                return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
             var node = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == input.ProjectNodeId && n.ProjectId == input.ProjectId);
             if (node == null)
             {
                 TempData["ProjectNodeError"] = "未找到对应节点，可能已被删除";
-                return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
             node.Title = input.Title;
             node.PlanTime = input.PlanTime;
             await _projectNodeRepository.UpdateAsync(node);
 
-            return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+            return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
         [HttpPost]
@@ -188,11 +212,11 @@ namespace SkylinePlanManagementSystem.Controllers
             if (node == null)
             {
                 TempData["ProjectNodeError"] = "未找到对应节点，可能已被删除";
-                return RedirectToAction(nameof(Edit), new { id = projectId });
+                return RedirectToAction(nameof(Project), new { id = projectId });
             }
 
             await _projectNodeRepository.DeleteAsync(node);
-            return RedirectToAction(nameof(Edit), new { id = projectId });
+            return RedirectToAction(nameof(Project), new { id = projectId });
         }
 
         [HttpPost]
@@ -205,8 +229,14 @@ namespace SkylinePlanManagementSystem.Controllers
                 ViewBag.ErrorMessage = $"项目编号为{id}的信息不存在，请重试";
                 return View("NotFound");
             }
+            if(project.Nodes != null && project.Nodes.Any())
+            {
+                TempData["ProjectError"] = $"项目【{project.ProjectName}】下存在一级节点，请先删除节点后再删除项目。";
+                return RedirectToAction(nameof(Index));
+            }
 
             await _projectRepository.DeleteAsync(project);
+            TempData["ProjectSuccess"] = $"项目【{project.ProjectName}】已删除";
             return RedirectToAction(nameof(Index));
         }
 
