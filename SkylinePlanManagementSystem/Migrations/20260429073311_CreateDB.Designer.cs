@@ -12,7 +12,7 @@ using SkylinePlanManagementSystem.Infrastructure;
 namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260429042434_CreateDB")]
+    [Migration("20260429073311_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />

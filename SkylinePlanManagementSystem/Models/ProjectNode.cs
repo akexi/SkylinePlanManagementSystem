@@ -16,6 +16,6 @@ namespace SkylinePlanManagementSystem.Models
 
         [ForeignKey(nameof(Project))]
         public int ProjectId { get; set; }
-        public Project Project { get; set; }
+        public Project Project { get; set; } = null!;
     }
 }

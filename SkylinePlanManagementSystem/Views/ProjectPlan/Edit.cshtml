@@ -82,21 +82,38 @@
 
 @if (nodes.Any())
 {
-    <table class="table table-bordered table-sm">
+    <table class="table table-bordered table-sm align-middle">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>节点名称</th>
                 <th>计划时间</th>
+                <th style="width:220px;">操作</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var node in nodes.OrderBy(n => n.ProjectNodeId))
             {
                 <tr>
-                    <td>@node.ProjectNodeId</td>
-                    <td>@node.Title</td>
-                    <td>@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    <td colspan="4">
+                        <form asp-action="UpdateNode" method="post" class="form-inline d-flex gap-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                            <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+                            <span class="mr-2">@node.ProjectNodeId</span>
+                            <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm mr-2" required />
+                            <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm mr-2" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary mr-2">保存</button>
+                            <button type="submit"
+                                    formaction="@Url.Action("DeleteNode", "ProjectPlan")"
+                                    name="projectNodeId"
+                                    value="@node.ProjectNodeId"
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('确定要删除节点【@node.Title】吗？');">
+                                删除
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>

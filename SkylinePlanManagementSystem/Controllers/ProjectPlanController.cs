@@ -12,13 +12,16 @@ namespace SkylinePlanManagementSystem.Controllers
     {
         private readonly IRepository<Project, int> _projectRepository;  // 项目仓储接口
         private readonly IProjectService _projectService;
+        private readonly IRepository<ProjectNode, int> _projectNodeRepository;
 
         // 使用构造函数注入的方式注入
         public ProjectPlanController(IRepository<Project, int> projectRepository, 
-            IProjectService projectService)
+            IProjectService projectService,
+            IRepository<ProjectNode, int> projectNodeRepository)
         {
             _projectRepository = projectRepository;
             _projectService = projectService;
+            _projectNodeRepository = projectNodeRepository;
         }
 
         //[Route("")]
@@ -151,6 +154,47 @@ namespace SkylinePlanManagementSystem.Controllers
             return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
         }
 
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateNode(ProjectNodeEditViewModel input)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ProjectNodeError"] = "节点数据不完整，请检查后重试";
+                return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+            }
+
+            var node = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == input.ProjectNodeId && n.ProjectId == input.ProjectId);
+            if (node == null)
+            {
+                TempData["ProjectNodeError"] = "未找到对应节点，可能已被删除";
+                return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+            }
+
+            node.Title = input.Title;
+            node.PlanTime = input.PlanTime;
+            await _projectNodeRepository.UpdateAsync(node);
+
+            return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteNode(int projectId, int projectNodeId)
+        {
+            var node = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == projectNodeId && n.ProjectId == projectId);
+            if (node == null)
+            {
+                TempData["ProjectNodeError"] = "未找到对应节点，可能已被删除";
+                return RedirectToAction(nameof(Edit), new { id = projectId });
+            }
+
+            await _projectNodeRepository.DeleteAsync(node);
+            return RedirectToAction(nameof(Edit), new { id = projectId });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -165,5 +209,7 @@ namespace SkylinePlanManagementSystem.Controllers
             await _projectRepository.DeleteAsync(project);
             return RedirectToAction(nameof(Index));
         }
+
+
     }
 }
