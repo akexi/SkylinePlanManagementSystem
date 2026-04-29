@@ -4,6 +4,7 @@ using SkylinePlanManagementSystem.Application.Projects.Dtos;
 using SkylinePlanManagementSystem.Infrastructure.Repositories;
 using SkylinePlanManagementSystem.Models;
 using SkylinePlanManagementSystem.ViewModels.ProjectPlan;
+using Microsoft.EntityFrameworkCore;
 
 namespace SkylinePlanManagementSystem.Controllers
 {
@@ -67,7 +68,7 @@ namespace SkylinePlanManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var project = await _projectRepository.FirstOrDefaultAsync(a => a.ProjectId == id);
+            var project = await _projectRepository.GetAll().Include(p => p.Nodes).FirstOrDefaultAsync(a => a.ProjectId == id);
             if (project == null)
             {
                 ViewBag.ErrorMessage = $"项目编号为{id}的信息不存在，请重试";
@@ -84,6 +85,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 Status = project.Status
             };
 
+            ViewBag.ProjectNodes = project.Nodes?.ToList() ?? new List<ProjectNode>();
             return View(model);
         }
 
@@ -101,7 +103,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 return View(input);
             }
 
-            var project = await _projectRepository.FirstOrDefaultAsync(a => a.ProjectId == input.ProjectId);
+            var project = await _projectRepository.GetAll().Include(p => p.Nodes).FirstOrDefaultAsync(a => a.ProjectId == input.ProjectId);
             if (project == null)
             {
                 ViewBag.ErrorMessage = $"项目编号为{input.ProjectId}的信息不存在，请重试";
@@ -120,9 +122,40 @@ namespace SkylinePlanManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNode(ProjectNodeCreateViewModel input)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ProjectNodeError"] = "节点数据不完整，请检查后重试";
+                return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+            }
+
+            var project = await _projectRepository.GetAll().Include(p => p.Nodes).FirstOrDefaultAsync(a => a.ProjectId == input.ProjectId);
+            if (project == null)
+            {
+                ViewBag.ErrorMessage = $"项目编号为{input.ProjectId}的信息不存在，请重试";
+                return View("NotFound");
+            }
+
+            var node = new ProjectNode
+            {
+                ProjectId = input.ProjectId,
+                Title = input.Title,
+                PlanTime = input.PlanTime
+            };
+
+            project.Nodes ??= new List<ProjectNode>();
+            project.Nodes.Add(node);
+            await _projectRepository.UpdateAsync(project);
+
+            return RedirectToAction(nameof(Edit), new { id = input.ProjectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var project = await _projectRepository.FirstOrDefaultAsync(a => a.ProjectId == id);
+            var project = await _projectRepository.GetAll().Include(p => p.Nodes).FirstOrDefaultAsync(a => a.ProjectId == id);
             if (project == null)
             {
                 ViewBag.ErrorMessage = $"项目编号为{id}的信息不存在，请重试";
