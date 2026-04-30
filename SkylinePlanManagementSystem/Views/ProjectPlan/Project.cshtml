@@ -26,25 +26,26 @@
     </div>
 
     <div class="node-panel mt-4">
-        <h5 class="mb-3">一级节点管理</h5>
+        <h5 class="mb-3">项目一级节点管理</h5>
 
         @if (TempData["ProjectNodeError"] != null)
         {
             <div class="alert alert-danger">@TempData["ProjectNodeError"]</div>
         }
 
+        <!-- 新增节点 -->
         <form asp-action="AddNode" method="post" class="node-create-form mb-3">
             @Html.AntiForgeryToken()
             <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
             <div class="form-row align-items-center">
-                <div class="col-md-5 mb-2">
-                    <input type="text" name="Title" class="form-control" placeholder="输入一级节点名称" required />
+                <div class="col-md-4 mb-2">
+                    <input type="text" name="Title" class="form-control" placeholder="节点名称（如：主体封顶）" required />
                 </div>
                 <div class="col-md-3 mb-2">
                     <input type="date" name="PlanTime" class="form-control" />
                 </div>
-                <div class="col-md-2 mb-2">
-                    <button type="submit" class="btn btn-primary btn-block">新增节点</button>
+                <div class="col-md-3 mb-2">
+                    <button type="submit" class="btn btn-primary btn-block">+ 新增节点</button>
                 </div>
             </div>
         </form>
@@ -65,25 +66,55 @@
                         @foreach (var node in nodes.OrderBy(n => n.ProjectNodeId))
                         {
                             <tr>
+                                <form asp-action="UpdateNode" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                                    <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+
                                 <td>@node.ProjectNodeId</td>
-                                <td colspan="3">
-                                    <form asp-action="UpdateNode" method="post" class="form-inline d-flex flex-wrap">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
-                                        <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
-                                        <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm mr-2 mb-2" style="min-width:260px;" required />
-                                        <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm mr-2 mb-2" />
-                                        <button type="submit" class="btn btn-sm btn-outline-primary mr-2 mb-2">保存</button>
-                                        <button type="submit"
-                                                formaction="@Url.Action("DeleteNode", "ProjectPlan")"
-                                                name="projectNodeId"
-                                                value="@node.ProjectNodeId"
-                                                class="btn btn-sm btn-outline-danger mb-2"
-                                                onclick="return confirm('确定要删除节点【@node.Title】吗？');">
-                                            删除
-                                        </button>
-                                    </form>
+
+                                <!-- 节点名称 -->
+                                <td>
+                                    <span class="view-mode">@node.Title</span>
+                                    <input type="text" name="Title"
+                                           value="@node.Title"
+                                           class="form-control form-control-sm edit-mode d-none" />
                                 </td>
+
+                                <!-- 时间 -->
+                                <td>
+                                    <span class="view-mode">
+                                        @(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")
+                                    </span>
+                                    <input type="date" name="PlanTime"
+                                           value="@(node.PlanTime?.ToString("yyyy-MM-dd"))"
+                                           class="form-control form-control-sm edit-mode d-none" />
+                                </td>
+
+                                <!-- 操作 -->
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-primary d-none btn-save">
+                                        保存
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary d-none btn-cancel">
+                                        取消
+                                    </button>
+
+                                    <button type="submit"
+                                            formaction="@Url.Action("DeleteNode", "ProjectPlan")"
+                                            name="projectNodeId"
+                                            value="@node.ProjectNodeId"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('确定删除节点【@node.Title】吗？');">
+                                        删除
+                                    </button>
+                                </td>
+                                </form>
                             </tr>
                         }
                     </tbody>
@@ -99,4 +130,8 @@
 
 @section Style {
     <link href="~/css/project-plan-index.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    <script src="~/js/projectplan/Project.js"></script>
 }
