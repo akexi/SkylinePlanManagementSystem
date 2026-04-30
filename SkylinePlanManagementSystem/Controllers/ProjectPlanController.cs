@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using SkylinePlanManagementSystem.Application.Projects;
 using SkylinePlanManagementSystem.Application.Projects.Dtos;
 using SkylinePlanManagementSystem.Infrastructure.Repositories;
@@ -13,15 +14,21 @@ namespace SkylinePlanManagementSystem.Controllers
         private readonly IRepository<Project, int> _projectRepository;  // 项目仓储接口
         private readonly IProjectService _projectService;
         private readonly IRepository<ProjectNode, int> _projectNodeRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IRepository<Department, int> _departmentRepository;
 
         // 使用构造函数注入的方式注入
         public ProjectPlanController(IRepository<Project, int> projectRepository, 
             IProjectService projectService,
-            IRepository<ProjectNode, int> projectNodeRepository)
+            IRepository<ProjectNode, int> projectNodeRepository, 
+            UserManager<ApplicationUser> userManager, 
+            IRepository<Department, int> departmentRepository)
         {
             _projectRepository = projectRepository;
             _projectService = projectService;
             _projectNodeRepository = projectNodeRepository;
+            _userManager = userManager;
+            _departmentRepository = departmentRepository;
         }
 
         //[Route("")]
@@ -96,6 +103,7 @@ namespace SkylinePlanManagementSystem.Controllers
         {
             var project = await _projectRepository.GetAll()
                 .Include(p => p.Nodes)
+                .ThenInclude(n => n.Department)
                 .FirstOrDefaultAsync(a => a.ProjectId == id);
 
             if(project == null)
@@ -115,6 +123,12 @@ namespace SkylinePlanManagementSystem.Controllers
             };
 
             ViewBag.ProjectNodes = project.Nodes?.ToList() ?? new List<ProjectNode>();
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.CurrentUserDepartmentId = user?.DepartmentId;
+            ViewBag.CurrentUserDepartmentName = user?.DepartmentId.HasValue == true
+                ? (await _departmentRepository.FirstOrDefaultAsync(d => d.DepartmentId == user.DepartmentId.Value)).Name
+                : null;
+
             return View(model);
         }
 
@@ -166,11 +180,19 @@ namespace SkylinePlanManagementSystem.Controllers
                 return View("NotFound");
             }
 
+            var user = await _userManager.GetUserAsync(User);
+            if (user?.DepartmentId == null)
+            {
+                TempData["ProjectNodeError"] = "当前用户未绑定部门，无权新增一级节点";
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+            }
+
             var node = new ProjectNode
             {
                 ProjectId = input.ProjectId,
                 Title = input.Title,
-                PlanTime = input.PlanTime
+                PlanTime = input.PlanTime,
+                DepartmentId = user.DepartmentId,
             };
 
             project.Nodes ??= new List<ProjectNode>();
@@ -197,6 +219,13 @@ namespace SkylinePlanManagementSystem.Controllers
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
+            var user = await _userManager.GetUserAsync(User);
+            if (user?.DepartmentId == null || node.DepartmentId != user.DepartmentId)
+            {
+                TempData["ProjectNodeError"] = "仅可修改本部门的一级节点";
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+            }
+
             node.Title = input.Title;
             node.PlanTime = input.PlanTime;
             await _projectNodeRepository.UpdateAsync(node);
@@ -212,6 +241,13 @@ namespace SkylinePlanManagementSystem.Controllers
             if (node == null)
             {
                 TempData["ProjectNodeError"] = "未找到对应节点，可能已被删除";
+                return RedirectToAction(nameof(Project), new { id = projectId });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user?.DepartmentId == null || node.DepartmentId != user.DepartmentId)
+            {
+                TempData["ProjectNodeError"] = "仅可删除本部门的一级节点";
                 return RedirectToAction(nameof(Project), new { id = projectId });
             }
 

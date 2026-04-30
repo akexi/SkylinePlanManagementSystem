@@ -2,6 +2,11 @@
 @{
     ViewBag.Title = "项目视图";
     var nodes = ViewBag.ProjectNodes as List<ProjectNode> ?? new List<ProjectNode>();
+    int? currentUserDepartmentId = ViewBag.CurrentUserDepartmentId as int?;
+    string currentUserDepartmentName = ViewBag.CurrentUserDepartmentName as string ?? "未绑定部门";
+    var departmentNodes = currentUserDepartmentId.HasValue
+        ? nodes.Where(n => n.DepartmentId == currentUserDepartmentId.Value).OrderBy(n => n.ProjectNodeId).ToList()
+        : new List<ProjectNode>();
 }
 
 <div class="project-detail-page">
@@ -32,6 +37,13 @@
         {
             <div class="alert alert-danger">@TempData["ProjectNodeError"]</div>
         }
+        <div class="alert alert-secondary">
+            当前用户部门：<strong>@currentUserDepartmentName</strong>。
+            @if (!currentUserDepartmentId.HasValue)
+            {
+                <span class="text-danger">未绑定部门时不可新增、修改、删除节点。</span>
+            }
+        </div>
 
         <!-- 新增节点 -->
         <form asp-action="AddNode" method="post" class="node-create-form mb-3">
@@ -45,10 +57,17 @@
                     <input type="date" name="PlanTime" class="form-control" />
                 </div>
                 <div class="col-md-3 mb-2">
-                    <button type="submit" class="btn btn-primary btn-block">+ 新增节点</button>
+                    <button type="submit" 
+                        class="btn btn-primary btn-block" @(currentUserDepartmentId.HasValue ? null : "disabled")>
+                        + 新增节点
+                    </button>
                 </div>
             </div>
         </form>
+
+        <div class="mb-2 text-muted">
+            部门一级节点（当前部门）：@departmentNodes.Count 条
+        </div>
 
         @if (nodes.Any())
         {
@@ -57,6 +76,7 @@
                     <thead>
                         <tr>
                             <th style="width:80px;">ID</th>
+                            <th style="width:140px;">所属部门</th>
                             <th>节点名称</th>
                             <th style="width:180px;">计划时间</th>
                             <th style="width:220px;">操作</th>
@@ -72,6 +92,7 @@
                                     <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
 
                                 <td>@node.ProjectNodeId</td>
+                                <td>@(node.Department?.Name ?? "未归属")</td>
 
                                 <!-- 节点名称 -->
                                 <td>
@@ -93,10 +114,14 @@
 
                                 <!-- 操作 -->
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
+                                    <button type="button" 
+                                        class="btn btn-sm btn-outline-secondary btn-edit" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>
+                                        编辑
+                                    </button>
 
                                     <button type="submit"
-                                            class="btn btn-sm btn-outline-primary d-none btn-save">
+                                            class="btn btn-sm btn-outline-primary d-none btn-save"
+                                            @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>
                                         保存
                                     </button>
 
@@ -110,6 +135,7 @@
                                             name="projectNodeId"
                                             value="@node.ProjectNodeId"
                                             class="btn btn-sm btn-outline-danger"
+                                            @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")
                                             onclick="return confirm('确定删除节点【@node.Title】吗？');">
                                         删除
                                     </button>

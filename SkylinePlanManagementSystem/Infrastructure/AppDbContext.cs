@@ -58,6 +58,11 @@ namespace SkylinePlanManagementSystem.Infrastructure
                 .WithMany(p => p.Nodes)
                 .HasForeignKey(n => n.ProjectId);
 
+            modelBuilder.Entity<ProjectNode>()
+                .HasOne(n => n.Department)
+                .WithMany()
+                .HasForeignKey(n => n.DepartmentId);
+
             // 告诉 EF：Department 是依赖方（有外键）
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Administrator)

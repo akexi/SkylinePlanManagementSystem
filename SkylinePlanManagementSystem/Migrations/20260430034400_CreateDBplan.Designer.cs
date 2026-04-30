@@ -12,8 +12,8 @@ using SkylinePlanManagementSystem.Infrastructure;
 namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260429073311_CreateDB")]
-    partial class CreateDB
+    [Migration("20260430034400_CreateDBplan")]
+    partial class CreateDBplan
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -464,6 +464,9 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProjectNodeId"));
 
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("PlanTime")
                         .HasColumnType("datetime(6)");
 
@@ -476,6 +479,8 @@ namespace SkylinePlanManagementSystem.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.HasKey("ProjectNodeId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("ProjectId");
 
@@ -690,11 +695,18 @@ namespace SkylinePlanManagementSystem.Migrations
 
             modelBuilder.Entity("SkylinePlanManagementSystem.Models.ProjectNode", b =>
                 {
+                    b.HasOne("SkylinePlanManagementSystem.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("SkylinePlanManagementSystem.Models.Project", "Project")
                         .WithMany("Nodes")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Department");
 
                     b.Navigation("Project");
                 });
