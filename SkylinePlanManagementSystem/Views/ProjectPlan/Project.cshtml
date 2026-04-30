@@ -2,11 +2,18 @@
 @{
     ViewBag.Title = "项目视图";
     var nodes = ViewBag.ProjectNodes as List<ProjectNode> ?? new List<ProjectNode>();
+
     int? currentUserDepartmentId = ViewBag.CurrentUserDepartmentId as int?;
+
     string currentUserDepartmentName = ViewBag.CurrentUserDepartmentName as string ?? "未绑定部门";
+
     var departmentNodes = currentUserDepartmentId.HasValue
         ? nodes.Where(n => n.DepartmentId == currentUserDepartmentId.Value).OrderBy(n => n.ProjectNodeId).ToList()
         : new List<ProjectNode>();
+
+    var otherDepartmentNodes = currentUserDepartmentId.HasValue
+        ? nodes.Where(n => n.DepartmentId != currentUserDepartmentId.Value).OrderBy(n => n.ProjectNodeId).ToList()
+        : nodes.OrderBy(n => n.ProjectNodeId).ToList();
 }
 
 <div class="project-detail-page">
@@ -65,86 +72,180 @@
             </div>
         </form>
 
-        <div class="mb-2 text-muted">
-            部门一级节点（当前部门）：@departmentNodes.Count 条
+        <div class="row mb-3 text-muted">
+            <div class="col-md-6">项目一级节点总数：@nodes.Count 条</div>
+            <div class="col-md-6">部门一级节点（当前部门）：@departmentNodes.Count 条</div>
         </div>
 
         @if (nodes.Any())
         {
-            <div class="table-responsive project-table-wrap">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th style="width:80px;">ID</th>
-                            <th style="width:140px;">所属部门</th>
-                            <th>节点名称</th>
-                            <th style="width:180px;">计划时间</th>
-                            <th style="width:220px;">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var node in nodes.OrderBy(n => n.ProjectNodeId))
-                        {
-                            <tr>
-                                <form asp-action="UpdateNode" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
-                                    <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+            <ul class="nav nav-tabs mb-3" id="projectNodeTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="all-nodes-tab" data-toggle="tab" href="#all-nodes" role="tab">全部节点</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="current-dept-tab" data-toggle="tab" href="#current-dept" role="tab">当前部门节点</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="other-dept-tab" data-toggle="tab" href="#other-dept" role="tab">其他部门节点</a>
+                </li>
+            </ul>
 
-                                <td>@node.ProjectNodeId</td>
-                                <td>@(node.Department?.Name ?? "未归属")</td>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="all-nodes" role="tabpanel">
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">项目一级节点 / 全部</div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive project-table-wrap">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">ID</th>
+                                            <th style="width:140px;">所属部门</th>
+                                            <th>节点名称</th>
+                                            <th style="width:180px;">计划时间</th>
+                                            <th style="width:220px;">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var node in nodes.OrderBy(n => n.ProjectNodeId))
+                                        {
+                                            <tr>
+                                                <form asp-action="UpdateNode" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                                                    <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+                                                    <td>@node.ProjectNodeId</td>
+                                                    <td>@(node.Department?.Name ?? "未归属")</td>
+                                                    <td>
+                                                        <span class="view-mode">@node.Title</span>
+                                                        <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm edit-mode d-none" />
+                                                    </td>
+                                                    <td>
+                                                        <span class="view-mode">@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                        <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-edit" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>编辑</button>
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>保存</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
+                                                        <button type="submit" formaction="@Url.Action("DeleteNode", "ProjectPlan")" name="projectNodeId" value="@node.ProjectNodeId" class="btn btn-sm btn-outline-danger" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled") onclick="return confirm('确定删除节点【@node.Title】吗？');">删除</button>
+                                                    </td>
+                                                </form>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                <!-- 节点名称 -->
-                                <td>
-                                    <span class="view-mode">@node.Title</span>
-                                    <input type="text" name="Title"
-                                           value="@node.Title"
-                                           class="form-control form-control-sm edit-mode d-none" />
-                                </td>
+                <div class="tab-pane fade" id="current-dept" role="tabpanel">
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">项目一级节点 / 当前部门</div>
+                        <div class="card-body p-0">
+                            @if (departmentNodes.Any())
+                            {
+                                <div class="table-responsive project-table-wrap">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:80px;">ID</th>
+                                                <th style="width:140px;">所属部门</th>
+                                                <th>节点名称</th>
+                                                <th style="width:180px;">计划时间</th>
+                                                <th style="width:220px;">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var node in departmentNodes)
+                                            {
+                                                <tr>
+                                                    <form asp-action="UpdateNode" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                                                        <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+                                                    <td>@node.ProjectNodeId</td>
+                                                    <td>@(node.Department?.Name ?? "未归属")</td>
+                                                    <td>
+                                                        <span class="view-mode">@node.Title</span>
+                                                        <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm edit-mode d-none" />
+                                                    </td>
+                                                    <td>
+                                                        <span class="view-mode">@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                        <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
+                                                        <button type="submit" formaction="@Url.Action("DeleteNode", "ProjectPlan")" name="projectNodeId" value="@node.ProjectNodeId" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除节点【@node.Title】吗？');">删除</button>
+                                                    </td>
+                                                    </form>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="p-3 text-muted">当前部门暂无一级节点。</div>
+                            }
+                        </div>
+                    </div>
+                </div>
 
-                                <!-- 时间 -->
-                                <td>
-                                    <span class="view-mode">
-                                        @(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")
-                                    </span>
-                                    <input type="date" name="PlanTime"
-                                           value="@(node.PlanTime?.ToString("yyyy-MM-dd"))"
-                                           class="form-control form-control-sm edit-mode d-none" />
-                                </td>
+                <div class="tab-pane fade" id="other-dept" role="tabpanel">
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">项目一级节点 / 其他部门</div>
+                        <div class="card-body p-0">
+                            @if (otherDepartmentNodes.Any())
+                            {
+                                <div class="table-responsive project-table-wrap">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:80px;">ID</th>
+                                                <th style="width:140px;">所属部门</th>
+                                                <th>节点名称</th>
+                                                <th style="width:180px;">计划时间</th>
+                                                <th style="width:220px;">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var node in otherDepartmentNodes)
+                                            {
+                                                <tr>
+                                                    <form asp-action="UpdateNode" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                                                        <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+                                                    <td>@node.ProjectNodeId</td>
+                                                    <td>@(node.Department?.Name ?? "未归属")</td>
+                                                    <td><span class="view-mode">@node.Title</span></td>
+                                                    <td><span class="view-mode">@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span></td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>编辑</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" disabled>删除</button>
+                                                    </td>
+                                                    </form>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="p-3 text-muted">暂无其他部门一级节点。</div>
+                            }
+                        </div>
+                    </div>
+                </div>
 
-                                <!-- 操作 -->
-                                <td>
-                                    <button type="button" 
-                                        class="btn btn-sm btn-outline-secondary btn-edit" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>
-                                        编辑
-                                    </button>
 
-                                    <button type="submit"
-                                            class="btn btn-sm btn-outline-primary d-none btn-save"
-                                            @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>
-                                        保存
-                                    </button>
-
-                                    <button type="button"
-                                            class="btn btn-sm btn-outline-secondary d-none btn-cancel">
-                                        取消
-                                    </button>
-
-                                    <button type="submit"
-                                            formaction="@Url.Action("DeleteNode", "ProjectPlan")"
-                                            name="projectNodeId"
-                                            value="@node.ProjectNodeId"
-                                            class="btn btn-sm btn-outline-danger"
-                                            @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")
-                                            onclick="return confirm('确定删除节点【@node.Title】吗？');">
-                                        删除
-                                    </button>
-                                </td>
-                                </form>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
             </div>
         }
         else
