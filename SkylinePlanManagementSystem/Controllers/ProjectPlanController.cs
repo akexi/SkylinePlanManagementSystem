@@ -14,19 +14,22 @@ namespace SkylinePlanManagementSystem.Controllers
         private readonly IRepository<Project, int> _projectRepository;  // 项目仓储接口
         private readonly IProjectService _projectService;
         private readonly IRepository<ProjectNode, int> _projectNodeRepository;
+        private readonly IRepository<ProjectSubNode, int> _projectSubNodeRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<Department, int> _departmentRepository;
 
         // 使用构造函数注入的方式注入
         public ProjectPlanController(IRepository<Project, int> projectRepository, 
             IProjectService projectService,
-            IRepository<ProjectNode, int> projectNodeRepository, 
-            UserManager<ApplicationUser> userManager, 
+            IRepository<ProjectNode, int> projectNodeRepository,
+            IRepository<ProjectSubNode, int> projectSubNodeRepository,
+            UserManager<ApplicationUser> userManager,
             IRepository<Department, int> departmentRepository)
         {
             _projectRepository = projectRepository;
             _projectService = projectService;
             _projectNodeRepository = projectNodeRepository;
+            _projectSubNodeRepository = projectSubNodeRepository;
             _userManager = userManager;
             _departmentRepository = departmentRepository;
         }
@@ -104,6 +107,9 @@ namespace SkylinePlanManagementSystem.Controllers
             var project = await _projectRepository.GetAll()
                 .Include(p => p.Nodes)
                 .ThenInclude(n => n.Department)
+                .Include(p => p.Nodes)
+                .ThenInclude(n => n.SubNodes)
+                .ThenInclude(sn => sn.Department)
                 .FirstOrDefaultAsync(a => a.ProjectId == id);
 
             if(project == null)
@@ -252,6 +258,94 @@ namespace SkylinePlanManagementSystem.Controllers
             }
 
             await _projectNodeRepository.DeleteAsync(node);
+            return RedirectToAction(nameof(Project), new { id = projectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddSubNode(ProjectSubNodeCreateViewModel input)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ProjectNodeError"] = "子节点数据不完整，请检查后重试";
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+            }
+
+            var parentNode = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == input.ProjectNodeId && n.ProjectId == input.ProjectId);
+            if(parentNode == null)
+            {
+                TempData["ProjectNodeError"] = "未找到对应的一级节点";
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user?.DepartmentId == null || parentNode.DepartmentId != user.DepartmentId)
+            {
+                TempData["ProjectNodeError"] = "仅可为本部门的一级节点新增子节点";
+                return RedirectToAction(nameof(Project), new {id = input.ProjectId});
+            }
+
+            await _projectSubNodeRepository.InsertAsync(new ProjectSubNode
+            {
+                ProjectNodeId = input.ProjectNodeId,
+                Title = input.Title,
+                PlanTime = input.PlanTime,
+                DepartmentId = user.DepartmentId,
+            });
+
+            return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateSubNode(ProjectSubNodeEditViewModel input)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ProjectNodeError"] = "子节点数据不完整，请检查后重试";
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+            }
+
+            var subNode = await _projectSubNodeRepository.FirstOrDefaultAsync(sn => sn.ProjectSubNodeId == input.ProjectSubNodeId && sn.ProjectNodeId == input.ProjectNodeId);
+            if (subNode == null)
+            {
+                TempData["ProjectNodeError"] = "未找到对应子节点，可能已被删除";
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user?.DepartmentId == null || subNode.DepartmentId != user.DepartmentId)
+            {
+                TempData["ProjectNodeError"] = "仅可修改本部门的子节点";
+                return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+            }
+
+            subNode.Title = input.Title;
+            subNode.PlanTime = input.PlanTime;
+            await _projectSubNodeRepository.UpdateAsync(subNode);
+
+            return RedirectToAction(nameof(Project), new { id = input.ProjectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSubNode(int projectId, int projectNodeId, int projectSubNodeId)
+        {
+            var subNode = await _projectSubNodeRepository.FirstOrDefaultAsync(sn => sn.ProjectSubNodeId == projectSubNodeId && sn.ProjectNodeId == projectNodeId);
+            if (subNode == null)
+            {
+                TempData["ProjectNodeError"] = "未找到对应子节点，可能已被删除";
+                return RedirectToAction(nameof(Project), new { id = projectId });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user?.DepartmentId == null || subNode.DepartmentId != user.DepartmentId)
+            {
+                TempData["ProjectNodeError"] = "仅可删除本部门的子节点";
+                return RedirectToAction(nameof(Project), new { id = projectId });
+            }
+
+            await _projectSubNodeRepository.DeleteAsync(subNode);
             return RedirectToAction(nameof(Project), new { id = projectId });
         }
 

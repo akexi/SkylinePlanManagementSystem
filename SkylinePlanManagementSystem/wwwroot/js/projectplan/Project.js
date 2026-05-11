@@ -23,3 +23,12 @@ document.querySelectorAll(".btn-cancel").forEach(btn => {
         tr.querySelector(".btn-cancel").classList.add("d-none");
     });
 });
+
+document.querySelectorAll('.btn-subnode-toggle').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const target = document.querySelector(this.dataset.target);
+        if (target) {
+            target.classList.toggle('d-none');
+        }
+    });
+});

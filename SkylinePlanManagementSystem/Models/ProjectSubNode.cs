@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkylinePlanManagementSystem.Models
 {
-    public class ProjectNode
+    public class ProjectSubNode
     {
         [Key]
-        public int ProjectNodeId { get; set; }
+        public int ProjectSubNodeId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -14,14 +14,12 @@ namespace SkylinePlanManagementSystem.Models
 
         public DateTime? PlanTime { get; set; }
 
-        [ForeignKey(nameof(Project))]
-        public int ProjectId { get; set; }
-        public Project Project { get; set; } = null!;
+        [ForeignKey(nameof(ProjectNode))]
+        public int ProjectNodeId { get; set; }
+        public ProjectNode ProjectNode { get; set; } = null!;
 
         [ForeignKey(nameof(Department))]
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
-
-        public ICollection<ProjectSubNode> SubNodes { get; set; } = new List<ProjectSubNode>();
     }
 }

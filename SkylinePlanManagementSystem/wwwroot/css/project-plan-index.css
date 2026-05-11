@@ -73,3 +73,13 @@
     padding: 18px;
     box-shadow: 0 3px 10px rgba(10, 20, 40, 0.05);
 }
+
+.project-detail-page .subnode-box {
+    border: 1px solid #e3e8f5;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.project-detail-page .subnode-table thead th {
+    background-color: #f8f9fa;
+}

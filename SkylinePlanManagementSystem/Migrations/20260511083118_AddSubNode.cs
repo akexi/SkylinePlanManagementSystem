@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SkylinePlanManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDBplan : Migration
+    public partial class AddSubNode : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -457,6 +457,36 @@ namespace SkylinePlanManagementSystem.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "ProjectSubNodes",
+                columns: table => new
+                {
+                    ProjectSubNodeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PlanTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ProjectNodeId = table.Column<int>(type: "int", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectSubNodes", x => x.ProjectSubNodeId);
+                    table.ForeignKey(
+                        name: "FK_ProjectSubNodes_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "DepartmentId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProjectSubNodes_ProjectNodes_ProjectNodeId",
+                        column: x => x.ProjectNodeId,
+                        principalTable: "ProjectNodes",
+                        principalColumn: "ProjectNodeId",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -537,6 +567,16 @@ namespace SkylinePlanManagementSystem.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectSubNodes_DepartmentId",
+                table: "ProjectSubNodes",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectSubNodes_ProjectNodeId",
+                table: "ProjectSubNodes",
+                column: "ProjectNodeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StudentCourse_CourseId",
                 table: "StudentCourse",
                 column: "CourseId");
@@ -613,7 +653,7 @@ namespace SkylinePlanManagementSystem.Migrations
                 name: "Posts");
 
             migrationBuilder.DropTable(
-                name: "ProjectNodes");
+                name: "ProjectSubNodes");
 
             migrationBuilder.DropTable(
                 name: "StudentCourse");
@@ -628,13 +668,16 @@ namespace SkylinePlanManagementSystem.Migrations
                 name: "Blogs");
 
             migrationBuilder.DropTable(
-                name: "Projects");
+                name: "ProjectNodes");
 
             migrationBuilder.DropTable(
                 name: "Course");
 
             migrationBuilder.DropTable(
                 name: "Person");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

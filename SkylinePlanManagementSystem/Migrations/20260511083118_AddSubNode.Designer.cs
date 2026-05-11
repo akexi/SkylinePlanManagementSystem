@@ -12,8 +12,8 @@ using SkylinePlanManagementSystem.Infrastructure;
 namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260430034400_CreateDBplan")]
-    partial class CreateDBplan
+    [Migration("20260511083118_AddSubNode")]
+    partial class AddSubNode
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -487,6 +487,37 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.ToTable("ProjectNodes");
                 });
 
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.ProjectSubNode", b =>
+                {
+                    b.Property<int>("ProjectSubNodeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProjectSubNodeId"));
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PlanTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ProjectNodeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("ProjectSubNodeId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("ProjectNodeId");
+
+                    b.ToTable("ProjectSubNodes");
+                });
+
             modelBuilder.Entity("SkylinePlanManagementSystem.Models.StudentCourse", b =>
                 {
                     b.Property<int>("StudentCourseId")
@@ -711,6 +742,24 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Navigation("Project");
                 });
 
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.ProjectSubNode", b =>
+                {
+                    b.HasOne("SkylinePlanManagementSystem.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SkylinePlanManagementSystem.Models.ProjectNode", "ProjectNode")
+                        .WithMany("SubNodes")
+                        .HasForeignKey("ProjectNodeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("ProjectNode");
+                });
+
             modelBuilder.Entity("SkylinePlanManagementSystem.Models.StudentCourse", b =>
                 {
                     b.HasOne("SkylinePlanManagementSystem.Models.Course", "Course")
@@ -753,6 +802,11 @@ namespace SkylinePlanManagementSystem.Migrations
             modelBuilder.Entity("SkylinePlanManagementSystem.Models.Project", b =>
                 {
                     b.Navigation("Nodes");
+                });
+
+            modelBuilder.Entity("SkylinePlanManagementSystem.Models.ProjectNode", b =>
+                {
+                    b.Navigation("SubNodes");
                 });
 
             modelBuilder.Entity("SkylinePlanManagementSystem.Models.Student", b =>

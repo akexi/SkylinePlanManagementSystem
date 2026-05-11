@@ -30,6 +30,7 @@ namespace SkylinePlanManagementSystem.Infrastructure
         public DbSet<TodoItem> TodoItems { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectNode> ProjectNodes { get; set; }
+        public DbSet<ProjectSubNode> ProjectSubNodes { get; set; }
 
         // 方法内调用Seed创建初始数据方法
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -62,6 +63,16 @@ namespace SkylinePlanManagementSystem.Infrastructure
                 .HasOne(n => n.Department)
                 .WithMany()
                 .HasForeignKey(n => n.DepartmentId);
+
+            modelBuilder.Entity<ProjectSubNode>()
+                .HasOne(sn => sn.ProjectNode)
+                .WithMany(n => n.SubNodes)
+                .HasForeignKey(sn => sn.ProjectNodeId);
+
+            modelBuilder.Entity<ProjectSubNode>()
+                .HasOne(sn => sn.Department)
+                .WithMany()
+                .HasForeignKey(sn => sn.DepartmentId);
 
             // 告诉 EF：Department 是依赖方（有外键）
             modelBuilder.Entity<Department>()
