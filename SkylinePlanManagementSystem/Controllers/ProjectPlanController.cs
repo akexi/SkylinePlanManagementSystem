@@ -34,6 +34,11 @@ namespace SkylinePlanManagementSystem.Controllers
             _departmentRepository = departmentRepository;
         }
 
+        private bool IsAjaxRequest()
+        {
+            return Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+        }
+
         //[Route("")]
         //[Route("ProjectPlan")]
         //[Route("ProjectPlan/Index")]
@@ -176,6 +181,7 @@ namespace SkylinePlanManagementSystem.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["ProjectNodeError"] = "节点数据不完整，请检查后重试";
+                if (IsAjaxRequest()) return Json(new { success = false, message = "子节点数据不完整，请检查后重试" });
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
@@ -257,6 +263,13 @@ namespace SkylinePlanManagementSystem.Controllers
                 return RedirectToAction(nameof(Project), new { id = projectId });
             }
 
+            var hasSubNodes = await _projectSubNodeRepository.GetAll().AnyAsync(sn => sn.ProjectNodeId == node.ProjectNodeId);
+            if (hasSubNodes)
+            {
+                TempData["ProjectNodeError"] = "该一级节点下存在子节点，请先删除子节点后再删除一级节点";
+                return RedirectToAction(nameof(Project), new { id = projectId });
+            }
+
             await _projectNodeRepository.DeleteAsync(node);
             return RedirectToAction(nameof(Project), new { id = projectId });
         }
@@ -267,6 +280,7 @@ namespace SkylinePlanManagementSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
+                if (IsAjaxRequest()) return Json(new { success = false, message = "子节点数据不完整，请检查后重试" });
                 TempData["ProjectNodeError"] = "子节点数据不完整，请检查后重试";
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
@@ -274,6 +288,7 @@ namespace SkylinePlanManagementSystem.Controllers
             var parentNode = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == input.ProjectNodeId && n.ProjectId == input.ProjectId);
             if(parentNode == null)
             {
+                if (IsAjaxRequest()) return Json(new { success = false, message = "未找到对应的一级节点" });
                 TempData["ProjectNodeError"] = "未找到对应的一级节点";
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
@@ -281,18 +296,21 @@ namespace SkylinePlanManagementSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user?.DepartmentId == null || parentNode.DepartmentId != user.DepartmentId)
             {
+                if (IsAjaxRequest()) return Json(new { success = false, message = "仅可为本部门的一级节点新增子节点" });
                 TempData["ProjectNodeError"] = "仅可为本部门的一级节点新增子节点";
                 return RedirectToAction(nameof(Project), new {id = input.ProjectId});
             }
 
-            await _projectSubNodeRepository.InsertAsync(new ProjectSubNode
+            var subNode = new ProjectSubNode
             {
                 ProjectNodeId = input.ProjectNodeId,
                 Title = input.Title,
                 PlanTime = input.PlanTime,
                 DepartmentId = user.DepartmentId,
-            });
+            };
+            await _projectSubNodeRepository.InsertAsync(subNode);
 
+            if (IsAjaxRequest()) return Json(new { success = true, subNodeId = subNode.ProjectSubNodeId, title = subNode.Title, planTime = subNode.PlanTime?.ToString("yyyy-MM-dd") });
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
@@ -309,6 +327,7 @@ namespace SkylinePlanManagementSystem.Controllers
             var subNode = await _projectSubNodeRepository.FirstOrDefaultAsync(sn => sn.ProjectSubNodeId == input.ProjectSubNodeId && sn.ProjectNodeId == input.ProjectNodeId);
             if (subNode == null)
             {
+                if (IsAjaxRequest()) return Json(new { success = false, message = "未找到对应子节点，可能已被删除" });
                 TempData["ProjectNodeError"] = "未找到对应子节点，可能已被删除";
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
@@ -316,6 +335,7 @@ namespace SkylinePlanManagementSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user?.DepartmentId == null || subNode.DepartmentId != user.DepartmentId)
             {
+                if (IsAjaxRequest()) return Json(new { success = false, message = "仅可修改本部门的子节点" });
                 TempData["ProjectNodeError"] = "仅可修改本部门的子节点";
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
@@ -324,6 +344,7 @@ namespace SkylinePlanManagementSystem.Controllers
             subNode.PlanTime = input.PlanTime;
             await _projectSubNodeRepository.UpdateAsync(subNode);
 
+            if (IsAjaxRequest()) return Json(new { success = true, title = subNode.Title, planTime = subNode.PlanTime?.ToString("yyyy-MM-dd") });
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
@@ -334,6 +355,7 @@ namespace SkylinePlanManagementSystem.Controllers
             var subNode = await _projectSubNodeRepository.FirstOrDefaultAsync(sn => sn.ProjectSubNodeId == projectSubNodeId && sn.ProjectNodeId == projectNodeId);
             if (subNode == null)
             {
+                if (IsAjaxRequest()) return Json(new { success = false, message = "未找到对应子节点，可能已被删除" });
                 TempData["ProjectNodeError"] = "未找到对应子节点，可能已被删除";
                 return RedirectToAction(nameof(Project), new { id = projectId });
             }
@@ -341,11 +363,13 @@ namespace SkylinePlanManagementSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user?.DepartmentId == null || subNode.DepartmentId != user.DepartmentId)
             {
+                if (IsAjaxRequest()) return Json(new { success = false, message = "仅可删除本部门的子节点" });
                 TempData["ProjectNodeError"] = "仅可删除本部门的子节点";
                 return RedirectToAction(nameof(Project), new { id = projectId });
             }
 
             await _projectSubNodeRepository.DeleteAsync(subNode);
+            if (IsAjaxRequest()) return Json(new { success = true });
             return RedirectToAction(nameof(Project), new { id = projectId });
         }
 

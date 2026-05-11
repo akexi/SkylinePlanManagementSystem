@@ -104,7 +104,7 @@
                                             <th style="width:140px;">所属部门</th>
                                             <th>节点名称</th>
                                             <th style="width:180px;">计划时间</th>
-                                            <th style="width:220px;">操作</th>
+                                            <th style="width:260px;">操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -129,7 +129,7 @@
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>编辑</button>
                                                         <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>保存</button>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
-                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-@node.ProjectNodeId">子节点管理</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
                                                         <button type="submit" formaction="@Url.Action("DeleteNode", "ProjectPlan")" name="projectNodeId" value="@node.ProjectNodeId" class="btn btn-sm btn-outline-danger" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled") onclick="return confirm('确定删除节点【@node.Title】吗？');">删除</button>
                                                     </td>
                                                 </form>
@@ -137,7 +137,7 @@
                                             <tr id="subnode-@node.ProjectNodeId" class="subnode-row d-none">
                                                 <td colspan="5" class="bg-light">
                                                     <div class="subnode-box p-3">
-                                                        <form asp-action="AddSubNode" method="post" class="form-row mb-2">
+                                                        <form asp-action="AddSubNode" method="post" class="form-row mb-2 subnode-add-form">
                                                             @Html.AntiForgeryToken()
                                                             <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                             <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
@@ -152,8 +152,8 @@
                                                                 <tbody>
                                                                     @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                     {
-                                                                        <tr>
-                                                                            <form asp-action="UpdateSubNode" method="post">
+                                                                        <tr class="subnode-item-row">
+                                                                            <form asp-action="UpdateSubNode" method="post" class="subnode-edit-form">
                                                                                 @Html.AntiForgeryToken()
                                                                                 <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                                                 <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
@@ -175,7 +175,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <div class="text-muted small">暂无子节点。</div>
+                                                            <div class="text-muted small subnode-empty">暂无子节点。</div>
                                                         }
                                                     </div>
                                                 </td>
@@ -202,7 +202,7 @@
                                                 <th style="width:140px;">所属部门</th>
                                                 <th>节点名称</th>
                                                 <th style="width:180px;">计划时间</th>
-                                                <th style="width:220px;">操作</th>
+                                                <th style="width:260px;">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -227,9 +227,51 @@
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
                                                         <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
                                                         <button type="submit" formaction="@Url.Action("DeleteNode", "ProjectPlan")" name="projectNodeId" value="@node.ProjectNodeId" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除节点【@node.Title】吗？');">删除</button>
                                                     </td>
                                                     </form>
+                                                </tr>
+                                                <tr id="subnode-@node.ProjectNodeId" class="subnode-row d-none">
+                                                    <td colspan="5" class="bg-light">
+                                                        <div class="subnode-box p-3">
+                                                            <form asp-action="AddSubNode" method="post" class="form-row mb-2 subnode-add-form">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                                                                <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+                                                                <div class="col-md-4"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
+                                                                <div class="col-md-3"><input type="date" name="PlanTime" class="form-control form-control-sm" /></div>
+                                                                <div class="col-md-3"><button type="submit" class="btn btn-sm btn-primary">+ 新增子节点</button></div>
+                                                            </form>
+                                                            @if (node.SubNodes != null && node.SubNodes.Any())
+                                                            {
+                                                                <table class="table table-sm table-bordered mb-0 subnode-table">
+                                                                    <thead><tr><th style="width:80px;">ID</th><th>子节点名称</th><th style="width:160px;">计划时间</th><th style="width:220px;">操作</th></tr></thead>
+                                                                    <tbody>
+                                                                        @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
+                                                                        {
+                                                                            <tr class="subnode-item-row">
+                                                                                <form asp-action="UpdateSubNode" method="post" class="subnode-edit-form" class="subnode-edit-form">
+                                                                                    @Html.AntiForgeryToken()
+                                                                                    <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                                                                                    <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
+                                                                                    <input type="hidden" name="ProjectSubNodeId" value="@subNode.ProjectSubNodeId" />
+                                                                                <td>@subNode.ProjectSubNodeId</td>
+                                                                                <td><span class="view-mode">@subNode.Title</span><input type="text" name="Title" value="@subNode.Title" class="form-control form-control-sm edit-mode d-none" /></td>
+                                                                                <td><span class="view-mode">@(subNode.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span><input type="date" name="PlanTime" value="@(subNode.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" /></td>
+                                                                                <td><button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button><button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button><button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button><button type="submit" formaction="@Url.Action("DeleteSubNode", "ProjectPlan")" name="projectSubNodeId" value="@subNode.ProjectSubNodeId" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除子节点【@subNode.Title】吗？');">删除</button></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="text-muted small subnode-empty">暂无子节点。</div>
+                                                            }
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -258,7 +300,7 @@
                                                 <th style="width:140px;">所属部门</th>
                                                 <th>节点名称</th>
                                                 <th style="width:180px;">计划时间</th>
-                                                <th style="width:220px;">操作</th>
+                                                <th style="width:260px;">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -275,6 +317,7 @@
                                                     <td><span class="view-mode">@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span></td>
                                                     <td>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary" disabled>编辑</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
                                                         <button type="button" class="btn btn-sm btn-outline-danger" disabled>删除</button>
                                                     </td>
                                                     </form>
