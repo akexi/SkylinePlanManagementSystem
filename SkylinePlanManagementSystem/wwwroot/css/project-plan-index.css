@@ -108,6 +108,25 @@
     font-weight: 600;
 }
 
+.project-detail-page .node-create-form {
+    border: 1px dashed #d8e2f6;
+    background: #f9fbff;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.project-detail-page .node-create-form .form-control[type="date"] {
+    border-color: #c9d8fb;
+}
+
+.project-detail-page .node-actions {
+    min-width: 260px;
+}
+
+.project-detail-page .node-actions .btn {
+    margin: 0 4px 6px 0;
+}
+
 .project-detail-page .btn-subnode-toggle {
     transition: all 0.2s ease;
 }

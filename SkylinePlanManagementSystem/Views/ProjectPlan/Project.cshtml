@@ -56,17 +56,20 @@
         <form asp-action="AddNode" method="post" class="node-create-form mb-3">
             @Html.AntiForgeryToken()
             <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
-            <div class="form-row align-items-center">
+            <div class="form-row align-items-end">
                 <div class="col-md-4 mb-2">
+                    <label class="small text-muted mb-1">一级节点名称 <span class="text-danger">*</span></label>
                     <input type="text" name="Title" class="form-control" placeholder="节点名称（如：主体封顶）" required />
                 </div>
                 <div class="col-md-3 mb-2">
-                    <input type="date" name="PlanStartTime" class="form-control" />
+                    <label class="small text-muted mb-1">计划开始日期</label>
+                    <input type="date" name="PlanStartTime" class="form-control" title="请选择计划开始日期" />
                 </div>
                 <div class="col-md-3 mb-2">
-                    <input type="date" name="PlanEndTime" class="form-control" />
+                    <label class="small text-muted mb-1">计划结束日期</label>
+                    <input type="date" name="PlanEndTime" class="form-control" title="请选择计划结束日期" />
                 </div>
-                <div class="col-md-3 mb-2">
+                <div class="col-md-2 mb-2">
                     <button type="submit" 
                         class="btn btn-primary btn-block" @(currentUserDepartmentId.HasValue ? null : "disabled")>
                         + 新增节点
@@ -107,8 +110,7 @@
                                             <th style="width:160px;">所属部门</th>
                                             <th>节点名称</th>
                                             <th style="width:200px;">计划开始/完成</th>
-                                            <th style="width:120px;">状态</th>
-                                            <th style="width:200px;">操作</th>
+                                            <th style="width:280px;">操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -131,11 +133,7 @@
                                                         <span class="view-mode"> / @(node.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span>
                                                         <input type="date" name="PlanEndTime" value="@(node.PlanEndTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
                                                     </td>
-                                                    <td>
-                                                        <!-- 节点层面暂时没有状态编辑（如果需要可在后端模型添加），此处仅占位显示 -->
-                                                        <span class="text-muted">—</span>
-                                                    </td>
-                                                    <td>
+                                                <td class="node-actions">
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>编辑</button>
                                                         <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>保存</button>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
@@ -145,7 +143,7 @@
                                                 </form>
                                             </tr>
                                             <tr id="subnode-all-@node.ProjectNodeId" class="subnode-row d-none">
-                                                <td colspan="6" class="bg-light">
+                                                <td colspan="5" class="bg-light">
                                                     <div class="subnode-box p-3">
                                                         <form asp-action="AddSubNode" method="post" class="form-row mb-2 subnode-add-form">
                                                             @Html.AntiForgeryToken()
@@ -232,8 +230,7 @@
                                                 <th style="width:160px;">所属部门</th>
                                                 <th>节点名称</th>
                                                 <th style="width:200px;">计划开始/完成</th>
-                                                <th style="width:120px;">状态</th>
-                                                <th style="width:200px;">操作</th>
+                                                <th style="width:280px;">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -256,10 +253,7 @@
                                                         <span class="view-mode"> / @(node.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span>
                                                         <input type="date" name="PlanEndTime" value="@(node.PlanEndTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
                                                     </td>
-                                                    <td>
-                                                        <span class="text-muted">—</span>
-                                                    </td>
-                                                    <td>
+                                                    <td class="node-actions">
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
                                                         <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
@@ -269,7 +263,7 @@
                                                     </form>
                                                 </tr>
                                                 <tr id="subnode-current-@node.ProjectNodeId" class="subnode-row d-none">
-                                                    <td colspan="6" class="bg-light">
+                                                    <td colspan="5" class="bg-light">
                                                         <div class="subnode-box p-3">
                                                             <form asp-action="AddSubNode" method="post" class="form-row mb-2 subnode-add-form">
                                                                 @Html.AntiForgeryToken()
@@ -361,8 +355,7 @@
                                                 <th style="width:160px;">所属部门</th>
                                                 <th>节点名称</th>
                                                 <th style="width:200px;">计划开始/完成</th>
-                                                <th style="width:120px;">状态</th>
-                                                <th style="width:200px;">操作</th>
+                                                <th style="width:280px;">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -377,8 +370,7 @@
                                                     <td>@(node.Department?.Name ?? "未归属")</td>
                                                     <td><span class="view-mode">@node.Title</span></td>
                                                     <td><span class="view-mode">@(node.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-") / @(node.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span></td>
-                                                    <td><span class="view-mode">—</span></td>
-                                                    <td>
+                                                    <td class="node-actions">
                                                         <button type="button" class="btn btn-sm btn-outline-secondary" disabled>编辑</button>
                                                         <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-other-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
                                                         <button type="button" class="btn btn-sm btn-outline-danger" disabled>删除</button>
@@ -386,7 +378,7 @@
                                                     </form>
                                                 </tr>
                                                 <tr id="subnode-other-@node.ProjectNodeId" class="subnode-row d-none">
-                                                    <td colspan="6" class="bg-light">
+                                                    <td colspan="5" class="bg-light">
                                                         <div class="subnode-box p-3">
                                                             @if (node.SubNodes != null && node.SubNodes.Any())
                                                             {
