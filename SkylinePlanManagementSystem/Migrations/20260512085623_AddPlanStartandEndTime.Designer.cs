@@ -12,8 +12,8 @@ using SkylinePlanManagementSystem.Infrastructure;
 namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260511083118_AddSubNode")]
-    partial class AddSubNode
+    [Migration("20260512085623_AddPlanStartandEndTime")]
+    partial class AddPlanStartandEndTime
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -467,7 +467,10 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("PlanTime")
+                    b.Property<DateTime?>("PlanEndTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("PlanStartTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProjectId")
@@ -498,8 +501,14 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("PlanTime")
+                    b.Property<DateTime?>("PlanEndTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("PlanStartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ProgressStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProjectNodeId")
                         .HasColumnType("int");

@@ -12,7 +12,9 @@ namespace SkylinePlanManagementSystem.Models
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
-        public DateTime? PlanTime { get; set; }
+        public DateTime? PlanStartTime { get; set; }
+
+        public DateTime? PlanEndTime { get; set; }
 
         [ForeignKey(nameof(Project))]
         public int ProjectId { get; set; }

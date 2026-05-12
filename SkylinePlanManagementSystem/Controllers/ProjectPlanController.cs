@@ -203,7 +203,8 @@ namespace SkylinePlanManagementSystem.Controllers
             {
                 ProjectId = input.ProjectId,
                 Title = input.Title,
-                PlanTime = input.PlanTime,
+                PlanStartTime = input.PlanStartTime,
+                PlanEndTime = input.PlanEndTime,
                 DepartmentId = user.DepartmentId,
             };
 
@@ -239,7 +240,8 @@ namespace SkylinePlanManagementSystem.Controllers
             }
 
             node.Title = input.Title;
-            node.PlanTime = input.PlanTime;
+            node.PlanStartTime = input.PlanStartTime;
+            node.PlanEndTime = input.PlanEndTime;
             await _projectNodeRepository.UpdateAsync(node);
 
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
@@ -305,12 +307,13 @@ namespace SkylinePlanManagementSystem.Controllers
             {
                 ProjectNodeId = input.ProjectNodeId,
                 Title = input.Title,
-                PlanTime = input.PlanTime,
+                PlanStartTime = input.PlanStartTime,
+                PlanEndTime = input.PlanEndTime,
                 DepartmentId = user.DepartmentId,
             };
             await _projectSubNodeRepository.InsertAsync(subNode);
 
-            if (IsAjaxRequest()) return Json(new { success = true, subNodeId = subNode.ProjectSubNodeId, title = subNode.Title, planTime = subNode.PlanTime?.ToString("yyyy-MM-dd") });
+            if (IsAjaxRequest()) return Json(new { success = true, subNodeId = subNode.ProjectSubNodeId, title = subNode.Title, planStartTime = subNode.PlanStartTime?.ToString("yyyy-MM-dd"), planEndTime = subNode.PlanEndTime?.ToString("yyyy-MM-dd"), progressStatus = subNode.ProgressStatus.ToString() });
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
@@ -341,10 +344,12 @@ namespace SkylinePlanManagementSystem.Controllers
             }
 
             subNode.Title = input.Title;
-            subNode.PlanTime = input.PlanTime;
+            subNode.PlanStartTime = input.PlanStartTime;
+            subNode.PlanEndTime = input.PlanEndTime;
+            subNode.ProgressStatus = input.ProgressStatus;
             await _projectSubNodeRepository.UpdateAsync(subNode);
 
-            if (IsAjaxRequest()) return Json(new { success = true, title = subNode.Title, planTime = subNode.PlanTime?.ToString("yyyy-MM-dd") });
+            if (IsAjaxRequest()) return Json(new { success = true, title = subNode.Title, planStartTime = subNode.PlanStartTime?.ToString("yyyy-MM-dd"), planEndTime = subNode.PlanEndTime?.ToString("yyyy-MM-dd"), progressStatus = subNode.ProgressStatus.ToString() });
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 

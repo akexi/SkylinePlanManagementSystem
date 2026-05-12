@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SkylinePlanManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSubNode : Migration
+    public partial class AddPlanStartandEndTime : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -382,7 +382,8 @@ namespace SkylinePlanManagementSystem.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PlanTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    PlanStartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    PlanEndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -465,7 +466,9 @@ namespace SkylinePlanManagementSystem.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PlanTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    PlanStartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    PlanEndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ProgressStatus = table.Column<int>(type: "int", nullable: false),
                     ProjectNodeId = table.Column<int>(type: "int", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: true)
                 },

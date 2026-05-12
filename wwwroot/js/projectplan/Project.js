@@ -1,4 +1,4 @@
-ï»¿document.addEventListener("click", function (e) {
+document.addEventListener("click", function (e) {
     const editBtn = e.target.closest(".btn-edit");
     const cancelBtn = e.target.closest(".btn-cancel");
     const toggleBtn = e.target.closest('.btn-subnode-toggle');
@@ -65,9 +65,9 @@ document.addEventListener("submit", async function (e) {
     const submitter = e.submitter;
     if (submitter?.getAttribute("formaction")) form.action = submitter.getAttribute("formaction");
     const data = await submitAjaxForm(form);
-    if (!data || data.success === false) return alert(data?.message || "æ“ä½œå¤±è´¥");
+    if (!data || data.success === false) return alert(data?.message || "²Ù×÷Ê§°Ü");
 
-    // æ–°å¢å­èŠ‚ç‚¹ååœ¨ DOM ä¸­è¿½åŠ è¡Œï¼ˆå…¼å®¹æ–°å¢è¿”å›çš„å­—æ®µï¼šsubNodeId, title, planStartTime, planEndTime, progressStatusï¼‰
+    // ĞÂÔö×Ó½ÚµãºóÔÚ DOM ÖĞ×·¼ÓĞĞ£¨¼æÈİĞÂÔö·µ»ØµÄ×Ö¶Î£ºsubNodeId, title, planStartTime, planEndTime, progressStatus£©
     if (addForm) {
         const box = addForm.closest(".subnode-box");
         const existingTable = box.querySelector(".subnode-table");
@@ -77,7 +77,7 @@ document.addEventListener("submit", async function (e) {
         if (!existingTable) {
             const table = document.createElement("table");
             table.className = "table table-sm table-bordered mb-0 subnode-table";
-            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>å­èŠ‚ç‚¹åç§°</th><th style="width:180px;">è®¡åˆ’å¼€å§‹/å®Œæˆ</th><th style="width:120px;">çŠ¶æ€</th><th style="width:200px;">æ“ä½œ</th></tr></thead><tbody></tbody>`;
+            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>×Ó½ÚµãÃû³Æ</th><th style="width:180px;">¼Æ»®¿ªÊ¼/Íê³É</th><th style="width:120px;">×´Ì¬</th><th style="width:200px;">²Ù×÷</th></tr></thead><tbody></tbody>`;
             box.appendChild(table);
         }
 
@@ -112,17 +112,17 @@ document.addEventListener("submit", async function (e) {
                 <td>
                     <span class="view-mode">${progress}</span>
                     <select name="ProgressStatus" class="custom-select custom-select-sm edit-mode d-none">
-                        <option${progress === "æœªå¼€å§‹" ? " selected" : ""}>æœªå¼€å§‹</option>
-                        <option${progress === "è¿›è¡Œä¸­" ? " selected" : ""}>è¿›è¡Œä¸­</option>
-                        <option${progress === "å·²å®Œæˆ" ? " selected" : ""}>å·²å®Œæˆ</option>
-                        <option${progress === "å·²å»¶æœŸ" ? " selected" : ""}>å·²å»¶æœŸ</option>
+                        <option${progress === "Î´¿ªÊ¼" ? " selected" : ""}>Î´¿ªÊ¼</option>
+                        <option${progress === "½øĞĞÖĞ" ? " selected" : ""}>½øĞĞÖĞ</option>
+                        <option${progress === "ÒÑÍê³É" ? " selected" : ""}>ÒÑÍê³É</option>
+                        <option${progress === "ÒÑÑÓÆÚ" ? " selected" : ""}>ÒÑÑÓÆÚ</option>
                     </select>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">ç¼–è¾‘</button>
-                    <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">ä¿å­˜</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">å–æ¶ˆ</button>
-                    <button type="submit" formaction="/ProjectPlan/DeleteSubNode" name="projectSubNodeId" value="${escapeHtml(subNodeId)}" class="btn btn-sm btn-outline-danger" onclick="return confirm('ç¡®å®šåˆ é™¤å­èŠ‚ç‚¹ã€${title}ã€‘å—ï¼Ÿ');">åˆ é™¤</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">±à¼­</button>
+                    <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">±£´æ</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">È¡Ïû</button>
+                    <button type="submit" formaction="/ProjectPlan/DeleteSubNode" name="projectSubNodeId" value="${escapeHtml(subNodeId)}" class="btn btn-sm btn-outline-danger" onclick="return confirm('È·¶¨É¾³ı×Ó½Úµã¡¾${title}¡¿Âğ£¿');">É¾³ı</button>
                 </td>
             </form>`;
         targetTbody.appendChild(row);
@@ -130,7 +130,7 @@ document.addEventListener("submit", async function (e) {
         return;
     }
 
-    // ç¼–è¾‘è¡¨å•ï¼šåˆ é™¤æˆ–æ›´æ–°
+    // ±à¼­±íµ¥£ºÉ¾³ı»ò¸üĞÂ
     if (editForm && form.action.includes("DeleteSubNode")) {
         editForm.closest("tr")?.remove();
         return;
@@ -138,7 +138,7 @@ document.addEventListener("submit", async function (e) {
 
     if (editForm) {
         const tr = editForm.closest("tr");
-        // æ›´æ–°æ˜¾ç¤ºå­—æ®µï¼ˆtitleã€start/endã€progressï¼‰
+        // ¸üĞÂÏÔÊ¾×Ö¶Î£¨title¡¢start/end¡¢progress£©
         const tds = tr.querySelectorAll("td");
         if (tds.length >= 4) {
             const titleSpan = tds[1].querySelector("span.view-mode");
@@ -148,7 +148,7 @@ document.addEventListener("submit", async function (e) {
             const progressSpan = tds[3].querySelector("span.view-mode");
             if (progressSpan) progressSpan.textContent = data.progressStatus || "-";
         }
-        // é€€å‡ºç¼–è¾‘æ€ï¼ˆè§¦å‘å–æ¶ˆé€»è¾‘ï¼‰
+        // ÍË³ö±à¼­Ì¬£¨´¥·¢È¡ÏûÂß¼­£©
         tr.querySelector(".btn-cancel")?.click();
     }
 });

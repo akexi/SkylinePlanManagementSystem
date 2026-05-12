@@ -464,7 +464,10 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("PlanTime")
+                    b.Property<DateTime?>("PlanEndTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("PlanStartTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProjectId")
@@ -495,8 +498,14 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("PlanTime")
+                    b.Property<DateTime?>("PlanEndTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("PlanStartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ProgressStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProjectNodeId")
                         .HasColumnType("int");

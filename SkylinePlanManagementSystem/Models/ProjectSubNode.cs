@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SkylinePlanManagementSystem.Models.EnumTypes;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkylinePlanManagementSystem.Models
@@ -12,7 +13,11 @@ namespace SkylinePlanManagementSystem.Models
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
-        public DateTime? PlanTime { get; set; }
+        public DateTime? PlanStartTime { get; set; }
+
+        public DateTime? PlanEndTime { get; set; }
+
+        public SubNodeProgressStatus ProgressStatus { get; set; } = SubNodeProgressStatus.未开始;
 
         [ForeignKey(nameof(ProjectNode))]
         public int ProjectNodeId { get; set; }

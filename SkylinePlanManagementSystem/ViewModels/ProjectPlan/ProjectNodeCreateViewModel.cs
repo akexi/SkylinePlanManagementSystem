@@ -12,8 +12,12 @@ namespace SkylinePlanManagementSystem.ViewModels.ProjectPlan
         [StringLength(100, MinimumLength = 2, ErrorMessage = "节点名称长度应在2-100个字符之间")]
         public string Title { get; set; } = string.Empty;
 
-        [Display(Name = "计划时间")]
+        [Display(Name = "计划开始时间")]
         [DataType(DataType.Date)]
-        public DateTime? PlanTime { get; set; }
+        public DateTime? PlanStartTime { get; set; }
+
+        [Display(Name = "计划完成时间")]
+        [DataType(DataType.Date)]
+        public DateTime? PlanEndTime { get; set; }
     }
 }

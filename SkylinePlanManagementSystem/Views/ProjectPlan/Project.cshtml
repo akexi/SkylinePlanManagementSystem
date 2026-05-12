@@ -61,7 +61,10 @@
                     <input type="text" name="Title" class="form-control" placeholder="节点名称（如：主体封顶）" required />
                 </div>
                 <div class="col-md-3 mb-2">
-                    <input type="date" name="PlanTime" class="form-control" />
+                    <input type="date" name="PlanStartTime" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="date" name="PlanEndTime" class="form-control" />
                 </div>
                 <div class="col-md-3 mb-2">
                     <button type="submit" 
@@ -100,11 +103,12 @@
                                 <table class="table table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            <th style="width:80px;">ID</th>
-                                            <th style="width:140px;">所属部门</th>
+                                            <th style="width:60px;">ID</th>
+                                            <th style="width:160px;">所属部门</th>
                                             <th>节点名称</th>
-                                            <th style="width:180px;">计划时间</th>
-                                            <th style="width:280px;">操作</th>
+                                            <th style="width:200px;">计划开始/完成</th>
+                                            <th style="width:120px;">状态</th>
+                                            <th style="width:200px;">操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -122,8 +126,14 @@
                                                         <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm edit-mode d-none" />
                                                     </td>
                                                     <td>
-                                                        <span class="view-mode">@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span>
-                                                        <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                        <span class="view-mode">@(node.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                        <input type="date" name="PlanStartTime" value="@(node.PlanStartTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                        <span class="view-mode"> / @(node.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                        <input type="date" name="PlanEndTime" value="@(node.PlanEndTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                    </td>
+                                                    <td>
+                                                        <!-- 节点层面暂时没有状态编辑（如果需要可在后端模型添加），此处仅占位显示 -->
+                                                        <span class="text-muted">—</span>
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>编辑</button>
@@ -135,20 +145,23 @@
                                                 </form>
                                             </tr>
                                             <tr id="subnode-all-@node.ProjectNodeId" class="subnode-row d-none">
-                                                <td colspan="5" class="bg-light">
+                                                <td colspan="6" class="bg-light">
                                                     <div class="subnode-box p-3">
                                                         <form asp-action="AddSubNode" method="post" class="form-row mb-2 subnode-add-form">
                                                             @Html.AntiForgeryToken()
                                                             <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                             <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
                                                             <div class="col-md-4"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
-                                                            <div class="col-md-3"><input type="date" name="PlanTime" class="form-control form-control-sm" /></div>
-                                                            <div class="col-md-3"><button type="submit" class="btn btn-sm btn-primary" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>+ 新增子节点</button></div>
+                                                            <div class="col-md-2"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
+                                                            <div class="col-md-3">
+                                                                <input type="date" name="PlanStartTime" class="form-control form-control-sm" />
+                                                            </div><div class="col-md-3"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
+                                                            <div class="col-md-3 mt-2"><button type="submit" class="btn btn-sm btn-primary" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>+ 新增子节点</button></div>
                                                         </form>
                                                         @if (node.SubNodes != null && node.SubNodes.Any())
                                                         {
                                                             <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                <thead><tr><th style="width:80px;">ID</th><th>子节点名称</th><th style="width:160px;">计划时间</th><th style="width:220px;">操作</th></tr></thead>
+                                                                <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead>
                                                                 <tbody>
                                                                     @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                     {
@@ -159,8 +172,25 @@
                                                                                 <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
                                                                                 <input type="hidden" name="ProjectSubNodeId" value="@subNode.ProjectSubNodeId" />
                                                                             <td>@subNode.ProjectSubNodeId</td>
-                                                                            <td><span class="view-mode">@subNode.Title</span><input type="text" name="Title" value="@subNode.Title" class="form-control form-control-sm edit-mode d-none" /></td>
-                                                                            <td><span class="view-mode">@(subNode.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span><input type="date" name="PlanTime" value="@(subNode.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" /></td>
+                                                                            <td>
+                                                                                <span class="view-mode">@subNode.Title</span>
+                                                                                <input type="text" name="Title" value="@subNode.Title" class="form-control form-control-sm edit-mode d-none" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="view-mode">@(subNode.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                                                <input type="date" name="PlanStartTime" value="@(subNode.PlanStartTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                                                <span class="view-mode"> / @(subNode.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                                                <input type="date" name="PlanEndTime" value="@(subNode.PlanEndTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="view-mode">@subNode.ProgressStatus</span>
+                                                                                <select name="ProgressStatus" class="custom-select custom-select-sm edit-mode d-none">
+                                                                                    <option selected="@(subNode.ProgressStatus.ToString() == "未开始")">未开始</option>
+                                                                                    <option selected="@(subNode.ProgressStatus.ToString() == "进行中")">进行中</option>
+                                                                                    <option selected="@(subNode.ProgressStatus.ToString() == "已完成")">已完成</option>
+                                                                                    <option selected="@(subNode.ProgressStatus.ToString() == "已延期")">已延期</option>
+                                                                                </select>
+                                                                            </td>
                                                                             <td>
                                                                                 <button type="button" class="btn btn-sm btn-outline-secondary btn-edit" @(subNode.DepartmentId == currentUserDepartmentId ? null : "disabled")>编辑</button>
                                                                                 <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save" @(subNode.DepartmentId == currentUserDepartmentId ? null : "disabled")>保存</button>
@@ -198,11 +228,12 @@
                                     <table class="table table-hover mb-0">
                                         <thead>
                                             <tr>
-                                                <th style="width:80px;">ID</th>
-                                                <th style="width:140px;">所属部门</th>
+                                                <th style="width:60px;">ID</th>
+                                                <th style="width:160px;">所属部门</th>
                                                 <th>节点名称</th>
-                                                <th style="width:180px;">计划时间</th>
-                                                <th style="width:280px;">操作</th>
+                                                <th style="width:200px;">计划开始/完成</th>
+                                                <th style="width:120px;">状态</th>
+                                                <th style="width:200px;">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -220,8 +251,13 @@
                                                         <input type="text" name="Title" value="@node.Title" class="form-control form-control-sm edit-mode d-none" />
                                                     </td>
                                                     <td>
-                                                        <span class="view-mode">@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span>
-                                                        <input type="date" name="PlanTime" value="@(node.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                        <span class="view-mode">@(node.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                        <input type="date" name="PlanStartTime" value="@(node.PlanStartTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                        <span class="view-mode"> / @(node.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                        <input type="date" name="PlanEndTime" value="@(node.PlanEndTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">—</span>
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
@@ -233,33 +269,58 @@
                                                     </form>
                                                 </tr>
                                                 <tr id="subnode-current-@node.ProjectNodeId" class="subnode-row d-none">
-                                                    <td colspan="5" class="bg-light">
+                                                    <td colspan="6" class="bg-light">
                                                         <div class="subnode-box p-3">
                                                             <form asp-action="AddSubNode" method="post" class="form-row mb-2 subnode-add-form">
                                                                 @Html.AntiForgeryToken()
                                                                 <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                                 <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
                                                                 <div class="col-md-4"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
-                                                                <div class="col-md-3"><input type="date" name="PlanTime" class="form-control form-control-sm" /></div>
-                                                                <div class="col-md-3"><button type="submit" class="btn btn-sm btn-primary">+ 新增子节点</button></div>
+                                                                <div class="col-md-2"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
+                                                                <div class="col-md-3">
+                                                                    <input type="date" name="PlanStartTime" class="form-control form-control-sm" />
+                                                                </div><div class="col-md-3"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
+                                                                <div class="col-md-3 mt-2"><button type="submit" class="btn btn-sm btn-primary">+ 新增子节点</button></div>
                                                             </form>
                                                             @if (node.SubNodes != null && node.SubNodes.Any())
                                                             {
                                                                 <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                    <thead><tr><th style="width:80px;">ID</th><th>子节点名称</th><th style="width:160px;">计划时间</th><th style="width:220px;">操作</th></tr></thead>
+                                                                    <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead>
                                                                     <tbody>
                                                                         @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                         {
                                                                             <tr class="subnode-item-row">
-                                                                                <form asp-action="UpdateSubNode" method="post" class="subnode-edit-form" class="subnode-edit-form">
+                                                                                <form asp-action="UpdateSubNode" method="post" class="subnode-edit-form">
                                                                                     @Html.AntiForgeryToken()
                                                                                     <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                                                     <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
                                                                                     <input type="hidden" name="ProjectSubNodeId" value="@subNode.ProjectSubNodeId" />
                                                                                 <td>@subNode.ProjectSubNodeId</td>
-                                                                                <td><span class="view-mode">@subNode.Title</span><input type="text" name="Title" value="@subNode.Title" class="form-control form-control-sm edit-mode d-none" /></td>
-                                                                                <td><span class="view-mode">@(subNode.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span><input type="date" name="PlanTime" value="@(subNode.PlanTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" /></td>
-                                                                                <td><button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button><button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button><button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button><button type="submit" formaction="@Url.Action("DeleteSubNode", "ProjectPlan")" name="projectSubNodeId" value="@subNode.ProjectSubNodeId" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除子节点【@subNode.Title】吗？');">删除</button></td>
+                                                                                <td>
+                                                                                    <span class="view-mode">@subNode.Title</span>
+                                                                                    <input type="text" name="Title" value="@subNode.Title" class="form-control form-control-sm edit-mode d-none" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span class="view-mode">@(subNode.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                                                    <input type="date" name="PlanStartTime" value="@(subNode.PlanStartTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                                                    <span class="view-mode"> / @(subNode.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span>
+                                                                                    <input type="date" name="PlanEndTime" value="@(subNode.PlanEndTime?.ToString("yyyy-MM-dd"))" class="form-control form-control-sm edit-mode d-none" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span class="view-mode">@subNode.ProgressStatus</span>
+                                                                                    <select name="ProgressStatus" class="custom-select custom-select-sm edit-mode d-none">
+                                                                                        <option selected="@(subNode.ProgressStatus.ToString() == "未开始")">未开始</option>
+                                                                                        <option selected="@(subNode.ProgressStatus.ToString() == "进行中")">进行中</option>
+                                                                                        <option selected="@(subNode.ProgressStatus.ToString() == "已完成")">已完成</option>
+                                                                                        <option selected="@(subNode.ProgressStatus.ToString() == "已延期")">已延期</option>
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
+                                                                                    <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button>
+                                                                                    <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
+                                                                                    <button type="submit" formaction="@Url.Action("DeleteSubNode", "ProjectPlan")" name="projectSubNodeId" value="@subNode.ProjectSubNodeId" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除子节点【@subNode.Title】吗？');">删除</button>
+                                                                                </td>
                                                                                 </form>
                                                                             </tr>
                                                                         }
@@ -296,11 +357,12 @@
                                     <table class="table table-hover mb-0">
                                         <thead>
                                             <tr>
-                                                <th style="width:80px;">ID</th>
-                                                <th style="width:140px;">所属部门</th>
+                                                <th style="width:60px;">ID</th>
+                                                <th style="width:160px;">所属部门</th>
                                                 <th>节点名称</th>
-                                                <th style="width:180px;">计划时间</th>
-                                                <th style="width:280px;">操作</th>
+                                                <th style="width:200px;">计划开始/完成</th>
+                                                <th style="width:120px;">状态</th>
+                                                <th style="width:200px;">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -314,7 +376,8 @@
                                                     <td>@node.ProjectNodeId</td>
                                                     <td>@(node.Department?.Name ?? "未归属")</td>
                                                     <td><span class="view-mode">@node.Title</span></td>
-                                                    <td><span class="view-mode">@(node.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</span></td>
+                                                    <td><span class="view-mode">@(node.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-") / @(node.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</span></td>
+                                                    <td><span class="view-mode">—</span></td>
                                                     <td>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary" disabled>编辑</button>
                                                         <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-other-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
@@ -323,19 +386,20 @@
                                                     </form>
                                                 </tr>
                                                 <tr id="subnode-other-@node.ProjectNodeId" class="subnode-row d-none">
-                                                    <td colspan="5" class="bg-light">
+                                                    <td colspan="6" class="bg-light">
                                                         <div class="subnode-box p-3">
                                                             @if (node.SubNodes != null && node.SubNodes.Any())
                                                             {
                                                                 <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                    <thead><tr><th style="width:80px;">ID</th><th>子节点名称</th><th style="width:160px;">计划时间</th></tr></thead>
+                                                                    <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th></tr></thead>
                                                                     <tbody>
                                                                         @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                         {
                                                                             <tr class="subnode-item-row">
                                                                                 <td>@subNode.ProjectSubNodeId</td>
                                                                                 <td>@subNode.Title</td>
-                                                                                <td>@(subNode.PlanTime?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                                                                <td>@(subNode.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-") / @(subNode.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                                                                <td>@subNode.ProgressStatus</td>
                                                                             </tr>
                                                                         }
                                                                     </tbody>
