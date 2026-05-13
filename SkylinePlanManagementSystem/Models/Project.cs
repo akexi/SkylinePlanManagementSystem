@@ -31,6 +31,8 @@ namespace SkylinePlanManagementSystem.Models
         [NotMapped]
         public string EncryptedId { get; set; }
 
+        public double CompletionProgress { get; set; }
+
         public ICollection<ProjectNode> Nodes { get; set; } = new List<ProjectNode>();
 
     }

@@ -87,7 +87,8 @@ namespace SkylinePlanManagementSystem.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CompletionProgress = table.Column<double>(type: "double", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -385,7 +386,8 @@ namespace SkylinePlanManagementSystem.Migrations
                     PlanStartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     PlanEndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: true)
+                    DepartmentId = table.Column<int>(type: "int", nullable: true),
+                    CompletionProgress = table.Column<double>(type: "double", nullable: false)
                 },
                 constraints: table =>
                 {

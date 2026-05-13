@@ -311,6 +311,7 @@ namespace SkylinePlanManagementSystem.Controllers
                 Detail = input.Detail,
                 PlanStartTime = input.PlanStartTime,
                 PlanEndTime = input.PlanEndTime,
+                ProgressStatus = input.ProgressStatus,
                 DepartmentId = user.DepartmentId,
             };
             await _projectSubNodeRepository.InsertAsync(subNode);

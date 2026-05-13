@@ -2,24 +2,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using NetCore.AutoRegisterDi;
+using NLog.Extensions.Logging;
+using NLog.Web;
+using SkylinePlanManagementSystem.Application.Courses;
+using SkylinePlanManagementSystem.Application.Projects;
+using SkylinePlanManagementSystem.Application.Students;
+using SkylinePlanManagementSystem.Application.Teachers;
 using SkylinePlanManagementSystem.CustomerMiddlewares;
 using SkylinePlanManagementSystem.DataRepositories;
 using SkylinePlanManagementSystem.Infrastructure;
+using SkylinePlanManagementSystem.Infrastructure.Data;
+using SkylinePlanManagementSystem.Infrastructure.Repositories;
 using SkylinePlanManagementSystem.Models;
 using SkylinePlanManagementSystem.Security;
-using NLog.Extensions.Logging;
-using NLog.Web;
-using System.Runtime;
 using SkylinePlanManagementSystem.Security;
 using SkylinePlanManagementSystem.Security.CustomTokenProvider;
-using SkylinePlanManagementSystem.Infrastructure.Repositories;
-using SkylinePlanManagementSystem.Application.Students;
-using SkylinePlanManagementSystem.Application.Courses;
-using SkylinePlanManagementSystem.Application.Teachers;
-using SkylinePlanManagementSystem.Infrastructure.Data;
-using NetCore.AutoRegisterDi;
-using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Runtime;
 
 namespace SkylinePlanManagementSystem
 {
@@ -51,10 +52,11 @@ namespace SkylinePlanManagementSystem
 
             // 自动注册服务（依赖注入）
             builder.Services.RegisterAssemblyPublicNonGenericClasses()
-                .Where(c => c.Name.EndsWith("Service")) // 只注册以 "Service" 结尾的类
+                .Where(t => t.Name.EndsWith("Service") && !typeof(IHostedService).IsAssignableFrom(t))
                 .AsPublicImplementedInterfaces(ServiceLifetime.Scoped);   // 将它们注册为它们实现的接口
             builder.Services.AddSingleton<DataProtectionPurposeStrings>();
             builder.Services.AddTransient(typeof(IRepository<,>), typeof(RepositoryBase<,>));   // 注册泛型仓储服务
+            builder.Services.AddHostedService<ProjectProgressBackgroundService>();
 
             // 注册 DbContext(MySQL 8)
             builder.Services.AddDbContextPool<AppDbContext>(options =>

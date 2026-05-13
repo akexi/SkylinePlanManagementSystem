@@ -24,6 +24,8 @@ namespace SkylinePlanManagementSystem.Models
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
 
+        public double CompletionProgress { get; set; }
+
         public ICollection<ProjectSubNode> SubNodes { get; set; } = new List<ProjectSubNode>();
     }
 }

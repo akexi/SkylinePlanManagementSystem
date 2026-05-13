@@ -432,6 +432,9 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProjectId"));
 
+                    b.Property<double>("CompletionProgress")
+                        .HasColumnType("double");
+
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime(6)");
 
@@ -460,6 +463,9 @@ namespace SkylinePlanManagementSystem.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProjectNodeId"));
+
+                    b.Property<double>("CompletionProgress")
+                        .HasColumnType("double");
 
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");

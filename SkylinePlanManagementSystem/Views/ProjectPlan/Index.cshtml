@@ -86,6 +86,8 @@
 
                         <th>状态</th>
 
+                        <th style="width:220px;">项目进度</th>
+
                         <th width="220">操作</th>
                     </tr>
                 </thead>
@@ -107,6 +109,12 @@
 
                             <td>
                                 <span class="badge badge-light border">@project.Status</span>
+                            </td>
+
+                            <td>
+                                <div class="progress" style="height:18px;">
+                                    <div class="progress-bar" role="progressbar" style="width: @project.CompletionProgress%;" aria-valuenow="@project.CompletionProgress" aria-valuemin="0" aria-valuemax="100">@project.CompletionProgress.ToString("0.##")%</div>
+                                </div>
                             </td>
 
                             <td>
