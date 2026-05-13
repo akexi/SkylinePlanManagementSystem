@@ -13,6 +13,9 @@ namespace SkylinePlanManagementSystem.Models
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
+        [StringLength(1000)]
+        public string? Detail { get; set; }
+
         public DateTime? PlanStartTime { get; set; }
 
         public DateTime? PlanEndTime { get; set; }

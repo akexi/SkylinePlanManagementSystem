@@ -93,6 +93,8 @@
     border-radius: 8px;
     background: #fff;
     border-left: 4px solid #6c8ef5;
+    margin-top: 4px;
+    padding-top: 10px !important;
 }
 
 .project-detail-page .subnode-table thead th {
@@ -101,6 +103,16 @@
 
 .project-detail-page .subnode-row > td {
     background: #f7f9ff !important;
+    padding-top: 6px;
+    padding-bottom: 8px;
+}
+
+.project-detail-page .subnode-add-form {
+    margin-bottom: 8px !important;
+    padding: 8px;
+    border: 1px dashed #d7def2;
+    border-radius: 8px;
+    background: #fbfcff;
 }
 
 .project-detail-page .subnode-item-row td:first-child {

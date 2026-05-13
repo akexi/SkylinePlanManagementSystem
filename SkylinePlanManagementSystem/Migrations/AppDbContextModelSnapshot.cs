@@ -498,6 +498,10 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Detail")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
                     b.Property<DateTime?>("PlanEndTime")
                         .HasColumnType("datetime(6)");
 

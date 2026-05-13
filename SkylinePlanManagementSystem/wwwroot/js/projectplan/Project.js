@@ -77,7 +77,7 @@ document.addEventListener("submit", async function (e) {
         if (!existingTable) {
             const table = document.createElement("table");
             table.className = "table table-sm table-bordered mb-0 subnode-table";
-            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead><tbody></tbody>`;
+            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th>子节点明细</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead><tbody></tbody>`;
             box.appendChild(table);
         }
 
@@ -85,6 +85,7 @@ document.addEventListener("submit", async function (e) {
         const targetTbody = box.querySelector(".subnode-table tbody");
         const subNodeId = data.subNodeId;
         const title = escapeHtml(data.title);
+        const detail = escapeHtml(data.detail || "-");
         const planStart = data.planStartTime || "";
         const planEnd = data.planEndTime || "";
         const progress = escapeHtml(data.progressStatus || "-");
@@ -103,6 +104,10 @@ document.addEventListener("submit", async function (e) {
                 <td>
                     <span class="view-mode">${title}</span>
                     <input type="text" name="Title" value="${title}" class="form-control form-control-sm edit-mode d-none" />
+                </td>
+                <td>
+                    <span class="view-mode">${detail}</span>
+                    <input type="text" name="Detail" value="${escapeHtml(data.detail || "")}" class="form-control form-control-sm edit-mode d-none" />
                 </td>
                 <td>
                     <span class="view-mode">${planStart || "-"} / ${planEnd || "-"}</span>
@@ -140,12 +145,14 @@ document.addEventListener("submit", async function (e) {
         const tr = editForm.closest("tr");
         // 更新显示字段（title、start/end、progress）
         const tds = tr.querySelectorAll("td");
-        if (tds.length >= 4) {
+        if (tds.length >= 5) {
             const titleSpan = tds[1].querySelector("span.view-mode");
             if (titleSpan) titleSpan.textContent = data.title || "";
-            const timeSpan = tds[2].querySelector("span.view-mode");
+            const detailSpan = tds[2].querySelector("span.view-mode");
+            if (detailSpan) detailSpan.textContent = data.detail || "-";
+            const timeSpan = tds[3].querySelector("span.view-mode");
             if (timeSpan) timeSpan.textContent = (data.planStartTime || "-") + " / " + (data.planEndTime || "-");
-            const progressSpan = tds[3].querySelector("span.view-mode");
+            const progressSpan = tds[4].querySelector("span.view-mode");
             if (progressSpan) progressSpan.textContent = data.progressStatus || "-";
         }
         // 退出编辑态（触发取消逻辑）

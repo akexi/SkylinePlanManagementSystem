@@ -210,7 +210,7 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
 
                 var adminRole = "Admin";
 
-                var role = new IdentityRole { Name = adminRole };
+                var role = new IdentityRole { Name = adminRole, NormalizedName = adminRole.ToUpper() };
 
                 dbcontext.Roles.Add(role);
                 dbcontext.SaveChanges();

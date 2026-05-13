@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SkylinePlanManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPlanStartandEndTime : Migration
+    public partial class UpdateDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -465,6 +465,8 @@ namespace SkylinePlanManagementSystem.Migrations
                     ProjectSubNodeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Detail = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PlanStartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     PlanEndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),

@@ -52,31 +52,12 @@
             }
         </div>
 
-        <!-- 新增节点 -->
-        <form asp-action="AddNode" method="post" class="node-create-form mb-3">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
-            <div class="form-row align-items-end">
-                <div class="col-md-4 mb-2">
-                    <label class="small text-muted mb-1">一级节点名称 <span class="text-danger">*</span></label>
-                    <input type="text" name="Title" class="form-control" placeholder="节点名称（如：主体封顶）" required />
-                </div>
-                <div class="col-md-3 mb-2">
-                    <label class="small text-muted mb-1">计划开始日期</label>
-                    <input type="date" name="PlanStartTime" class="form-control" title="请选择计划开始日期" />
-                </div>
-                <div class="col-md-3 mb-2">
-                    <label class="small text-muted mb-1">计划结束日期</label>
-                    <input type="date" name="PlanEndTime" class="form-control" title="请选择计划结束日期" />
-                </div>
-                <div class="col-md-2 mb-2">
-                    <button type="submit" 
-                        class="btn btn-primary btn-block" @(currentUserDepartmentId.HasValue ? null : "disabled")>
-                        + 新增节点
-                    </button>
-                </div>
-            </div>
-        </form>
+        <div class="node-create-form mb-3 d-flex justify-content-between align-items-center">
+            <div class="text-muted small">点击按钮后在弹窗中录入一级节点信息，避免页面拥挤。</div>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNodeModal" @(currentUserDepartmentId.HasValue ? null : "disabled")>
+                + 新增节点
+            </button>
+        </div>
 
         <div class="row mb-3 text-muted">
             <div class="col-md-6">项目一级节点总数：@nodes.Count 条</div>
@@ -149,17 +130,17 @@
                                                             @Html.AntiForgeryToken()
                                                             <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                             <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
-                                                            <div class="col-md-4"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
+                                                            <div class="col-md-3"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
+                                                            <div class="col-md-3"><input type="text" name="Detail" class="form-control form-control-sm" placeholder="子节点明细（可选）" /></div>
                                                             <div class="col-md-2"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
-                                                            <div class="col-md-3">
-                                                                <input type="date" name="PlanStartTime" class="form-control form-control-sm" />
-                                                            </div><div class="col-md-3"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
-                                                            <div class="col-md-3 mt-2"><button type="submit" class="btn btn-sm btn-primary" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>+ 新增子节点</button></div>
+                                                            <div class="col-md-2"><input type="date" name="PlanStartTime" class="form-control form-control-sm" /></div>
+                                                            <div class="col-md-2"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
+                                                            <div class="col-md-12 mt-2"><button type="submit" class="btn btn-sm btn-primary" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>+ 新增子节点</button></div>
                                                         </form>
                                                         @if (node.SubNodes != null && node.SubNodes.Any())
                                                         {
                                                             <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead>
+                                                                <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th>子节点明细</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead>
                                                                 <tbody>
                                                                     @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                     {
@@ -173,6 +154,10 @@
                                                                             <td>
                                                                                 <span class="view-mode">@subNode.Title</span>
                                                                                 <input type="text" name="Title" value="@subNode.Title" class="form-control form-control-sm edit-mode d-none" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="view-mode">@(string.IsNullOrWhiteSpace(subNode.Detail) ? "-" : subNode.Detail)</span>
+                                                                                <input type="text" name="Detail" value="@subNode.Detail" class="form-control form-control-sm edit-mode d-none" />
                                                                             </td>
                                                                             <td>
                                                                                 <span class="view-mode">@(subNode.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</span>
@@ -269,17 +254,17 @@
                                                                 @Html.AntiForgeryToken()
                                                                 <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                                 <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
-                                                                <div class="col-md-4"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
+                                                                <div class="col-md-3"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
+                                                                <div class="col-md-3"><input type="text" name="Detail" class="form-control form-control-sm" placeholder="子节点明细（可选）" /></div>
                                                                 <div class="col-md-2"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
-                                                                <div class="col-md-3">
-                                                                    <input type="date" name="PlanStartTime" class="form-control form-control-sm" />
-                                                                </div><div class="col-md-3"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
-                                                                <div class="col-md-3 mt-2"><button type="submit" class="btn btn-sm btn-primary">+ 新增子节点</button></div>
+                                                                <div class="col-md-2"><input type="date" name="PlanStartTime" class="form-control form-control-sm" /></div>
+                                                                <div class="col-md-2"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
+                                                                <div class="col-md-12 mt-2"><button type="submit" class="btn btn-sm btn-primary">+ 新增子节点</button></div>
                                                             </form>
                                                             @if (node.SubNodes != null && node.SubNodes.Any())
                                                             {
                                                                 <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                    <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead>
+                                                                    <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th>子节点明细</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead>
                                                                     <tbody>
                                                                         @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                         {
@@ -293,6 +278,10 @@
                                                                                 <td>
                                                                                     <span class="view-mode">@subNode.Title</span>
                                                                                     <input type="text" name="Title" value="@subNode.Title" class="form-control form-control-sm edit-mode d-none" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span class="view-mode">@(string.IsNullOrWhiteSpace(subNode.Detail) ? "-" : subNode.Detail)</span>
+                                                                                    <input type="text" name="Detail" value="@subNode.Detail" class="form-control form-control-sm edit-mode d-none" />
                                                                                 </td>
                                                                                 <td>
                                                                                     <span class="view-mode">@(subNode.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</span>
@@ -383,13 +372,14 @@
                                                             @if (node.SubNodes != null && node.SubNodes.Any())
                                                             {
                                                                 <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                    <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th></tr></thead>
+                                                                    <thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th>子节点明细</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th></tr></thead>
                                                                     <tbody>
                                                                         @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                         {
                                                                             <tr class="subnode-item-row">
                                                                                 <td>@subNode.ProjectSubNodeId</td>
                                                                                 <td>@subNode.Title</td>
+                                                                                <td>@(string.IsNullOrWhiteSpace(subNode.Detail) ? "-" : subNode.Detail)</td>
                                                                                 <td>@(subNode.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-") / @(subNode.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</td>
                                                                                 <td>@subNode.ProgressStatus</td>
                                                                             </tr>
@@ -434,3 +424,23 @@
 @section Scripts {
     <script src="~/js/projectplan/Project.js"></script>
 }
+
+<div class="modal fade" id="addNodeModal" tabindex="-1" role="dialog" aria-labelledby="addNodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form asp-action="AddNode" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addNodeModalLabel">新增一级节点</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group"><label>一级节点名称</label><input type="text" name="Title" class="form-control" required /></div>
+                    <div class="form-row"><div class="col"><label>计划开始日期</label><input type="date" name="PlanStartTime" class="form-control" /></div><div class="col"><label>计划结束日期</label><input type="date" name="PlanEndTime" class="form-control" /></div></div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-dismiss="modal">取消</button><button type="submit" class="btn btn-primary">保存节点</button></div>
+            </form>
+        </div>
+    </div>
+</div>
