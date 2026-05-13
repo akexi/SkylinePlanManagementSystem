@@ -10,7 +10,7 @@
 }
 
 .project-list-page .project-search-box {
-    max-width: 520px;
+    max-width: 640px;
 }
 
 .project-list-page .project-table-wrap {
@@ -22,6 +22,14 @@
 
 .project-list-page table tbody tr:hover {
     background-color: #f8fbff;
+}
+
+.project-list-page table tbody tr {
+    transition: background-color .2s ease, transform .2s ease;
+}
+
+.project-list-page table tbody tr:hover {
+    transform: translateY(-1px);
 }
 
 .project-list-page table thead th {
@@ -37,6 +45,51 @@
 .project-list-page .badge {
     font-size: 12px;
     padding: 6px 10px;
+}
+
+.project-list-page .status-badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.project-list-page .status-completed {
+    color: #155724;
+    background: #d4edda;
+    border-color: #b1dfbb;
+}
+
+.project-list-page .status-paused {
+    color: #5f6368;
+    background: #eceff1;
+    border-color: #d8dde3;
+}
+
+.project-list-page .status-active {
+    color: #0c5460;
+    background: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.project-list-page .status-not-started {
+    color: #5b4a00;
+    background: #fff3cd;
+    border-color: #ffe8a1;
+}
+
+.project-list-page .status-cancelled {
+    color: #721c24;
+    background: #f8d7da;
+    border-color: #f1b8bd;
+}
+
+.project-list-page .status-default {
+    color: #495057;
+    background: #f1f3f5;
+    border-color: #e3e7eb;
 }
 
 .project-list-page .page-link {
@@ -137,6 +190,26 @@
 
 .project-detail-page .node-actions .btn {
     margin: 0 4px 6px 0;
+}
+
+.project-detail-page tr.is-editing {
+    background: #f7faff;
+}
+
+.project-detail-page tr.is-editing input.edit-mode[type="text"],
+.project-detail-page tr.is-editing select.edit-mode,
+.project-detail-page tr.is-editing input.edit-mode[type="date"] {
+    display: inline-block;
+    width: auto;
+    min-width: 120px;
+    margin-right: 8px;
+    margin-bottom: 6px;
+    vertical-align: middle;
+}
+
+.project-detail-page tr.is-editing td {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .project-detail-page .btn-subnode-toggle {

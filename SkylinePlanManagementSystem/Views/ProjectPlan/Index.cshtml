@@ -108,7 +108,19 @@
                             <td class="text-muted">@(string.IsNullOrWhiteSpace(project.Remark) ? "-" : project.Remark)</td>
 
                             <td>
-                                <span class="badge badge-light border">@project.Status</span>
+                                @{
+                                    var status = project.Status.ToString();
+                                    var statusClass = status switch
+                                    {
+                                        "已完成" => "status-badge status-completed",
+                                        "已暂停" => "status-badge status-paused",
+                                        "进行中" => "status-badge status-active",
+                                        "未开始" => "status-badge status-not-started",
+                                        "已取消" => "status-badge status-cancelled",
+                                        _ => "status-badge status-default"
+                                    };
+                                }
+                                <span class="@statusClass">@project.Status</span>
                             </td>
 
                             <td>

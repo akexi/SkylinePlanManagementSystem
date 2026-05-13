@@ -5,6 +5,7 @@
 
     if (editBtn) {
         const tr = editBtn.closest("tr");
+        tr.classList.add("is-editing");
         tr.querySelectorAll(".view-mode").forEach(x => x.classList.add("d-none"));
         tr.querySelectorAll(".edit-mode").forEach(x => x.classList.remove("d-none"));
         tr.querySelector(".btn-edit")?.classList.add("d-none");
@@ -14,6 +15,7 @@
 
     if (cancelBtn) {
         const tr = cancelBtn.closest("tr");
+        tr.classList.remove("is-editing");
         tr.querySelectorAll(".view-mode").forEach(x => x.classList.remove("d-none"));
         tr.querySelectorAll(".edit-mode").forEach(x => x.classList.add("d-none"));
         tr.querySelector(".btn-edit")?.classList.remove("d-none");
