@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SkylinePlanManagementSystem.Application.Dtos;
@@ -24,6 +26,7 @@ namespace SkylinePlanManagementSystem.Controllers
         private readonly IDataProtector protector;  // IDataProtector提供了Protect()和Unprotect()方法来加密和解密数据
         private readonly IStudentService _studentService; // 注入学生服务接口
         private readonly AppDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
 
         // 使用构造函数注入的方式注入IRepository<Student, int>、IWebHostEnvironment、ILogger<HomeController>、IDataProtectionProvider和DataProtectionPurposeStrings服务
@@ -33,7 +36,8 @@ namespace SkylinePlanManagementSystem.Controllers
             IDataProtectionProvider dataProtectionProvider,
             DataProtectionPurposeStrings dataProtectionPurposeStrings,
             IStudentService studentService,
-            AppDbContext dbContext)
+            AppDbContext dbContext,
+            UserManager<ApplicationUser> userManager)
         {
             _studentRepository = studentRepository;
             _webHostEnvironment = webHostEnvironment;
@@ -41,11 +45,67 @@ namespace SkylinePlanManagementSystem.Controllers
             protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.StudentIdRouteValue);
             _studentService = studentService;
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
-        public IActionResult NewIndex()
+        public async Task<IActionResult> NewIndex()
         {
-            return View();
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            var totalProjects = await _dbContext.Projects.CountAsync();
+            var totalNodes = await _dbContext.ProjectNodes.CountAsync();
+            var totalSubNodes = await _dbContext.ProjectSubNodes.CountAsync();
+            var completedProjects = await _dbContext.Projects.CountAsync(p => p.Status == Models.EnumTypes.ProjectStatus.已完成);
+
+            var progressList = await _dbContext.ProjectSubNodes
+    .Select(sn => sn.ProgressStatus == Models.EnumTypes.SubNodeProgressStatus.已完成 ? 100d :
+                  sn.ProgressStatus == Models.EnumTypes.SubNodeProgressStatus.进行中 ? 50d : 0d)
+    .ToListAsync();
+
+            var overallProgress = progressList.Any()
+                ? progressList.Average()
+                : 0;
+
+            var departmentProgresses = await _dbContext.ProjectSubNodes
+                .Where(sn => sn.DepartmentId != null && sn.Department != null)
+                .GroupBy(sn => sn.Department!.Name)
+                .Select(g => new NewIndexDepartmentProgressViewModel
+                {
+                    DepartmentName = g.Key,
+                    TotalSubNodes = g.Count(),
+                    CompletedSubNodes = g.Count(x => x.ProgressStatus == Models.EnumTypes.SubNodeProgressStatus.已完成),
+                    ProgressPercent = g.Select(x => x.ProgressStatus == Models.EnumTypes.SubNodeProgressStatus.已完成 ? 100d :
+                                                  x.ProgressStatus == Models.EnumTypes.SubNodeProgressStatus.进行中 ? 50d : 0d).Average()
+                })
+                .OrderByDescending(d => d.ProgressPercent)
+                .Take(6)
+                .ToListAsync();
+
+            var model = new NewIndexViewModel
+            {
+                UserDisplayName = string.IsNullOrWhiteSpace(currentUser?.Name) ? User?.Identity?.Name ?? "用户" : currentUser.Name,
+                TotalProjects = totalProjects,
+                TotalNodes = totalNodes,
+                TotalSubNodes = totalSubNodes,
+                CompletedProjects = completedProjects,
+                OverallProgress = Math.Round(overallProgress, 1),
+                DepartmentProgresses = departmentProgresses,
+                RecentProjects = await _dbContext.Projects
+                    .OrderByDescending(p => p.ProjectId)
+                    .Select(p => new NewIndexRecentProjectViewModel
+                    {
+                        ProjectId = p.ProjectId,
+                        ProjectName = p.ProjectName,
+                        Status = p.Status,
+                        CompletionProgress = p.CompletionProgress,
+                        EndTime = p.EndTime,
+                        NodeCount = p.Nodes.Count
+                    })
+                    .Take(6)
+                    .ToListAsync()
+            };
+
+            return View(model);
         }
 
         //[Route("")]
@@ -63,6 +123,11 @@ namespace SkylinePlanManagementSystem.Controllers
             }).ToList();
 
             return View(dtos);
+        }
+
+        public IActionResult ComingSoon()
+        {
+            return View();
         }
 
         /// <summary>

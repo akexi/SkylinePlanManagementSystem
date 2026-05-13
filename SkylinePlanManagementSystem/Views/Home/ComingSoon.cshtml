@@ -1,0 +1,172 @@
+﻿@{
+    ViewData["Title"] = "施工现场";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序员正在发功</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            font-family: "Microsoft YaHei";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient( -45deg, #ff0080, #7928ca, #00c6ff, #0072ff );
+            background-size: 400% 400%;
+            animation: bg 10s infinite ease;
+        }
+
+        @@keyframes bg {
+            0% {
+                background-position: 0 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        .card {
+            width: 800px;
+            text-align: center;
+            color: white;
+        }
+
+        .emoji {
+            font-size: 120px;
+            animation: shake 1s infinite;
+        }
+
+        @@keyframes shake {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(10deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
+        }
+
+        .title {
+            font-size: 52px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-shadow: 0 0 20px rgba(255,255,255,.6);
+        }
+
+        .subtitle {
+            margin-top: 20px;
+            font-size: 24px;
+            opacity: .95;
+        }
+
+        .code {
+            margin-top: 30px;
+            display: inline-block;
+            background: rgba(0,0,0,.3);
+            padding: 20px 40px;
+            border-radius: 20px;
+            font-size: 22px;
+            font-family: Consolas;
+        }
+
+        .error {
+            color: #ffe600;
+            animation: flash 1s infinite;
+        }
+
+        @@keyframes flash {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .3;
+            }
+        }
+
+        .btn {
+            margin-top: 40px;
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            font-size: 22px;
+            padding: 15px 35px;
+            border-radius: 50px;
+            background: rgba(255,255,255,.2);
+            backdrop-filter: blur(10px);
+            transition: .3s;
+        }
+
+            .btn:hover {
+                transform: scale(1.1) rotate(-2deg);
+                background: white;
+                color: black;
+            }
+
+        .tips {
+            margin-top: 30px;
+            opacity: .8;
+            font-size: 18px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="card">
+
+        <div class="emoji">
+            🐷💻
+        </div>
+
+        <div class="title">
+            小李正在激情施工中...
+        </div>
+
+        <div class="subtitle">
+            别催，再催就给你加需求 😏
+        </div>
+
+        <div class="code">
+            <span class="error">
+                compiling... 99%
+            </span>
+        </div>
+
+        <br />
+
+        <a href="/" class="btn">
+            🏠 先回首页避避风头
+        </a>
+
+        <div class="tips">
+            Bug 不一定会消失，但功能一定会出现 🚀
+        </div>
+
+    </div>
+
+</body>
+</html>

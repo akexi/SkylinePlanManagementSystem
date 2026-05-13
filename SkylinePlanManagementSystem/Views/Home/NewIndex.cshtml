@@ -1,136 +1,102 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> _userManager
+﻿@model SkylinePlanManagementSystem.ViewModels.NewIndexViewModel
 @{
     ViewBag.Title = "首页 - 项目计划管理系统";
-    var appUser = await _userManager.GetUserAsync(User);
+    var completionRate = Model.TotalProjects == 0 ? 0 : Math.Round(Model.CompletedProjects * 100.0 / Model.TotalProjects, 1);
 }
 
 <!-- 欢迎区 -->
-<div class="card shadow-sm mb-4">
-    <div class="card-body d-flex justify-content-between align-items-center">
-
+<div class="p-4 mb-4 text-white" style="border-radius:16px;background:linear-gradient(120deg,#1d4ed8,#0ea5e9);">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
         <div>
-            <h5 class="mb-1">👋 欢迎回来，@appUser.Name</h5>
-            <div class="text-muted">
-                今天是 @DateTime.Now.ToString("yyyy年MM月dd日 HH:mm")
-            </div>
+            <h2 class="mb-2">@Model.UserDisplayName，欢迎回来~ 👋</h2>
+            <div class="opacity-75">@DateTime.Now.ToString("yyyy年MM月dd日 dddd HH:mm")</div>
         </div>
-
-        <a asp-controller="ProjectPlan"
-           asp-action="Create"
-           class="btn btn-primary">
-            ＋ 新建项目计划
-        </a>
-
+        <a asp-controller="ProjectPlan" asp-action="Create" class="btn btn-light mt-3 mt-md-0">立即创建新项目</a>
     </div>
 </div>
-
 
 <!-- 统计卡片 -->
 <div class="row mb-4">
-
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted">总项目数</div>
-                    <h4 class="mb-0">0</h4>
-                </div>
-                <div style="font-size:28px">📁</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted">一级节点</div>
-                    <h4 class="mb-0">0</h4>
-                </div>
-                <div style="font-size:28px">🔵</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted">二级节点</div>
-                    <h4 class="mb-0">0</h4>
-                </div>
-                <div style="font-size:28px">🟢</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted">三级节点</div>
-                    <h4 class="mb-0">0</h4>
-                </div>
-                <div style="font-size:28px">🟣</div>
-            </div>
-        </div>
-    </div>
-
+    <div class="col-lg-3 col-6 mb-3"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">总项目</small><h3>@Model.TotalProjects</h3></div></div></div>
+    <div class="col-lg-3 col-6 mb-3"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">一级节点</small><h3>@Model.TotalNodes</h3></div></div></div>
+    <div class="col-lg-3 col-6 mb-3"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">二级节点</small><h3>@Model.TotalSubNodes</h3></div></div></div>
+    <div class="col-lg-3 col-6 mb-3"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">项目完成率</small><h3>@completionRate%</h3></div></div></div>
 </div>
 
-
-<!-- 快捷功能 -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-light">
-        <h6 class="mb-0">快捷功能</h6>
+<div class="row mb-4">
+    <div class="col-lg-5 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white"><strong>全局进度雷达</strong></div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between"><span>所有子节点汇总进度</span><strong>@Model.OverallProgress%</strong></div>
+                <div class="progress mt-2" style="height:12px;"><div class="progress-bar bg-success" style="width:@Model.OverallProgress%"></div></div>
+                <div class="mt-4 d-grid gap-2">
+                    <a asp-controller="ProjectPlan" asp-action="Index" class="btn btn-outline-primary">查看项目全览</a>
+                    <a asp-controller="Departments" asp-action="Index" class="btn btn-outline-secondary">查看部门管理</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="card-body">
-        <div class="row text-center">
-
-            <div class="col-md-2">
-                <a asp-controller="ProjectPlan" asp-action="Index"
-                   class="text-decoration-none text-dark">
-                    <div class="p-3 border rounded">
-                        <svg class="icon" aria-hidden="true" style="font-size:26px">
-                            <use xlink:href="#icon-hetongleixing-L"></use>
-                        </svg>
-                        <div class="mt-1">项目计划</div>
-                    </div>
-                </a>
+<!-- 快捷功能 -->
+    <div class="col-lg-7 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white"><strong>部门工作进度 Top 6</strong></div>
+            <div class="card-body">
+                @if (Model.DepartmentProgresses.Any())
+                {
+                    foreach (var d in Model.DepartmentProgresses)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>@d.DepartmentName</span>
+                                <small class="text-muted">@d.CompletedSubNodes/@d.TotalSubNodes · @Math.Round(d.ProgressPercent, 1)%</small>
+                            </div>
+                            <div class="progress" style="height:10px;"><div class="progress-bar bg-info" style="width:@d.ProgressPercent%"></div></div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted">暂无可统计的部门节点数据。</div>
+                }
             </div>
-
         </div>
     </div>
 </div>
 
 
 <!-- 最近项目 -->
-<div class="card shadow-sm">
-    <div class="card-header bg-light">
-        <h6 class="mb-0">最近项目</h6>
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <strong>最近项目动态</strong>
+        <a asp-controller="ProjectPlan" asp-action="Index" class="btn btn-sm btn-outline-primary">全部项目</a>
     </div>
 
-    <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>项目名称</th>
-                    <th>负责人</th>
-                    <th>节点进度</th>
-                    <th>状态</th>
-                    <th width="120">操作</th>
-                </tr>
-            </thead>
-
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead><tr><th>项目</th><th>节点数</th><th>进度</th><th>状态</th><th>结束时间</th></tr></thead>
             <tbody>
-                <tr>
-                    <td colspan="5"
-                        class="text-center text-muted py-4">
-                        暂无项目数据，点击右上角「新建项目计划」
-                    </td>
-                </tr>
+                @if (Model.RecentProjects.Any())
+                {
+                    foreach (var p in Model.RecentProjects)
+                    {
+                        <tr>
+                            <td>@p.ProjectName</td>
+                            <td>@p.NodeCount</td>
+                            <td style="min-width:180px;">
+                                <div class="progress" style="height:8px;"><div class="progress-bar" style="width:@p.CompletionProgress%"></div></div>
+                                <small>@Math.Round(p.CompletionProgress, 1)%</small>
+                            </td>
+                            <td>@p.Status</td>
+                            <td>@(p.EndTime?.ToString("yyyy-MM-dd") ?? "--")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-4">还没有项目，去创建你的第一个项目吧。</td></tr>
+                }
             </tbody>
         </table>
     </div>
