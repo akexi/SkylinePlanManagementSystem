@@ -14,6 +14,8 @@
     var otherDepartmentNodes = currentUserDepartmentId.HasValue
         ? nodes.Where(n => n.DepartmentId != currentUserDepartmentId.Value).OrderBy(n => n.ProjectNodeId).ToList()
         : nodes.OrderBy(n => n.ProjectNodeId).ToList();
+
+    var activeTab = ViewBag.ActiveTab as string ?? "all-nodes";
 }
 
 <div class="project-detail-page">
@@ -23,8 +25,7 @@
             <p class="text-muted mb-0">项目ID：@Model.ProjectId</p>
         </div>
         <div class="project-detail-actions">
-            <a asp-action="Edit" asp-route-id="@Model.ProjectId" class="btn btn-outline-primary">编辑项目</a>
-            <a asp-action="Index" class="btn btn-outline-secondary ml-2">返回列表</a>
+            <a asp-action="Index" class="btn btn-outline-secondary ml-2">返回项目列表</a>
         </div>
     </div>
 
@@ -52,34 +53,25 @@
             }
         </div>
 
-        <div class="node-create-form mb-3 d-flex justify-content-between align-items-center">
-            <div class="text-muted small">点击按钮后在弹窗中录入一级节点信息，避免页面拥挤。</div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNodeModal" @(currentUserDepartmentId.HasValue ? null : "disabled")>
-                + 新增节点
-            </button>
-        </div>
-
-        <div class="row mb-3 text-muted">
-            <div class="col-md-6">项目一级节点总数：@nodes.Count 条</div>
-            <div class="col-md-6">部门一级节点（当前部门）：@departmentNodes.Count 条</div>
-        </div>
-
         @if (nodes.Any())
         {
             <ul class="nav nav-tabs mb-3" id="projectNodeTabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="all-nodes-tab" data-toggle="tab" href="#all-nodes" role="tab">全部节点</a>
+                    <a class="nav-link @(activeTab == "all-nodes" ? "active" : "")" id="all-nodes-tab" href="@Url.Action("Project", "ProjectPlan", new { id = Model.ProjectId, tab = "all-nodes" })" role="tab">全部节点（@nodes.Count）</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="current-dept-tab" data-toggle="tab" href="#current-dept" role="tab">当前部门节点</a>
+                    <a class="nav-link @(activeTab == "current-dept" ? "active" : "")" id="current-dept-tab" href="@Url.Action("Project", "ProjectPlan", new { id = Model.ProjectId, tab = "current-dept" })" role="tab">当前部门节点（@departmentNodes.Count）</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="other-dept-tab" data-toggle="tab" href="#other-dept" role="tab">其他部门节点</a>
+                    <a class="nav-link @(activeTab == "other-dept" ? "active" : "")" id="other-dept-tab" href="@Url.Action("Project", "ProjectPlan", new { id = Model.ProjectId, tab = "other-dept" })" role="tab">其他部门节点（@otherDepartmentNodes.Count）</a>
+                </li>
+                <li class="nav-item ml-2 align-self-center">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addNodeModal" @(currentUserDepartmentId.HasValue ? null : "disabled")>+ 新增节点</button>
                 </li>
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="all-nodes" role="tabpanel">
+                <div class="tab-pane fade @(activeTab == "all-nodes" ? "show active" : "")" id="all-nodes" role="tabpanel">
                     <div class="card mb-3">
                         <div class="card-header bg-light">项目一级节点 / 全部</div>
                         <div class="card-body p-0">
@@ -201,7 +193,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="current-dept" role="tabpanel">
+                <div class="tab-pane fade @(activeTab == "current-dept" ? "show active" : "")" id="current-dept" role="tabpanel">
                     <div class="card mb-3">
                         <div class="card-header bg-light">项目一级节点 / 当前部门</div>
                         <div class="card-body p-0">
@@ -330,7 +322,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="other-dept" role="tabpanel">
+                <div class="tab-pane fade @(activeTab == "other-dept" ? "show active" : "")" id="other-dept" role="tabpanel">
                     <div class="card mb-3">
                         <div class="card-header bg-light">项目一级节点 / 其他部门</div>
                         <div class="card-body p-0">

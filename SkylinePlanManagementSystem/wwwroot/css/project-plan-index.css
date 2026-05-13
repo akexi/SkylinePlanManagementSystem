@@ -157,3 +157,16 @@
 .project-detail-page .btn-subnode-toggle.is-expanded::before {
     content: "▾ ";
 }
+
+.subnode-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.subnode-box .subnode-table, .subnode-box .subnode-empty {
+    order: 1;
+}
+
+.subnode-box .subnode-add-form {
+    order: 2;
+}

@@ -107,7 +107,7 @@ namespace SkylinePlanManagementSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Project(int id)
+        public async Task<IActionResult> Project(int id, string tab = "all-nodes")
         {
             var project = await _projectRepository.GetAll()
                 .Include(p => p.Nodes)
@@ -139,6 +139,7 @@ namespace SkylinePlanManagementSystem.Controllers
             ViewBag.CurrentUserDepartmentName = user?.DepartmentId.HasValue == true
                 ? (await _departmentRepository.FirstOrDefaultAsync(d => d.DepartmentId == user.DepartmentId.Value)).Name
                 : null;
+            ViewBag.ActiveTab = tab;
 
             return View(model);
         }

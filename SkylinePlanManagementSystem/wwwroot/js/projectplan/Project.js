@@ -110,8 +110,9 @@ document.addEventListener("submit", async function (e) {
                     <input type="text" name="Detail" value="${escapeHtml(data.detail || "")}" class="form-control form-control-sm edit-mode d-none" />
                 </td>
                 <td>
-                    <span class="view-mode">${planStart || "-"} / ${planEnd || "-"}</span>
-                    <input type="date" name="PlanStartTime" value="${escapeHtml(planStart)}" class="form-control form-control-sm edit-mode d-none mb-1" />
+                    <span class="view-mode">${planStart || "-"}</span>
+                    <input type="date" name="PlanStartTime" value="${escapeHtml(planStart)}" class="form-control form-control-sm edit-mode d-none" />
+                    <span class="view-mode"> / ${planEnd || "-"}</span>
                     <input type="date" name="PlanEndTime" value="${escapeHtml(planEnd)}" class="form-control form-control-sm edit-mode d-none" />
                 </td>
                 <td>
@@ -150,8 +151,9 @@ document.addEventListener("submit", async function (e) {
             if (titleSpan) titleSpan.textContent = data.title || "";
             const detailSpan = tds[2].querySelector("span.view-mode");
             if (detailSpan) detailSpan.textContent = data.detail || "-";
-            const timeSpan = tds[3].querySelector("span.view-mode");
-            if (timeSpan) timeSpan.textContent = (data.planStartTime || "-") + " / " + (data.planEndTime || "-");
+            const timeSpans = tds[3].querySelectorAll("span.view-mode");
+            if (timeSpans.length > 0) timeSpans[0].textContent = data.planStartTime || "-";
+            if (timeSpans.length > 1) timeSpans[1].textContent = " / " + (data.planEndTime || "-");
             const progressSpan = tds[4].querySelector("span.view-mode");
             if (progressSpan) progressSpan.textContent = data.progressStatus || "-";
         }
