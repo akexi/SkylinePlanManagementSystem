@@ -1,6 +1,6 @@
 # SkylinePlanManagementSystem
 
-一个基于 **ASP.NET Core 8 MVC + EF Core + MySQL + Identity** 的项目管理与教学管理示例系统。
+一个基于 **ASP.NET Core 8 MVC + EF Core + MySQL + Identity** 的项目管理示例系统。
 
 > 当前仓库包含部门、项目计划（含节点与子节点进度）等模块，并集成了登录认证、角色授权、Swagger、NLog 日志与后台任务。
 
