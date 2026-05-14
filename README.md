@@ -2,7 +2,7 @@
 
 一个基于 **ASP.NET Core 8 MVC + EF Core + MySQL + Identity** 的项目管理与教学管理示例系统。
 
-> 当前仓库包含课程、学生、教师、部门、项目计划（含节点与子节点进度）等模块，并集成了登录认证、角色授权、Swagger、NLog 日志与后台任务。
+> 当前仓库包含部门、项目计划（含节点与子节点进度）等模块，并集成了登录认证、角色授权、Swagger、NLog 日志与后台任务。
 
 ## ✨ 功能概览
 
@@ -12,7 +12,6 @@
   - 角色/声明策略授权（如 `SuperAdminPolicy`、`EditRolePolicy`）
   - 第三方登录：Microsoft、GitHub
 - 业务模块
-  - 学生、教师、课程、院系基础管理
   - 项目计划管理（Project / Node / SubNode）
   - 项目进度后台服务自动更新（HostedService）
 - 工程能力
@@ -119,4 +118,4 @@ dotnet run --project SkylinePlanManagementSystem
 
 ## 📝 License
 
-如未单独声明，建议在此补充你的开源协议（例如 MIT / Apache-2.0）。
+本项目仅为学习参考，如有不妥请联系。
