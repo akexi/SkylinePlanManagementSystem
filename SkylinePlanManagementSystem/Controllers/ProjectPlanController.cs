@@ -6,6 +6,7 @@ using SkylinePlanManagementSystem.Infrastructure.Repositories;
 using SkylinePlanManagementSystem.Models;
 using SkylinePlanManagementSystem.ViewModels.ProjectPlan;
 using Microsoft.EntityFrameworkCore;
+using ClosedXML.Excel;
 
 namespace SkylinePlanManagementSystem.Controllers
 {
@@ -405,6 +406,96 @@ namespace SkylinePlanManagementSystem.Controllers
             await _projectRepository.DeleteAsync(project);
             TempData["ProjectSuccess"] = $"项目【{project.ProjectName}】已删除";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NodeExport(ProjectNodeExportQueryViewModel query)
+        {
+            var rows = await BuildNodeExportQuery(query).ToListAsync();
+            var model = new ProjectNodeExportPageViewModel
+            {
+                Query = query,
+                Rows = rows
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportNodeExcel(ProjectNodeExportQueryViewModel query)
+        {
+            var rows = await BuildNodeExportQuery(query).ToListAsync();
+
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("项目节点数据");
+
+            worksheet.Cell(1, 1).Value = "项目名称";
+            worksheet.Cell(1, 2).Value = "一级节点";
+            worksheet.Cell(1, 3).Value = "子节点";
+            worksheet.Cell(1, 4).Value = "计划开始时间";
+            worksheet.Cell(1, 5).Value = "计划结束时间";
+
+            for (var i = 0; i < rows.Count; i++)
+            {
+                var row = rows[i];
+                worksheet.Cell(i + 2, 1).Value = row.ProjectName;
+                worksheet.Cell(i + 2, 2).Value = row.NodeTitle ?? string.Empty;
+                worksheet.Cell(i + 2, 3).Value = row.SubNodeTitle ?? string.Empty;
+                worksheet.Cell(i + 2, 4).Value = row.PlanStartTime?.ToString("yyyy-MM-dd") ?? string.Empty;
+                worksheet.Cell(i + 2, 5).Value = row.PlanEndTime?.ToString("yyyy-MM-dd") ?? string.Empty;
+            }
+
+            worksheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            stream.Position = 0;
+
+            var fileName = $"项目节点导出_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
+        private IQueryable<ProjectNodeExportRowViewModel> BuildNodeExportQuery(ProjectNodeExportQueryViewModel query)
+        {
+            var dataQuery =
+                from project in _projectRepository.GetAll()
+                from node in project.Nodes.DefaultIfEmpty()
+                from subNode in node.SubNodes.DefaultIfEmpty()
+                select new ProjectNodeExportRowViewModel
+                {
+                    ProjectName = project.ProjectName,
+                    NodeTitle = node != null ? node.Title : null,
+                    SubNodeTitle = subNode != null ? subNode.Title : null,
+                    PlanStartTime = subNode != null ? subNode.PlanStartTime : node != null ? node.PlanStartTime : project.StartTime,
+                    PlanEndTime = subNode != null ? subNode.PlanEndTime : node != null ? node.PlanEndTime : project.EndTime
+                };
+
+            if (!string.IsNullOrWhiteSpace(query.ProjectName))
+            {
+                dataQuery = dataQuery.Where(x => x.ProjectName.Contains(query.ProjectName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.NodeTitle))
+            {
+                dataQuery = dataQuery.Where(x => x.NodeTitle != null && x.NodeTitle.Contains(query.NodeTitle));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.SubNodeTitle))
+            {
+                dataQuery = dataQuery.Where(x => x.SubNodeTitle != null && x.SubNodeTitle.Contains(query.SubNodeTitle));
+            }
+
+            if (query.StartDate.HasValue)
+            {
+                dataQuery = dataQuery.Where(x => x.PlanStartTime.HasValue && x.PlanStartTime.Value.Date >= query.StartDate.Value.Date);
+            }
+
+            if (query.EndDate.HasValue)
+            {
+                dataQuery = dataQuery.Where(x => x.PlanEndTime.HasValue && x.PlanEndTime.Value.Date <= query.EndDate.Value.Date);
+            }
+
+            return dataQuery.OrderBy(x => x.ProjectName).ThenBy(x => x.NodeTitle).ThenBy(x => x.SubNodeTitle);
         }
 
 
