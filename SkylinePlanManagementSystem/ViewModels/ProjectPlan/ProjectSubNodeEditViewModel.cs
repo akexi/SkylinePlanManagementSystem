@@ -28,5 +28,9 @@ namespace SkylinePlanManagementSystem.ViewModels.ProjectPlan
 
         [Display(Name = "完成情况")]
         public SubNodeProgressStatus ProgressStatus { get; set; } = SubNodeProgressStatus.未开始;
+
+        [Display(Name = "备注")]
+        [StringLength(200, ErrorMessage = "备注最多200个字符")]
+        public string? Remark { get; set; }
     }
 }

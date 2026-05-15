@@ -19,5 +19,9 @@ namespace SkylinePlanManagementSystem.ViewModels.ProjectPlan
         [Display(Name = "计划完成时间")]
         [DataType(DataType.Date)]
         public DateTime? PlanEndTime { get; set; }
+
+        [Display(Name = "备注")]
+        [StringLength(200, ErrorMessage = "备注最多200个字符")]
+        public string? Remark { get; set; }
     }
 }

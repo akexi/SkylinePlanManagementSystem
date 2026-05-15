@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SkylinePlanManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateDb : Migration
+    public partial class CreateDb1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -385,6 +385,8 @@ namespace SkylinePlanManagementSystem.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PlanStartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     PlanEndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Remark = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: true),
                     CompletionProgress = table.Column<double>(type: "double", nullable: false)
@@ -473,6 +475,8 @@ namespace SkylinePlanManagementSystem.Migrations
                     PlanStartTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     PlanEndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ProgressStatus = table.Column<int>(type: "int", nullable: false),
+                    Remark = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ProjectNodeId = table.Column<int>(type: "int", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: true)
                 },

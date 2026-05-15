@@ -479,6 +479,9 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Remark")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -519,6 +522,9 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     b.Property<int>("ProjectNodeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Remark")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Title")
                         .IsRequired()

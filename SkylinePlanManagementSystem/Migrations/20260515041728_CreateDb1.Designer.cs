@@ -12,8 +12,8 @@ using SkylinePlanManagementSystem.Infrastructure;
 namespace SkylinePlanManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260513042820_UpdateDb")]
-    partial class UpdateDb
+    [Migration("20260515041728_CreateDb1")]
+    partial class CreateDb1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -482,6 +482,9 @@ namespace SkylinePlanManagementSystem.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Remark")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -522,6 +525,9 @@ namespace SkylinePlanManagementSystem.Migrations
 
                     b.Property<int>("ProjectNodeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Remark")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Title")
                         .IsRequired()

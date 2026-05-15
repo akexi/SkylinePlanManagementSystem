@@ -31,7 +31,8 @@ namespace SkylinePlanManagementSystem.Models
         [NotMapped]
         public string EncryptedId { get; set; }
 
-        public double CompletionProgress { get; set; }
+        // 计算项目完成度的属性，范围从0.0到1.0
+        public double CompletionProgress { get; set; } = 0.0;
 
         public ICollection<ProjectNode> Nodes { get; set; } = new List<ProjectNode>();
 

@@ -8,7 +8,7 @@ namespace SkylinePlanManagementSystem.Models
     {
         [Key]
         public int ProjectSubNodeId { get; set; }
-
+        
         [Required]
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;
@@ -21,6 +21,8 @@ namespace SkylinePlanManagementSystem.Models
         public DateTime? PlanEndTime { get; set; }
 
         public SubNodeProgressStatus ProgressStatus { get; set; } = SubNodeProgressStatus.未开始;
+
+        public string? Remark { get; set; }
 
         [ForeignKey(nameof(ProjectNode))]
         public int ProjectNodeId { get; set; }

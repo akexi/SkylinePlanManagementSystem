@@ -54,21 +54,25 @@ namespace SkylinePlanManagementSystem.Infrastructure
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // 配置ProjectNode与Project之间的关系
             modelBuilder.Entity<ProjectNode>()
                 .HasOne(n => n.Project)
                 .WithMany(p => p.Nodes)
                 .HasForeignKey(n => n.ProjectId);
 
+            // 配置ProjectNode与Department之间的关系
             modelBuilder.Entity<ProjectNode>()
                 .HasOne(n => n.Department)
                 .WithMany()
                 .HasForeignKey(n => n.DepartmentId);
 
+            // 配置ProjectSubNode与ProjectNode之间的关系
             modelBuilder.Entity<ProjectSubNode>()
                 .HasOne(sn => sn.ProjectNode)
                 .WithMany(n => n.SubNodes)
                 .HasForeignKey(sn => sn.ProjectNodeId);
 
+            // 配置ProjectSubNode与Department之间的关系
             modelBuilder.Entity<ProjectSubNode>()
                 .HasOne(sn => sn.Department)
                 .WithMany()

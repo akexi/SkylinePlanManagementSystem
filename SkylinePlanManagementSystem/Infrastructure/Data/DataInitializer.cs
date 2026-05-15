@@ -14,7 +14,7 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
                 var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
                 var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
 
-                #region 学生种子信息
+                #region 学生/教师种子信息(示例数据)
 
                 if (dbcontext.Students.Any())
                 {
@@ -34,9 +34,9 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
                 }
                 dbcontext.SaveChanges();
 
-                #endregion 学生种子信息
 
-                #region 部门种子数据
+
+
 
                 var teachers = new[]
                 {
@@ -58,7 +58,11 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
                 }
                 dbcontext.SaveChanges();
 
-                #endregion 学院种子数据
+                #endregion 学生/教师种子信息(示例数据)
+
+
+                #region 部门种子数据
+
 
                 var departments = new[]
                 {
@@ -73,6 +77,45 @@ namespace SkylinePlanManagementSystem.Infrastructure.Data
                     dbcontext.Departments.Add(d);
                 }
                 dbcontext.SaveChanges();
+
+                #endregion 部门种子数据
+
+                #region 项目种子数据
+                // 项目种子
+                var projects = new[]
+                {
+                    new Project { ProjectName = "示例项目A", Remark = "这是一个项目的示例备注", StartTime = DateTime.Parse("2023-01-01"), EndTime = DateTime.Parse("2023-12-31"),Status = ProjectStatus.已完成 },
+                    new Project { ProjectName = "示例项目B", Remark = "这是一个项目的示例备注", StartTime = DateTime.Parse("2024-01-01"), EndTime = DateTime.Parse("2025-12-31"),Status = ProjectStatus.已暂停 },
+                    new Project { ProjectName = "示例项目C", Remark = "这是一个项目的示例备注", StartTime = DateTime.Parse("2025-01-01"), EndTime = DateTime.Parse("2026-12-31"),Status = ProjectStatus.进行中 },
+                    new Project { ProjectName = "示例项目D", Remark = "这是一个项目的示例备注", StartTime = DateTime.Parse("2026-01-01"), EndTime = DateTime.Parse("2027-12-31"),Status = ProjectStatus.进行中 },
+                    new Project { ProjectName = "示例项目E", Remark = "这是一个项目的示例备注", StartTime = DateTime.Parse("2027-01-01"), EndTime = DateTime.Parse("2028-12-31"),Status = ProjectStatus.未开始 },
+                    
+                };
+                foreach(var p in projects)
+                {
+                    dbcontext.Projects.Add(p);
+                }
+                dbcontext.SaveChanges();
+
+                // 一级节点种子
+                var projectNodes = new[]
+                {
+                    new ProjectNode { ProjectId = projects.Single(p => p.ProjectName == "示例项目A").ProjectId, Title = "示例一级节点1", PlanStartTime = DateTime.Parse("2023-01-01"), PlanEndTime = DateTime.Parse("2023-06-30"),DepartmentId = departments.Single(d => d.Name == "综合管理部").DepartmentId },
+                    new ProjectNode { ProjectId = projects.Single(p => p.ProjectName == "示例项目A").ProjectId, Title = "示例一级节点2", PlanStartTime = DateTime.Parse("2023-07-01"), PlanEndTime = DateTime.Parse("2023-12-31"),DepartmentId = departments.Single(d => d.Name == "综合管理部").DepartmentId },
+                    new ProjectNode { ProjectId = projects.Single(p => p.ProjectName == "示例项目B").ProjectId, Title = "示例一级节点1", PlanStartTime = DateTime.Parse("2024-01-01"), PlanEndTime = DateTime.Parse("2024-06-30"),DepartmentId = departments.Single(d => d.Name == "财务管理部").DepartmentId },
+                    new ProjectNode { ProjectId = projects.Single(p => p.ProjectName == "示例项目C").ProjectId, Title = "示例一级节点1", PlanStartTime = DateTime.Parse("2025-01-01"), PlanEndTime = DateTime.Parse("2025-06-30"),DepartmentId = departments.Single(d => d.Name == "工程管理中心").DepartmentId },
+                    new ProjectNode { ProjectId = projects.Single(p => p.ProjectName == "示例项目D").ProjectId, Title = "示例一级节点1", PlanStartTime = DateTime.Parse("2026-01-01"), PlanEndTime = DateTime.Parse("2026-06-30"),DepartmentId = departments.Single(d => d.Name == "营销管理中心").DepartmentId },
+                    new ProjectNode { ProjectId = projects.Single(p => p.ProjectName == "示例项目E").ProjectId, Title = "示例一级节点1", PlanStartTime = DateTime.Parse("2027-01-01"), PlanEndTime = DateTime.Parse("2027-06-30"),DepartmentId = departments.Single(d => d.Name == "综合管理部").DepartmentId },
+                };
+                foreach(var pn in projectNodes)
+                {
+                    dbcontext.ProjectNodes.Add(pn);
+                }
+                dbcontext.SaveChanges();
+
+                #endregion 项目种子数据
+
+
 
 
                 #region 课程种子数据

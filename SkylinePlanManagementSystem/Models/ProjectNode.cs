@@ -16,6 +16,8 @@ namespace SkylinePlanManagementSystem.Models
 
         public DateTime? PlanEndTime { get; set; }
 
+        public string? Remark { get; set; }
+
         [ForeignKey(nameof(Project))]
         public int ProjectId { get; set; }
         public Project Project { get; set; } = null!;
