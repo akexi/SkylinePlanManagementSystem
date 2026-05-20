@@ -79,7 +79,7 @@ document.addEventListener("submit", async function (e) {
         if (!existingTable) {
             const table = document.createElement("table");
             table.className = "table table-sm table-bordered mb-0 subnode-table";
-            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>子节点名称</th><th>子节点明细</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead><tbody></tbody>`;
+            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>二级节点名称</th><th>明细（三级节点）</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead><tbody></tbody>`;
             box.appendChild(table);
         }
 

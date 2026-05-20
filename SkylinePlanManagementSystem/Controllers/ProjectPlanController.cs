@@ -430,19 +430,27 @@ namespace SkylinePlanManagementSystem.Controllers
             var worksheet = workbook.Worksheets.Add("项目节点数据");
 
             worksheet.Cell(1, 1).Value = "项目名称";
-            worksheet.Cell(1, 2).Value = "一级节点";
-            worksheet.Cell(1, 3).Value = "子节点";
-            worksheet.Cell(1, 4).Value = "计划开始时间";
-            worksheet.Cell(1, 5).Value = "计划结束时间";
+            worksheet.Cell(1, 2).Value = "项目ID";
+            worksheet.Cell(1, 3).Value = "一级节点";
+            worksheet.Cell(1, 4).Value = "所属部门";
+            worksheet.Cell(1, 5).Value = "二级节点";
+            worksheet.Cell(1, 6).Value = "明细（三级节点）";
+            worksheet.Cell(1, 7).Value = "二级节点状态";
+            worksheet.Cell(1, 8).Value = "计划开始时间";
+            worksheet.Cell(1, 9).Value = "计划结束时间";
 
             for (var i = 0; i < rows.Count; i++)
             {
                 var row = rows[i];
                 worksheet.Cell(i + 2, 1).Value = row.ProjectName;
-                worksheet.Cell(i + 2, 2).Value = row.NodeTitle ?? string.Empty;
-                worksheet.Cell(i + 2, 3).Value = row.SubNodeTitle ?? string.Empty;
-                worksheet.Cell(i + 2, 4).Value = row.PlanStartTime?.ToString("yyyy-MM-dd") ?? string.Empty;
-                worksheet.Cell(i + 2, 5).Value = row.PlanEndTime?.ToString("yyyy-MM-dd") ?? string.Empty;
+                worksheet.Cell(i + 2, 2).Value = row.ProjectId;
+                worksheet.Cell(i + 2, 3).Value = row.NodeTitle ?? string.Empty;
+                worksheet.Cell(i + 2, 4).Value = row.NodeDepartmentName ?? string.Empty;
+                worksheet.Cell(i + 2, 5).Value = row.SubNodeTitle ?? string.Empty;
+                worksheet.Cell(i + 2, 6).Value = row.SubNodeDetail ?? string.Empty;
+                worksheet.Cell(i + 2, 7).Value = row.SubNodeStatus ?? string.Empty;
+                worksheet.Cell(i + 2, 8).Value = row.PlanStartTime?.ToString("yyyy-MM-dd") ?? string.Empty;
+                worksheet.Cell(i + 2, 9).Value = row.PlanEndTime?.ToString("yyyy-MM-dd") ?? string.Empty;
             }
 
             worksheet.Columns().AdjustToContents();
@@ -463,9 +471,13 @@ namespace SkylinePlanManagementSystem.Controllers
                 from subNode in node.SubNodes.DefaultIfEmpty()
                 select new ProjectNodeExportRowViewModel
                 {
+                    ProjectId = project.ProjectId,
                     ProjectName = project.ProjectName,
                     NodeTitle = node != null ? node.Title : null,
+                    NodeDepartmentName = node != null && node.Department != null ? node.Department.Name : null,
                     SubNodeTitle = subNode != null ? subNode.Title : null,
+                    SubNodeDetail = subNode != null ? subNode.Detail : null,
+                    SubNodeStatus = subNode != null ? subNode.ProgressStatus.ToString() : null,
                     PlanStartTime = subNode != null ? subNode.PlanStartTime : node != null ? node.PlanStartTime : project.StartTime,
                     PlanEndTime = subNode != null ? subNode.PlanEndTime : node != null ? node.PlanEndTime : project.EndTime
                 };

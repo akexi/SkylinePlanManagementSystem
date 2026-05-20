@@ -121,7 +121,7 @@
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>编辑</button>
                                                         <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>保存</button>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
-                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-all-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
+                                                    <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-all-@node.ProjectNodeId">二级节点@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
                                                         <button type="submit" formaction="@Url.Action("DeleteNode", "ProjectPlan")" name="projectNodeId" value="@node.ProjectNodeId" class="btn btn-sm btn-outline-danger" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled") onclick="return confirm('确定删除节点【@node.Title】吗？');">删除</button>
                                                     </td>
                                                 </form>
@@ -133,18 +133,18 @@
                                                             @Html.AntiForgeryToken()
                                                             <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                             <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
-                                                            <div class="col-md-2"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
-                                                            <div class="col-md-3"><input type="text" name="Detail" class="form-control form-control-sm" placeholder="子节点明细（可选）" /></div>
-                                                            <div class="col-md-1"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
+                                                            <div class="col-md-2"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增二级节点名称" required /></div>
+                                                            <div class="col-md-3"><input type="text" name="Detail" class="form-control form-control-sm" placeholder="明细（三级节点）" /></div>                                                          
                                                             <div class="col-md-1"><input type="date" name="PlanStartTime" class="form-control form-control-sm" /></div>
                                                             <div class="col-md-1"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
+                                                            <div class="col-md-1"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
                                                             <div class="col-md-3"><input type="text" name="Remark" class="form-control form-control-sm" placeholder="备注（可选）" /></div>
                                                             <div class="col-md-12 mt-2"><button type="submit" class="btn btn-sm btn-primary" @(node.DepartmentId == currentUserDepartmentId ? null : "disabled")>+ 新增子节点</button></div>
                                                         </form>
                                                         @if (node.SubNodes != null && node.SubNodes.Any())
                                                         {
                                                             <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                <thead><tr><th style="width:60px;">ID</th><th style="width:200px;">子节点名称</th><th style="width:250px;">子节点明细</th><th style="width:120px;">计划开始/完成</th><th style="width:80px;">状态</th><th style="width:180px;">备注</th><th style="width:200px;">操作</th></tr></thead>
+                                                                <thead><tr><th style="width:60px;">ID</th><th style="width:200px;">二级节点名称</th><th style="width:250px;">明细（三级节点）</th><th style="width:120px;">计划开始/完成</th><th style="width:80px;">状态</th><th style="width:180px;">备注</th><th style="width:200px;">操作</th></tr></thead>
                                                                 <tbody>
                                                                     @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                     {
@@ -261,7 +261,7 @@
                                                         <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
                                                         <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button>
                                                         <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
-                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-current-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-current-@node.ProjectNodeId">二级节点@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
                                                         <button type="submit" formaction="@Url.Action("DeleteNode", "ProjectPlan")" name="projectNodeId" value="@node.ProjectNodeId" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除节点【@node.Title】吗？');">删除</button>
                                                     </td>
                                                     </form>
@@ -273,18 +273,18 @@
                                                                 @Html.AntiForgeryToken()
                                                                 <input type="hidden" name="ProjectId" value="@Model.ProjectId" />
                                                                 <input type="hidden" name="ProjectNodeId" value="@node.ProjectNodeId" />
-                                                                <div class="col-md-3"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增子节点名称" required /></div>
-                                                                <div class="col-md-3"><input type="text" name="Detail" class="form-control form-control-sm" placeholder="子节点明细（可选）" /></div>
-                                                                <div class="col-md-2"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
-                                                                <div class="col-md-2"><input type="date" name="PlanStartTime" class="form-control form-control-sm" /></div>
-                                                                <div class="col-md-2"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
+                                                                <div class="col-md-3"><input type="text" name="Title" class="form-control form-control-sm" placeholder="新增二级节点名称" required /></div>
+                                                                <div class="col-md-3"><input type="text" name="Detail" class="form-control form-control-sm" placeholder="明细（三级节点）" /></div>
+                                                                <div class="col-md-1"><input type="date" name="PlanStartTime" class="form-control form-control-sm" /></div>
+                                                                <div class="col-md-1"><input type="date" name="PlanEndTime" class="form-control form-control-sm" /></div>
+                                                                <div class="col-md-1"><select name="ProgressStatus" class="custom-select custom-select-sm"><option>未开始</option><option>进行中</option><option>已完成</option><option>已延期</option></select></div>
                                                                 <div class="col-md-3"><input type="text" name="Remark" class="form-control form-control-sm" placeholder="备注（可选）" /></div>
                                                                 <div class="col-md-12 mt-2"><button type="submit" class="btn btn-sm btn-primary">+ 新增子节点</button></div>
                                                             </form>
                                                             @if (node.SubNodes != null && node.SubNodes.Any())
                                                             {
                                                                 <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                    <thead><tr><th style="width:60px;">ID</th><th style="width:200px;">子节点名称</th><th style="width:250px;">子节点明细</th><th style="width:120px;">计划开始/完成</th><th style="width:80px;">状态</th><th style="width:180px;">备注</th><th style="width:200px;">操作</th></tr></thead>
+                                                                    <thead><tr><th style="width:60px;">ID</th><th style="width:200px;">二级节点名称</th><th style="width:250px;">明细（三级节点）</th><th style="width:120px;">计划开始/完成</th><th style="width:80px;">状态</th><th style="width:180px;">备注</th><th style="width:200px;">操作</th></tr></thead>
                                                                     <tbody>
                                                                         @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                         {
@@ -387,7 +387,7 @@
                                                     <td><span class="view-mode">@node.Remark</span></td>
                                                     <td class="node-actions">
                                                         <button type="button" class="btn btn-sm btn-outline-secondary" disabled>编辑</button>
-                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-other-@node.ProjectNodeId">子节点管理@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info btn-subnode-toggle" data-target="#subnode-other-@node.ProjectNodeId">二级节点@(node.SubNodes != null && node.SubNodes.Any() ? $"（{node.SubNodes.Count}）" : "")</button>
                                                         <button type="button" class="btn btn-sm btn-outline-danger" disabled>删除</button>
                                                     </td>
                                                     </form>
@@ -398,7 +398,7 @@
                                                             @if (node.SubNodes != null && node.SubNodes.Any())
                                                             {
                                                                 <table class="table table-sm table-bordered mb-0 subnode-table">
-                                                                    <thead><tr><th style="width:60px;">ID</th><th style="width:200px;">子节点名称</th><th style="width:250px;">子节点明细</th><th style="width:120px;">计划开始/完成</th><th style="width:80px;">状态</th><th style="width:180px;">备注</th></tr></thead>
+                                                                    <thead><tr><th style="width:60px;">ID</th><th style="width:200px;">二级节点名称</th><th style="width:250px;">明细（三级节点）</th><th style="width:120px;">计划开始/完成</th><th style="width:80px;">状态</th><th style="width:180px;">备注</th></tr></thead>
                                                                     <tbody>
                                                                         @foreach (var subNode in node.SubNodes.OrderBy(sn => sn.ProjectSubNodeId))
                                                                         {

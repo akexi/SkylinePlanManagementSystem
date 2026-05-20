@@ -4,13 +4,13 @@
     ViewBag.Title = "节点查询与导出";
 }
 
-<div class="container-fluid">
+<div class="container-fluid node-export-page">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0">节点查询与导出</h3>
         <a asp-action="Index" class="btn btn-outline-secondary">返回项目列表</a>
     </div>
 
-    <form asp-action="NodeExport" method="get" class="card card-body mb-3">
+    <form asp-action="NodeExport" method="get" class="card card-body shadow-sm border-0 mb-3">
         <div class="form-row">
             <div class="form-group col-md-2">
                 <label>项目名称</label>
@@ -21,7 +21,7 @@
                 <input class="form-control" name="NodeTitle" value="@Model.Query.NodeTitle" />
             </div>
             <div class="form-group col-md-2">
-                <label>子节点</label>
+                <label>二级节点</label>
                 <input class="form-control" name="SubNodeTitle" value="@Model.Query.SubNodeTitle" />
             </div>
             <div class="form-group col-md-2">
@@ -33,7 +33,7 @@
                 <input type="date" class="form-control" name="EndDate" value="@(Model.Query.EndDate?.ToString("yyyy-MM-dd"))" />
             </div>
         </div>
-        <div>
+        <div class="d-flex flex-wrap gap-2">
             <button type="submit" class="btn btn-primary">筛选</button>
             <a asp-action="NodeExport" class="btn btn-outline-secondary">重置</a>
             <a asp-action="ExportNodeExcel"
@@ -46,36 +46,60 @@
         </div>
     </form>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>项目名称</th>
-                    <th>一级节点</th>
-                    <th>子节点</th>
-                    <th>计划开始时间</th>
-                    <th>计划结束时间</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.Rows.Any())
-                {
-                    foreach (var row in Model.Rows)
-                    {
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle mb-0">
+                    <thead class="thead-light">
                         <tr>
-                            <td>@row.ProjectName</td>
-                            <td>@(row.NodeTitle ?? "-")</td>
-                            <td>@(row.SubNodeTitle ?? "-")</td>
-                            <td>@(row.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</td>
-                            <td>@(row.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <th>项目ID</th>
+                            <th>项目名称</th>
+                            <th>一级节点</th>
+                            <th>所属部门</th>
+                            <th>二级节点</th>
+                            <th>二级节点明细（三级节点）</th>
+                            <th>二级节点状态</th>
+                            <th>计划开始时间</th>
+                            <th>计划结束时间</th>
                         </tr>
-                    }
-                }
-                else
-                {
-                    <tr><td colspan="5" class="text-center text-muted">无匹配数据</td></tr>
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        @if (Model.Rows.Any())
+                        {
+                            foreach (var row in Model.Rows)
+                            {
+                                <tr>
+                                    <td><span class="badge badge-pill badge-primary">@row.ProjectId</span></td>
+                                    <td>@row.ProjectName</td>
+                                    <td>@(row.NodeTitle ?? "-")</td>
+                                    <td>@(row.NodeDepartmentName ?? "-")</td>
+                                    <td>@(row.SubNodeTitle ?? "-")</td>
+                                    <td class="text-break">@(row.SubNodeDetail ?? "-")</td>
+                                    <td>@(row.SubNodeStatus ?? "-")</td>
+                                    <td>@(row.PlanStartTime?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                    <td>@(row.PlanEndTime?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="9" class="text-center text-muted py-4">无匹配数据</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .node-export-page .form-group label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .node-export-page .table thead th {
+        white-space: nowrap;
+        background-color: #f8f9fa;
+    }
+</style>
