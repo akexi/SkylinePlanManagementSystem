@@ -54,7 +54,7 @@ SkylinePlanManagementSystem/
 ### 2) 获取代码
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/akexi/SkylinePlanManagementSystem.git
 cd SkylinePlanManagementSystem
 ```
 
