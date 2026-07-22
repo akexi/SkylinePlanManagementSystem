@@ -4,22 +4,27 @@ namespace SkylinePlanManagementSystem.Application.Dtos
 {
     public class PagedSortedAndFilterInput
     {
-        public PagedSortedAndFilterInput() 
-        { 
-            CurrentPage = 1;
-            MaxResultCount = 10;
+        private const int DefaultCurrentPage = 1;
+        private const int DefaultMaxResultCount = 10;
+
+        public PagedSortedAndFilterInput()
+        {
+            CurrentPage = DefaultCurrentPage;
+            MaxResultCount = DefaultMaxResultCount;
+            Sorting = string.Empty;
+            FilterText = string.Empty;
         }
 
         /// <summary>
         /// 每页分页条数，最大值为1000
         /// </summary>
-        [Range(0,1000)]
+        [Range(1,1000)]
         public int MaxResultCount { get; set; }
 
         /// <summary>
         /// 当前页，最大值为1000
         /// </summary>
-        [Range(0,1000)]
+        [Range(1,1000)]
         public int CurrentPage { get; set; }
 
         /// <summary>
