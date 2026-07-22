@@ -29,5 +29,8 @@ namespace SkylinePlanManagementSystem.ViewModels.ProjectPlan
         [Display(Name = "状态")]
         [Required(ErrorMessage = "请选择项目状态")]
         public ProjectStatus Status { get; set; } = ProjectStatus.未开始;
+
+        [Display(Name = "项目进度")]
+        public double CompletionProgress { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿document.addEventListener("click", function (e) {
+document.addEventListener("click", function (e) {
     const editBtn = e.target.closest(".btn-edit");
     const cancelBtn = e.target.closest(".btn-cancel");
     const toggleBtn = e.target.closest('.btn-subnode-toggle');
@@ -57,6 +57,26 @@ function escapeHtml(str) {
     });
 }
 
+function updateNodeProgressBar(nodeId, progress) {
+    const progressBars = document.querySelectorAll(`.node-progress-bar-${nodeId}`);
+    progressBars.forEach(bar => {
+        const percentage = parseFloat(progress).toFixed(2);
+        bar.style.width = `${percentage}%`;
+        bar.setAttribute("aria-valuenow", percentage);
+        bar.textContent = `${parseFloat(percentage)}%`;
+    });
+}
+
+function updateProjectProgressBar(progress) {
+    const bar = document.getElementById("project-overall-progress");
+    if (bar) {
+        const percentage = parseFloat(progress).toFixed(2);
+        bar.style.width = `${percentage}%`;
+        bar.setAttribute("aria-valuenow", percentage);
+        bar.textContent = `${parseFloat(percentage)}%`;
+    }
+}
+
 document.addEventListener("submit", async function (e) {
     const addForm = e.target.closest(".subnode-add-form");
     const editForm = e.target.closest(".subnode-edit-form");
@@ -79,7 +99,7 @@ document.addEventListener("submit", async function (e) {
         if (!existingTable) {
             const table = document.createElement("table");
             table.className = "table table-sm table-bordered mb-0 subnode-table";
-            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>二级节点名称</th><th>明细（三级节点）</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:200px;">操作</th></tr></thead><tbody></tbody>`;
+            table.innerHTML = `<thead><tr><th style="width:60px;">ID</th><th>二级节点名称</th><th>明细（三级节点）</th><th style="width:180px;">计划开始/完成</th><th style="width:120px;">状态</th><th style="width:180px;">备注</th><th style="width:200px;">操作</th></tr></thead><tbody></tbody>`;
             box.appendChild(table);
         }
 
@@ -96,59 +116,86 @@ document.addEventListener("submit", async function (e) {
 
         const row = document.createElement("tr");
         row.className = "subnode-item-row";
+        row.dataset.subnodeId = subNodeId;
         row.innerHTML = `
-            <form action="/ProjectPlan/UpdateSubNode" method="post" class="subnode-edit-form">
-                <input name="__RequestVerificationToken" type="hidden" value="${escapeHtml(token)}" />
-                <input type="hidden" name="ProjectId" value="${escapeHtml(projectId)}" />
-                <input type="hidden" name="ProjectNodeId" value="${escapeHtml(projectNodeId)}" />
-                <input type="hidden" name="ProjectSubNodeId" value="${escapeHtml(subNodeId)}" />
-                <td>${escapeHtml(subNodeId)}</td>
-                <td>
-                    <span class="view-mode">${title}</span>
-                    <input type="text" name="Title" value="${title}" class="form-control form-control-sm edit-mode d-none" />
-                </td>
-                <td>
-                    <span class="view-mode">${detail}</span>
-                    <input type="text" name="Detail" value="${escapeHtml(data.detail || "")}" class="form-control form-control-sm edit-mode d-none" />
-                </td>
-                <td>
-                    <span class="view-mode">${planStart || "-"}</span>
-                    <input type="date" name="PlanStartTime" value="${escapeHtml(planStart)}" class="form-control form-control-sm edit-mode d-none" />
-                    <span class="view-mode"> / ${planEnd || "-"}</span>
-                    <input type="date" name="PlanEndTime" value="${escapeHtml(planEnd)}" class="form-control form-control-sm edit-mode d-none" />
-                </td>
-                <td>
-                    <span class="view-mode">${progress}</span>
-                    <select name="ProgressStatus" class="custom-select custom-select-sm edit-mode d-none">
-                        <option${progress === "未开始" ? " selected" : ""}>未开始</option>
-                        <option${progress === "进行中" ? " selected" : ""}>进行中</option>
-                        <option${progress === "已完成" ? " selected" : ""}>已完成</option>
-                        <option${progress === "已延期" ? " selected" : ""}>已延期</option>
-                    </select>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
-                    <button type="submit" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
-                    <button type="submit" formaction="/ProjectPlan/DeleteSubNode" name="projectSubNodeId" value="${escapeHtml(subNodeId)}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除子节点【${title}】吗？');">删除</button>
-                </td>
-            </form>`;
+            <td>
+                ${escapeHtml(subNodeId)}
+                <form id="subnode-edit-form-${subNodeId}" action="/ProjectPlan/UpdateSubNode" method="post" class="subnode-edit-form" style="display:none;">
+                    <input name="__RequestVerificationToken" type="hidden" value="${escapeHtml(token)}" />
+                    <input type="hidden" name="ProjectId" value="${escapeHtml(projectId)}" />
+                    <input type="hidden" name="ProjectNodeId" value="${escapeHtml(projectNodeId)}" />
+                    <input type="hidden" name="ProjectSubNodeId" value="${escapeHtml(subNodeId)}" />
+                </form>
+            </td>
+            <td>
+                <span class="view-mode">${title}</span>
+                <input type="text" name="Title" value="${title}" form="subnode-edit-form-${subNodeId}" class="form-control form-control-sm edit-mode d-none" style="width:100%;margin:0;" />
+            </td>
+            <td>
+                <span class="view-mode">${detail}</span>
+                <input type="text" name="Detail" value="${escapeHtml(data.detail || "")}" form="subnode-edit-form-${subNodeId}" class="form-control form-control-sm edit-mode d-none" style="width:100%;margin:0;" />
+            </td>
+            <td>
+                <span class="view-mode">${planStart || "-"}</span>
+                <input type="date" name="PlanStartTime" value="${escapeHtml(planStart)}" form="subnode-edit-form-${subNodeId}" class="form-control form-control-sm edit-mode d-none" />
+                <span class="view-mode"> / ${planEnd || "-"}</span>
+                <input type="date" name="PlanEndTime" value="${escapeHtml(planEnd)}" form="subnode-edit-form-${subNodeId}" class="form-control form-control-sm edit-mode d-none" />
+            </td>
+            <td>
+                <span class="view-mode">${progress}</span>
+                <select name="ProgressStatus" form="subnode-edit-form-${subNodeId}" class="custom-select custom-select-sm edit-mode d-none">
+                    <option${progress === "未开始" ? " selected" : ""}>未开始</option>
+                    <option${progress === "进行中" ? " selected" : ""}>进行中</option>
+                    <option${progress === "已完成" ? " selected" : ""}>已完成</option>
+                    <option${progress === "已延期" ? " selected" : ""}>已延期</option>
+                </select>
+            </td>
+            <td>
+                <span class="view-mode">${escapeHtml(data.remark || "")}</span>
+                <input type="text" name="Remark" value="${escapeHtml(data.remark || "")}" form="subnode-edit-form-${subNodeId}" class="form-control form-control-sm edit-mode d-none" style="width:100%;margin:0;" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-sm btn-outline-secondary btn-edit">编辑</button>
+                <button type="submit" form="subnode-edit-form-${subNodeId}" class="btn btn-sm btn-outline-primary d-none btn-save">保存</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary d-none btn-cancel">取消</button>
+                <button type="submit" form="subnode-edit-form-${subNodeId}" formaction="/ProjectPlan/DeleteSubNode" name="projectSubNodeId" value="${escapeHtml(subNodeId)}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定删除子节点【${title}】吗？');">删除</button>
+            </td>`;
         targetTbody.appendChild(row);
         addForm.reset();
+
+        if (data.nodeProgress !== undefined) {
+            updateNodeProgressBar(projectNodeId, data.nodeProgress);
+        }
+        if (data.projectProgress !== undefined) {
+            updateProjectProgressBar(data.projectProgress);
+        }
         return;
     }
 
     // 编辑表单：删除或更新
     if (editForm && form.action.includes("DeleteSubNode")) {
-        editForm.closest("tr")?.remove();
+        const projectNodeId = editForm.querySelector('input[name="ProjectNodeId"]').value;
+        const subNodeId = editForm.querySelector('input[name="ProjectSubNodeId"]').value;
+        const tr = document.querySelector(`.subnode-item-row[data-subnode-id="${subNodeId}"]`) || editForm.closest("tr");
+        tr?.remove();
+
+        if (data.nodeProgress !== undefined) {
+            updateNodeProgressBar(projectNodeId, data.nodeProgress);
+        }
+        if (data.projectProgress !== undefined) {
+            updateProjectProgressBar(data.projectProgress);
+        }
         return;
     }
 
     if (editForm) {
-        const tr = editForm.closest("tr");
-        // 更新显示字段（title、start/end、progress）
+        const projectNodeId = editForm.querySelector('input[name="ProjectNodeId"]').value;
+        const subNodeId = editForm.querySelector('input[name="ProjectSubNodeId"]').value;
+        const tr = document.querySelector(`.subnode-item-row[data-subnode-id="${subNodeId}"]`) || editForm.closest("tr");
+
+        // 更新显示字段（title、start/end、progress, remark）
         const tds = tr.querySelectorAll("td");
-        if (tds.length >= 5) {
+        if (tds.length >= 6) {
             const titleSpan = tds[1].querySelector("span.view-mode");
             if (titleSpan) titleSpan.textContent = data.title || "";
             const detailSpan = tds[2].querySelector("span.view-mode");
@@ -158,8 +205,17 @@ document.addEventListener("submit", async function (e) {
             if (timeSpans.length > 1) timeSpans[1].textContent = " / " + (data.planEndTime || "-");
             const progressSpan = tds[4].querySelector("span.view-mode");
             if (progressSpan) progressSpan.textContent = data.progressStatus || "-";
+            const remarkSpan = tds[5].querySelector("span.view-mode");
+            if (remarkSpan) remarkSpan.textContent = data.remark || "";
         }
         // 退出编辑态（触发取消逻辑）
         tr.querySelector(".btn-cancel")?.click();
+
+        if (data.nodeProgress !== undefined) {
+            updateNodeProgressBar(projectNodeId, data.nodeProgress);
+        }
+        if (data.projectProgress !== undefined) {
+            updateProjectProgressBar(data.projectProgress);
+        }
     }
 });
