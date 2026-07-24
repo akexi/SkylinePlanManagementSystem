@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using SkylinePlanManagementSystem.Application.Projects;
 using SkylinePlanManagementSystem.Application.Projects.Dtos;
@@ -131,7 +131,8 @@ namespace SkylinePlanManagementSystem.Controllers
                 Remark = project.Remark,
                 StartTime = project.StartTime,
                 EndTime = project.EndTime,
-                Status = project.Status
+                Status = project.Status,
+                CompletionProgress = project.CompletionProgress
             };
 
             ViewBag.ProjectNodes = project.Nodes?.ToList() ?? new List<ProjectNode>();
@@ -215,6 +216,8 @@ namespace SkylinePlanManagementSystem.Controllers
             project.Nodes.Add(node);
             await _projectRepository.UpdateAsync(project);
 
+            await RecalculateProjectProgressAsync(input.ProjectId);
+
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
@@ -248,6 +251,8 @@ namespace SkylinePlanManagementSystem.Controllers
             node.Remark = input.Remark;
             await _projectNodeRepository.UpdateAsync(node);
 
+            await RecalculateProjectProgressAsync(input.ProjectId);
+
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
@@ -277,6 +282,9 @@ namespace SkylinePlanManagementSystem.Controllers
             }
 
             await _projectNodeRepository.DeleteAsync(node);
+
+            await RecalculateProjectProgressAsync(projectId);
+
             return RedirectToAction(nameof(Project), new { id = projectId });
         }
 
@@ -320,7 +328,23 @@ namespace SkylinePlanManagementSystem.Controllers
             };
             await _projectSubNodeRepository.InsertAsync(subNode);
 
-            if (IsAjaxRequest()) return Json(new { success = true, subNodeId = subNode.ProjectSubNodeId, title = subNode.Title, detail = subNode.Detail, planStartTime = subNode.PlanStartTime?.ToString("yyyy-MM-dd"), planEndTime = subNode.PlanEndTime?.ToString("yyyy-MM-dd"), progressStatus = subNode.ProgressStatus.ToString(), remark = subNode.Remark });
+            await RecalculateProjectProgressAsync(input.ProjectId);
+
+            var updatedNode = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == input.ProjectNodeId);
+            var updatedProject = await _projectRepository.FirstOrDefaultAsync(p => p.ProjectId == input.ProjectId);
+
+            if (IsAjaxRequest()) return Json(new { 
+                success = true, 
+                subNodeId = subNode.ProjectSubNodeId, 
+                title = subNode.Title, 
+                detail = subNode.Detail, 
+                planStartTime = subNode.PlanStartTime?.ToString("yyyy-MM-dd"), 
+                planEndTime = subNode.PlanEndTime?.ToString("yyyy-MM-dd"), 
+                progressStatus = subNode.ProgressStatus.ToString(), 
+                remark = subNode.Remark,
+                nodeProgress = updatedNode?.CompletionProgress ?? 0d,
+                projectProgress = updatedProject?.CompletionProgress ?? 0d
+            });
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
@@ -358,7 +382,22 @@ namespace SkylinePlanManagementSystem.Controllers
             subNode.Remark = input.Remark;
             await _projectSubNodeRepository.UpdateAsync(subNode);
 
-            if (IsAjaxRequest()) return Json(new { success = true, title = subNode.Title, detail = subNode.Detail, planStartTime = subNode.PlanStartTime?.ToString("yyyy-MM-dd"), planEndTime = subNode.PlanEndTime?.ToString("yyyy-MM-dd"), progressStatus = subNode.ProgressStatus.ToString(), remark = subNode.Remark });
+            await RecalculateProjectProgressAsync(input.ProjectId);
+
+            var updatedNode = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == input.ProjectNodeId);
+            var updatedProject = await _projectRepository.FirstOrDefaultAsync(p => p.ProjectId == input.ProjectId);
+
+            if (IsAjaxRequest()) return Json(new { 
+                success = true, 
+                title = subNode.Title, 
+                detail = subNode.Detail, 
+                planStartTime = subNode.PlanStartTime?.ToString("yyyy-MM-dd"), 
+                planEndTime = subNode.PlanEndTime?.ToString("yyyy-MM-dd"), 
+                progressStatus = subNode.ProgressStatus.ToString(), 
+                remark = subNode.Remark,
+                nodeProgress = updatedNode?.CompletionProgress ?? 0d,
+                projectProgress = updatedProject?.CompletionProgress ?? 0d
+            });
             return RedirectToAction(nameof(Project), new { id = input.ProjectId });
         }
 
@@ -383,7 +422,17 @@ namespace SkylinePlanManagementSystem.Controllers
             }
 
             await _projectSubNodeRepository.DeleteAsync(subNode);
-            if (IsAjaxRequest()) return Json(new { success = true });
+
+            await RecalculateProjectProgressAsync(projectId);
+
+            var updatedNode = await _projectNodeRepository.FirstOrDefaultAsync(n => n.ProjectNodeId == projectNodeId);
+            var updatedProject = await _projectRepository.FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+            if (IsAjaxRequest()) return Json(new { 
+                success = true,
+                nodeProgress = updatedNode?.CompletionProgress ?? 0d,
+                projectProgress = updatedProject?.CompletionProgress ?? 0d
+            });
             return RedirectToAction(nameof(Project), new { id = projectId });
         }
 
@@ -508,6 +557,44 @@ namespace SkylinePlanManagementSystem.Controllers
             }
 
             return dataQuery.OrderBy(x => x.ProjectName).ThenBy(x => x.NodeTitle).ThenBy(x => x.SubNodeTitle);
+        }
+
+        private async Task RecalculateProjectProgressAsync(int projectId)
+        {
+            var project = await _projectRepository.GetAll()
+                .Include(p => p.Nodes)
+                .ThenInclude(n => n.SubNodes)
+                .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+            if (project == null) return;
+
+            foreach (var node in project.Nodes)
+            {
+                var totalSubNodes = node.SubNodes.Count;
+                if (totalSubNodes == 0)
+                {
+                    node.CompletionProgress = 0d;
+                }
+                else
+                {
+                    var completedSubNodes = node.SubNodes.Count(sn => sn.ProgressStatus == SkylinePlanManagementSystem.Models.EnumTypes.SubNodeProgressStatus.已完成);
+                    node.CompletionProgress = Math.Round((double)completedSubNodes * 100d / totalSubNodes, 2);
+                }
+                await _projectNodeRepository.UpdateAsync(node);
+            }
+
+            var allSubNodes = project.Nodes.SelectMany(n => n.SubNodes).ToList();
+            var totalProjectSubNodes = allSubNodes.Count;
+            if (totalProjectSubNodes == 0)
+            {
+                project.CompletionProgress = 0d;
+            }
+            else
+            {
+                var completedProjectSubNodes = allSubNodes.Count(sn => sn.ProgressStatus == SkylinePlanManagementSystem.Models.EnumTypes.SubNodeProgressStatus.已完成);
+                project.CompletionProgress = Math.Round((double)completedProjectSubNodes * 100d / totalProjectSubNodes, 2);
+            }
+            await _projectRepository.UpdateAsync(project);
         }
 
 

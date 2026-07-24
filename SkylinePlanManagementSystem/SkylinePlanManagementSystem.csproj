@@ -13,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Error\" />
+    <Folder Include="ViewModels\ProjectPlans\" />
+    <Folder Include="Views\SubNodeQuery\" />
     <Folder Include="wwwroot\images\avatars\" />
     <Folder Include="wwwroot\images\avatars\" />
   </ItemGroup>
