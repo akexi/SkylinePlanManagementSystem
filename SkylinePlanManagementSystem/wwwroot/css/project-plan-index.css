@@ -243,3 +243,39 @@
 .subnode-box .subnode-add-form {
     order: 2;
 }
+
+/* Gantt Chart Styling */
+.timeline-gantt-wrapper {
+    background-color: #fafbfc;
+    border: 1px solid #eef1f6;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.gantt-row {
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.gantt-row:hover {
+    background-color: #f4f7fe;
+}
+
+.gantt-bar-container {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e1e5ee;
+}
+
+.gantt-bar {
+    position: absolute;
+    box-shadow: 0 2px 4px rgba(29, 78, 216, 0.2);
+    overflow: hidden;
+}
+
+.gantt-bar-progress {
+    transition: width 0.4s ease-in-out;
+}
+
+.xsmall {
+    font-size: 11px;
+}

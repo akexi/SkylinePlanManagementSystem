@@ -181,10 +181,18 @@ namespace SkylinePlanManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddNode(ProjectNodeCreateViewModel input)
         {
+            if (input.PlanStartTime.HasValue && input.PlanEndTime.HasValue && input.PlanEndTime < input.PlanStartTime)
+            {
+                ModelState.AddModelError(nameof(input.PlanEndTime), "计划完成时间不能早于计划开始时间");
+            }
+
             if (!ModelState.IsValid)
             {
-                TempData["ProjectNodeError"] = "节点数据不完整，请检查后重试";
-                if (IsAjaxRequest()) return Json(new { success = false, message = "子节点数据不完整，请检查后重试" });
+                var errors = string.Join("；", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                TempData["ProjectNodeError"] = $"数据验证失败：{errors}";
+                if (IsAjaxRequest()) return Json(new { success = false, message = $"数据验证失败：{errors}" });
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
@@ -225,9 +233,17 @@ namespace SkylinePlanManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateNode(ProjectNodeEditViewModel input)
         {
+            if (input.PlanStartTime.HasValue && input.PlanEndTime.HasValue && input.PlanEndTime < input.PlanStartTime)
+            {
+                ModelState.AddModelError(nameof(input.PlanEndTime), "计划完成时间不能早于计划开始时间");
+            }
+
             if (!ModelState.IsValid)
             {
-                TempData["ProjectNodeError"] = "节点数据不完整，请检查后重试";
+                var errors = string.Join("；", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                TempData["ProjectNodeError"] = $"数据验证失败：{errors}";
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
@@ -292,10 +308,18 @@ namespace SkylinePlanManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSubNode(ProjectSubNodeCreateViewModel input)
         {
+            if (input.PlanStartTime.HasValue && input.PlanEndTime.HasValue && input.PlanEndTime < input.PlanStartTime)
+            {
+                ModelState.AddModelError(nameof(input.PlanEndTime), "计划完成时间不能早于计划开始时间");
+            }
+
             if (!ModelState.IsValid)
             {
-                if (IsAjaxRequest()) return Json(new { success = false, message = "子节点数据不完整，请检查后重试" });
-                TempData["ProjectNodeError"] = "子节点数据不完整，请检查后重试";
+                var errors = string.Join("；", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                TempData["ProjectNodeError"] = $"数据验证失败：{errors}";
+                if (IsAjaxRequest()) return Json(new { success = false, message = $"数据验证失败：{errors}" });
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
@@ -352,9 +376,18 @@ namespace SkylinePlanManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateSubNode(ProjectSubNodeEditViewModel input)
         {
+            if (input.PlanStartTime.HasValue && input.PlanEndTime.HasValue && input.PlanEndTime < input.PlanStartTime)
+            {
+                ModelState.AddModelError(nameof(input.PlanEndTime), "计划完成时间不能早于计划开始时间");
+            }
+
             if (!ModelState.IsValid)
             {
-                TempData["ProjectNodeError"] = "子节点数据不完整，请检查后重试";
+                var errors = string.Join("；", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                TempData["ProjectNodeError"] = $"数据验证失败：{errors}";
+                if (IsAjaxRequest()) return Json(new { success = false, message = $"数据验证失败：{errors}" });
                 return RedirectToAction(nameof(Project), new { id = input.ProjectId });
             }
 
