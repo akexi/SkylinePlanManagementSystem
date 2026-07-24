@@ -16,6 +16,16 @@
         : nodes.OrderBy(n => n.ProjectNodeId).ToList();
 
     var activeTab = ViewBag.ActiveTab as string ?? "all-nodes";
+
+    // Timeline Calculations for Gantt Chart
+    var projectStart = Model.StartTime ?? (nodes.Any(n => n.PlanStartTime.HasValue) ? nodes.Where(n => n.PlanStartTime.HasValue).Min(n => n.PlanStartTime) : null) ?? DateTime.Now;
+    var projectEnd = Model.EndTime ?? (nodes.Any(n => n.PlanEndTime.HasValue) ? nodes.Where(n => n.PlanEndTime.HasValue).Max(n => n.PlanEndTime) : null) ?? DateTime.Now.AddMonths(3);
+    if (projectEnd <= projectStart)
+    {
+        projectEnd = projectStart.AddDays(30);
+    }
+    var totalProjectDays = (projectEnd - projectStart).TotalDays;
+    if (totalProjectDays <= 0) totalProjectDays = 1;
 }
 
 <div class="project-detail-page">
@@ -44,6 +54,70 @@
         </div>
     </div>
 
+    <!-- 甘特时间线 / Gantt Timeline -->
+    @if (nodes.Any(n => n.PlanStartTime.HasValue || n.PlanEndTime.HasValue))
+    {
+        <div class="project-info-card mt-3">
+            <h5 class="mb-3 d-flex align-items-center">
+                <span class="mr-2" style="width: 4px; height: 18px; background-color: #0d6efd; display: inline-block; border-radius: 2px;"></span>
+                项目执行甘特时间线
+            </h5>
+            <div class="timeline-gantt-wrapper">
+                <!-- Timeline Header (Months/Quarters/Dates) -->
+                <div class="gantt-header d-flex justify-content-between text-muted small border-bottom pb-2 mb-2">
+                    <span>@projectStart.ToString("yyyy-MM-dd")</span>
+                    <span>@projectStart.AddDays(totalProjectDays / 2).ToString("yyyy-MM-dd")</span>
+                    <span>@projectEnd.ToString("yyyy-MM-dd")</span>
+                </div>
+
+                <!-- Gantt Rows -->
+                <div class="gantt-rows">
+                    @foreach (var node in nodes.OrderBy(n => n.PlanStartTime ?? DateTime.MaxValue))
+                    {
+                        var nStart = node.PlanStartTime ?? projectStart;
+                        var nEnd = node.PlanEndTime ?? projectEnd;
+                        if (nStart < projectStart) { nStart = projectStart; }
+                        if (nEnd > projectEnd) { nEnd = projectEnd; }
+                        if (nEnd < nStart) { nEnd = nStart; }
+
+                        var leftPercent = (nStart - projectStart).TotalDays / totalProjectDays * 100.0;
+                        var widthPercent = (nEnd - nStart).TotalDays / totalProjectDays * 100.0;
+
+                        // Bound the values between 0 and 100
+                        if (leftPercent < 0) { leftPercent = 0; }
+                        if (leftPercent > 100) { leftPercent = 100; }
+                        if (widthPercent < 0) { widthPercent = 0; }
+                        if (leftPercent + widthPercent > 100) { widthPercent = 100 - leftPercent; }
+                        if (widthPercent < 3.0) { widthPercent = 3.0; } // Ensure visible minimum width
+
+                        <div class="gantt-row py-2 border-bottom align-items-center">
+                            <div class="row">
+                                <div class="col-md-3 d-flex align-items-center justify-content-between mb-1 mb-md-0">
+                                    <span class="font-weight-bold text-dark text-truncate" title="@node.Title">@node.Title</span>
+                                    <span class="badge badge-light text-muted small">@(node.Department?.Name ?? "未归属")</span>
+                                </div>
+                                <div class="col-md-9 position-relative">
+                                    <div class="gantt-bar-container bg-light rounded" style="height: 24px; width: 100%; position: relative; overflow: hidden;">
+                                        <!-- Node Bar -->
+                                        <div class="gantt-bar d-flex align-items-center justify-content-center text-white font-weight-bold small rounded"
+                                             style="position: absolute; left: @(leftPercent.ToString("F2"))%; width: @(widthPercent.ToString("F2"))%; height: 100%; background: linear-gradient(90deg, #3b82f6, #1d4ed8); transition: all 0.3s ease; font-size: 11px;">
+                                            <div class="gantt-bar-progress bg-success" style="position: absolute; left: 0; top: 0; bottom: 0; width: @(node.CompletionProgress)%; opacity: 0.85; z-index: 1;"></div>
+                                            <span style="z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">@node.CompletionProgress.ToString("0.##")%</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-muted xsmall mt-1 px-1" style="font-size: 10px;">
+                                        <span>@(node.PlanStartTime?.ToString("MM-dd") ?? "-")</span>
+                                        <span>@(node.PlanEndTime?.ToString("MM-dd") ?? "-")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
     <div class="node-panel mt-4">
         <h5 class="mb-3">项目一级节点管理</h5>
 
@@ -63,13 +137,13 @@
         {
             <ul class="nav nav-tabs mb-3" id="projectNodeTabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link @(activeTab == "all-nodes" ? "active" : "")" id="all-nodes-tab" href="@Url.Action("Project", "ProjectPlan", new { id = Model.ProjectId, tab = "all-nodes" })" role="tab">全部节点（@nodes.Count）</a>
+                    <a class="nav-link @(activeTab == "all-nodes" ? "active" : "")" id="all-nodes-tab" data-toggle="tab" href="#all-nodes" role="tab" aria-controls="all-nodes" aria-selected="@(activeTab == "all-nodes" ? "true" : "false")">全部节点（@nodes.Count）</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(activeTab == "current-dept" ? "active" : "")" id="current-dept-tab" href="@Url.Action("Project", "ProjectPlan", new { id = Model.ProjectId, tab = "current-dept" })" role="tab">当前部门节点（@departmentNodes.Count）</a>
+                    <a class="nav-link @(activeTab == "current-dept" ? "active" : "")" id="current-dept-tab" data-toggle="tab" href="#current-dept" role="tab" aria-controls="current-dept" aria-selected="@(activeTab == "current-dept" ? "true" : "false")">当前部门节点（@departmentNodes.Count）</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(activeTab == "other-dept" ? "active" : "")" id="other-dept-tab" href="@Url.Action("Project", "ProjectPlan", new { id = Model.ProjectId, tab = "other-dept" })" role="tab">其他部门节点（@otherDepartmentNodes.Count）</a>
+                    <a class="nav-link @(activeTab == "other-dept" ? "active" : "")" id="other-dept-tab" data-toggle="tab" href="#other-dept" role="tab" aria-controls="other-dept" aria-selected="@(activeTab == "other-dept" ? "true" : "false")">其他部门节点（@otherDepartmentNodes.Count）</a>
                 </li>
                 <li class="nav-item ml-2 align-self-center">
                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addNodeModal" @(currentUserDepartmentId.HasValue ? null : "disabled")>+ 新增节点</button>
